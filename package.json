@@ -1,0 +1,12 @@
+{
+  "name": "memberdashboard",
+  "version": "1.0.0",
+  "description": "A project made using HTML, CSS & JS. The Website is about a Member Dashboard",
+  "license": "ISC",
+  "author": "Kshitij Das",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
