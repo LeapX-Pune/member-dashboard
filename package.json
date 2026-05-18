@@ -1,0 +1,12 @@
+{
+  "name": "memberdashboard",
+  "version": "1.0.0",
+  "description": "A website for member dashboard using HTML, CSS, JS",
+  "license": "ISC",
+  "author": "Devansh Mittal",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
