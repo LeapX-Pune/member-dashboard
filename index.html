@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPulse — Member Dashboard</title>
+    <meta name="description" content="Your personal fitness dashboard — track workouts, membership status, goals, and activity all in one place.">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/plan.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!------------ Sidebar (Left) ------------>
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span>FitPulse</span>
+            </div>
+
+            <nav class="nav-links vertical-nav" role="navigation" aria-label="Main navigation">
+                <a href="#" class="active" id="nav-overview" data-target="dashboard-view">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" id="nav-plans" data-target="plans-view">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Plans</span>
+                </a>
+                <a href="#" id="nav-analytics" data-target="wip-view">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" id="nav-settings" data-target="wip-view">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!--------------------- Main Wrapper (Right) --------------------->
+        <div class="main-wrapper">
+
+            <!-- Top Navbar (Profile & Alerts) -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <!-- Space for page title if needed -->
+                </div>
+
+                <div class="navbar-right">
+                    <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img
+                            src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=1e1c1a&color=fff&rounded=true&bold=true"
+                            alt="Sauryaman Bisen Avatar"
+                            class="avatar"
+                            id="userAvatar"
+                        >
+                    </div>
+                </div>
+            </header>
+
+
+
+        <!-------------------- Main Dashboard View -------------------->
+        <main class="main-content" id="dashboard-view">
+
+            <!--- ROW 1 --->
+
+            <!-- Welcome Card (left) -->
+            <section class="welcome-card card-equal" aria-label="Welcome section">
+                <div class="welcome-content">
+                    <h1>Good&nbsp;Morning 🎉</h1>
+                    <p class="welcome-subtext">Welcome back, <strong>Sauryaman</strong>. Ready for today's workout?</p>
+
+                    <div class="mini-stats">
+                        <div class="m-stat">
+                            <span class="m-val">12</span>
+                            <span class="m-label">Streak Days</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="m-val">Pro</span>
+                            <span class="m-label">Workout Tier</span>
+                        </div>
+                        <div class="m-stat">
+                            <span class="m-val">48</span>
+                            <span class="m-label">Sessions Done</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer photo — blends seamlessly into beige via mix-blend-mode: multiply -->
+                <img
+                    src="images/fitness_model.png"
+                    alt="Fitness trainer standing confidently"
+                    class="fitness-image"
+                    id="trainerImage"
+                    loading="eager"
+                >
+            </section>
+
+            <!-- Dark Stats Grid (right) -->
+            <div class="dark-cards-grid card-equal" aria-label="Membership stats">
+
+                <div class="dark-card">
+                    <div class="dark-card-header">
+                        <i class="fa-solid fa-crown icon-crown"></i>
+                        <span>Active Plan</span>
+                    </div>
+                    <div class="dark-card-body">
+                        <h2>Pro Annual</h2>
+                        <p>Valid till Dec 2025</p>
+                    </div>
+                </div>
+
+                <div class="dark-card">
+                    <div class="dark-card-header">
+                        <i class="fa-regular fa-hourglass-half text-orange"></i>
+                        <span>Expiry In</span>
+                    </div>
+                    <div class="dark-card-body">
+                        <h2>142 Days</h2>
+                        <p>Auto-renew ON</p>
+                    </div>
+                </div>
+
+                <div class="dark-card">
+                    <div class="dark-card-header">
+                        <i class="fa-solid fa-fire-flame-curved text-orange"></i>
+                        <span>Total Sessions</span>
+                    </div>
+                    <div class="dark-card-body">
+                        <h2>84</h2>
+                        <p>Goal: 100 sessions</p>
+                    </div>
+                </div>
+
+                <div class="dark-card">
+                    <div class="dark-card-header">
+                        <i class="fa-solid fa-star text-orange"></i>
+                        <span>Reward Points</span>
+                    </div>
+                    <div class="dark-card-body">
+                        <h2>1,250</h2>
+                        <p>Goal: 2,000 pts</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!----------- ROW 2 ----------->
+
+            <!-- Recent Activity (left) -->
+            <section class="content-card card-equal" aria-label="Recent activity">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                    <button class="view-all-btn" id="viewAllActivity">View All</button>
+                </div>
+
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <img src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=fce9d5&color=e8813a&rounded=true&bold=true" alt="Sauryaman Bisen" class="act-avatar">
+                        <div class="act-details">
+                            <h4>Session Booked</h4>
+                            <p>Yoga Session · 08:00 AM</p>
+                        </div>
+                        <div class="act-time">Just now</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <img src="https://ui-avatars.com/api/?name=Aarav+Sharma&background=e2e8f0&color=475569&rounded=true&bold=true" alt="Aarav Sharma" class="act-avatar">
+                        <div class="act-details">
+                            <h4>Plan Renewed</h4>
+                            <p>Pro Annual · Aarav Sharma</p>
+                        </div>
+                        <div class="act-time">2h ago</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <img src="https://ui-avatars.com/api/?name=Priya+Verma&background=d1fae5&color=059669&rounded=true&bold=true" alt="Priya Verma" class="act-avatar">
+                        <div class="act-details">
+                            <h4>Points Earned</h4>
+                            <p>+50 pts · Priya Verma</p>
+                        </div>
+                        <div class="act-time">5h ago</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Workouts (right) -->
+            <section class="content-card card-equal" aria-label="Recent workouts">
+                <div class="section-header">
+                    <h2>Recent Workouts</h2>
+                </div>
+
+                <div class="workout-list">
+                    <div class="workout-item">
+                        <div class="workout-icon">
+                            <img src="https://ui-avatars.com/api/?name=MR&background=1e1c1a&color=fff&rounded=true&bold=true" alt="Morning Run icon">
+                        </div>
+                        <div class="workout-details">
+                            <h4>Morning Run</h4>
+                            <p>07:00 AM &middot; 45 min</p>
+                        </div>
+                        <div class="workout-stats">
+                            <span class="cal">420 cal</span>
+                            <span class="badge high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="workout-item">
+                        <div class="workout-icon">
+                            <img src="https://ui-avatars.com/api/?name=ST&background=1e1c1a&color=fff&rounded=true&bold=true" alt="Strength Training icon">
+                        </div>
+                        <div class="workout-details">
+                            <h4>Strength Training</h4>
+                            <p>06:00 PM &middot; 60 min</p>
+                        </div>
+                        <div class="workout-stats">
+                            <span class="cal">380 cal</span>
+                            <span class="badge medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="workout-item">
+                        <div class="workout-icon">
+                            <img src="https://ui-avatars.com/api/?name=YS&background=1e1c1a&color=fff&rounded=true&bold=true" alt="Yoga Session icon">
+                        </div>
+                        <div class="workout-details">
+                            <h4>Yoga Session</h4>
+                            <p>08:00 AM &middot; 30 min</p>
+                        </div>
+                        <div class="workout-stats">
+                            <span class="cal">150 cal</span>
+                            <span class="badge low">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!------------ ROW 3 ------------>
+
+            <!-- Quick Actions (left) -->
+            <section class="content-card card-equal" aria-label="Quick actions">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="quick-actions-grid h-full">
+                    <button class="action-btn" id="actionBook" aria-label="Book a session">
+                        <i class="fa-solid fa-dumbbell"></i>
+                        <span>Book</span>
+                    </button>
+                    <button class="action-btn" id="actionSchedule" aria-label="View schedule">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>Schedule</span>
+                    </button>
+                    <button class="action-btn" id="actionUpgrade" aria-label="Upgrade plan">
+                        <i class="fa-solid fa-arrow-up-right-dots"></i>
+                        <span>Upgrade</span>
+                    </button>
+                    <button class="action-btn" id="actionRefer" aria-label="Refer a friend">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Refer</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Weekly Goal Progress (right) -->
+            <section class="content-card card-equal" aria-label="Weekly goal progress">
+                <div class="section-header">
+                    <h2>Weekly Goal Progress</h2>
+                    <i class="fa-solid fa-chevron-right text-muted" style="font-size:0.85rem;"></i>
+                </div>
+
+                <div class="progress-grid h-full">
+
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <div class="prog-icon bg-accent-light">
+                                <i class="fa-solid fa-shoe-prints text-accent"></i>
+                            </div>
+                            <div class="prog-text">
+                                <h4>Steps</h4>
+                                <p>68,000 / 70,000</p>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill bg-accent-solid" style="width: 97%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <div class="prog-icon bg-slate-light">
+                                <i class="fa-solid fa-dumbbell text-dark"></i>
+                            </div>
+                            <div class="prog-text">
+                                <h4>Workouts</h4>
+                                <p>4 / 5 sessions</p>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill bg-dark-solid" style="width: 80%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <div class="prog-icon bg-green-light">
+                                <i class="fa-solid fa-droplet text-green"></i>
+                            </div>
+                            <div class="prog-text">
+                                <h4>Water</h4>
+                                <p>17.5L / 27.5L</p>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-fill bg-green-solid" style="width: 64%;"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!------------ ROW 3: Feature Carousel ------------>
+            <section class="carousel-section" aria-label="Feature Carousel">
+                <div class="carousel-wrapper">
+                    <button class="carousel-arrow left-arrow" id="prevSlide" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
+                    
+                    <div class="carousel-track-container">
+                        <ul class="carousel-track" id="carouselTrack">
+                            <li class="carousel-slide prev-slide">
+                                <img src="images/fitness_model.png" alt="Trainer Profile">
+                                <div class="slide-label">Trainer Profile</div>
+                            </li>
+                            <li class="carousel-slide">
+                                <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=600&auto=format&fit=crop" alt="Smart Mirror tech">
+                                <div class="slide-label">Smart Mirror Tech</div>
+                            </li>
+                            <li class="carousel-slide current-slide">
+                                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop" alt="Female athlete mid-stride">
+                                <div class="slide-label">Overview Slide (3/5)</div>
+                            </li>
+                            <li class="carousel-slide next-slide">
+                                <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=600&auto=format&fit=crop" alt="Nutrition App">
+                                <div class="slide-label">Nutrition App</div>
+                            </li>
+                            <li class="carousel-slide">
+                                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop" alt="Outdoor Meditation">
+                                <div class="slide-label">Outdoor Meditation</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <button class="carousel-arrow right-arrow" id="nextSlide" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="carousel-dots" id="carouselDots">
+                    <span class="dot" data-index="0">1</span>
+                    <span class="dot" data-index="1">2</span>
+                    <span class="dot active" data-index="2">3</span>
+                    <span class="dot" data-index="3">4</span>
+                    <span class="dot" data-index="4">5</span>
+                </div>
+            </section>
+
+        </main>
+
+
+        <!------------ Plans View ------------>
+        <main class="main-content plans-view" id="plans-view" style="display: none;" aria-label="Membership plans">
+            <div style="grid-column: 1 / -1; margin-bottom: 1.5rem; text-align: center;">
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; letter-spacing: -0.02em;">Membership Plans</h2>
+                <p style="color: var(--text-muted);">Choose the perfect plan for your fitness journey.</p>
+            </div>
+            
+            <div class="plans-grid">
+                <!-- Gold Plan -->
+                <div class="plan-card plan-light">
+                    <h3 class="plan-title">Gold Plan</h3>
+                    <p class="plan-goal">Goal: 50 sessions</p>
+                    <div class="plan-price">
+                        <span class="currency">₹</span>699<span class="period">/mo</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-regular fa-calendar-days text-orange"></i> 1 Month Duration</li>
+                        <li><i class="fa-solid fa-dumbbell text-orange"></i> 50 Standard Streak Days</li>
+                        <li><i class="fa-solid fa-person-running text-orange"></i> Pro Tier Access</li>
+                        <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
+                    </ul>
+                    <button class="plan-btn">Select Plan</button>
+                </div>
+                
+                <!-- Gold Premium -->
+                <div class="plan-card plan-dark">
+                    <h3 class="plan-title">Gold Premium</h3>
+                    <p class="plan-goal">Goal: 100 sessions</p>
+                    <div class="plan-price">
+                        <span class="currency">₹</span>1,899<span class="period">/3mo</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-regular fa-calendar-days text-orange"></i> 3 Months Duration</li>
+                        <li><i class="fa-solid fa-dumbbell text-orange"></i> 150 Standard Streak Days</li>
+                        <li><i class="fa-solid fa-person-running text-orange"></i> Pro Tier Access</li>
+                        <li><i class="fa-solid fa-heart-pulse text-orange"></i> Specialized Classes</li>
+                        <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
+                    </ul>
+                    <button class="plan-btn">Select Plan</button>
+                </div>
+                
+                <!-- Elite Plan -->
+                <div class="plan-card plan-light">
+                    <h3 class="plan-title">Elite Plan</h3>
+                    <p class="plan-goal">Goal: 150 sessions</p>
+                    <div class="plan-price">
+                        <span class="currency">₹</span>999<span class="period">/mo</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-regular fa-calendar-days text-orange"></i> 1 Month Duration</li>
+                        <li><i class="fa-solid fa-dumbbell text-orange"></i> Unlimited Standard Workouts</li>
+                        <li><i class="fa-solid fa-person-running text-orange"></i> Comprehensive Features</li>
+                        <li><i class="fa-solid fa-heart-pulse text-orange"></i> Specialized Classes</li>
+                        <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
+                    </ul>
+                    <button class="plan-btn">Select Plan</button>
+                </div>
+                
+                <!-- Elite Premium -->
+                <div class="plan-card plan-dark elite-premium">
+                    <div class="elite-badge">Elite</div>
+                    <h3 class="plan-title">Elite Premium</h3>
+                    <p class="plan-goal">Goal: 200+ sessions</p>
+                    <div class="plan-price">
+                        <span class="currency">₹</span>3,000<span class="period">/3mo</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-regular fa-calendar-days text-white"></i> 3 Months Duration</li>
+                        <li><i class="fa-solid fa-dumbbell text-white"></i> All Tiers</li>
+                        <li><i class="fa-solid fa-person-running text-white"></i> 1-on-1 Sessions</li>
+                        <li><i class="fa-solid fa-heart-pulse text-white"></i> Premium</li>
+                    </ul>
+                    <button class="plan-btn">Select Plan</button>
+                </div>
+            </div>
+        </main>
+
+        <!------------ Work In Progress View ------------>
+        <main class="wip-view" id="wip-view" style="display: none;" aria-label="Work in progress">
+            <div class="wip-content">
+                <div class="wip-icon">
+                    <i class="fa-solid fa-person-digging"></i>
+                </div>
+                <h2>Work In Progress</h2>
+                <p>This section is currently under development. Check back soon!</p>
+            </div>
+        </main>
+
+    </div> <!-- End main-wrapper -->
+    </div> <!-- End dashboard-container -->
+
+    <!-- Scripts -->
+    <script src="js/script.js"></script>
+</body>
+</html>
