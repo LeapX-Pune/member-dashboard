@@ -460,15 +460,207 @@
             </div>
         </main>
 
-        <!------------ Work In Progress View ------------>
-        <main class="wip-view" id="wip-view" style="display: none;" aria-label="Work in progress">
-            <div class="wip-content">
-                <div class="wip-icon">
-                    <i class="fa-solid fa-person-digging"></i>
+        <!------------ Analytics View ------------>
+        <main class="wip-view analytics-override" id="wip-view" style="display: none;" aria-label="Analytics">
+            <style>
+                .analytics-override {
+                    align-items: flex-start !important;
+                    justify-content: flex-start !important;
+                }
+                .analytics-dashboard {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    width: 100%;
+                    font-family: 'Inter', sans-serif;
+                }
+                .analytics-top-row {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 1.5rem;
+                }
+                .analytics-card {
+                    background-color: #1e1c1a;
+                    border-radius: 16px;
+                    padding: 1.5rem;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    position: relative;
+                }
+                .analytics-card h3 {
+                    color: #fff;
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    margin-bottom: 1.5rem;
+                    font-weight: 600;
+                }
+                .ring-container {
+                    width: 130px;
+                    height: 130px;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                }
+                .ring-container::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    border-radius: 50%;
+                    padding: 7px;
+                    background: conic-gradient(var(--ring-color, #39ff14) 0% var(--ring-pct, 0%), rgba(255,255,255,0.1) var(--ring-pct, 0%) 100%);
+                    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                }
+                
+                /* Adding glows */
+                .ring-container::after { content:''; position:absolute; inset:0; border-radius:50%; box-shadow: 0 0 15px var(--ring-glow, rgba(57,255,20,0.3)); pointer-events:none; }
+
+                .ring-content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    color: white;
+                }
+                .ring-content i {
+                    font-size: 1.2rem;
+                    margin-bottom: 0.25rem;
+                }
+                .ring-content .value {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    line-height: 1.1;
+                }
+                .ring-content .unit {
+                    font-size: 0.65rem;
+                    color: #a1a19a;
+                    text-transform: uppercase;
+                    margin-top: 0.25rem;
+                }
+                .analytics-card-footer {
+                    margin-top: 1.5rem;
+                    font-size: 0.75rem;
+                    color: #a1a19a;
+                }
+
+
+
+                .analytics-bottom-row {
+                    display: grid;
+                    grid-template-columns: 2fr 1fr;
+                    gap: 1.5rem;
+                }
+                .chart-card {
+                    background-color: #1e1c1a;
+                    border-radius: 16px;
+                    padding: 1.5rem;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                }
+                .chart-card h3 {
+                    color: #fff;
+                    font-size: 0.85rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    margin-bottom: 1.5rem;
+                    font-weight: 600;
+                }
+                .chart-container {
+                    height: 350px;
+                    width: 100%;
+                }
+
+                @media (max-width: 1024px) {
+                    .analytics-top-row { grid-template-columns: repeat(2, 1fr); }
+                    .analytics-bottom-row { grid-template-columns: 1fr; }
+                }
+                @media (max-width: 600px) {
+                    .analytics-top-row { grid-template-columns: 1fr; }
+                }
+            </style>
+            
+            <div class="analytics-dashboard">
+                <!-- Top Row -->
+                <div class="analytics-top-row">
+                    <div class="analytics-card">
+                        <h3>Total Sessions</h3>
+                        <div class="ring-container" id="stat-sessions-ring" style="--ring-color:#39ff14; --ring-glow:rgba(57,255,20,0.3); --ring-pct:0%;">
+                            <div class="ring-content">
+                                <i class="fa-solid fa-dumbbell" style="color:#39ff14"></i>
+                                <span class="value" id="stat-sessions-val">0</span>
+                                <span class="unit">Sessions</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Reward Points</h3>
+                        <div class="ring-container" id="stat-points-ring" style="--ring-color:#ffd700; --ring-glow:rgba(255,215,0,0.3); --ring-pct:0%;">
+                            <div class="ring-content">
+                                <i class="fa-solid fa-star" style="color:#ffd700"></i>
+                                <span class="value" id="stat-points-val">0</span>
+                                <span class="unit">Pts</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Attendance Rate</h3>
+                        <div class="ring-container" id="stat-attendance-ring" style="--ring-color:#00f2fe; --ring-glow:rgba(0,242,254,0.3); --ring-pct:0%;">
+                            <div class="ring-content">
+                                <i class="fa-regular fa-calendar-check" style="color:#00f2fe"></i>
+                                <span class="value" id="stat-attendance-val">0</span>
+                                <span class="unit">%</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Hours Burned</h3>
+                        <div class="ring-container" id="stat-hours-ring" style="--ring-color:#ff8a8a; --ring-glow:rgba(255,138,138,0.3); --ring-pct:0%;">
+                            <div class="ring-content">
+                                <i class="fa-solid fa-fire" style="color:#ff8a8a"></i>
+                                <span class="value" id="stat-hours-val">0</span>
+                                <span class="unit">Hrs</span>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <h2>Work In Progress</h2>
-                <p>This section is currently under development. Check back soon!</p>
+                
+
+                
+                <!-- Bottom Row -->
+                <div class="analytics-bottom-row">
+                    <div class="chart-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h3 style="margin:0;">Activity Progress</h3>
+                            <div style="font-size:0.75rem; color:#a1a19a; display:flex; gap:1rem;">
+                                <span style="display:flex; align-items:center; gap:0.4rem;"><span style="width:8px; height:8px; border-radius:50%; background:#39ff14; box-shadow: 0 0 5px #39ff14;"></span>Sessions</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Membership Usage</h3>
+                        <div class="chart-container" style="position: relative;">
+                            
+                        </div>
+                    </div>
+                </div>
             </div>
+            
+            <!-- Dependencies for Charts to work in this view -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="./js/data.js"></script>
+            <script src="./js/charts.js"></script>
         </main>
 
     </div> <!-- End main-wrapper -->
