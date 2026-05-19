@@ -107,3 +107,105 @@ window.addEventListener('DOMContentLoaded', () => {
     // Run the function!
     injectData();
 });
+
+// REAL-TIME SIMULATION
+const stats = window.mockData.membershipStats;
+// Dom Elements
+const sessionsEl = document.getElementById('stat-sessions');
+const pointsEl = document.getElementById('stat-points');
+const statusEl = document.getElementById('membership-status');
+// Status option
+const statuses = [
+    "Active",
+    "Expiring Soon",
+    "Expired"
+];
+// Animation Function
+function animateElement(element) {
+if (!element) return;
+
+    element.classList.add('live-update');
+
+    setTimeout(() => {
+        element.classList.remove('live-update');
+    }, 500);
+}
+// Update points
+function updatePoints() {
+
+    const randomChange =
+        Math.floor(Math.random() * 20) - 5;
+
+    stats.rewardPoints += randomChange;
+
+    if (stats.rewardPoints < 0) {
+        stats.rewardPoints = 0;
+    }
+
+    if (pointsEl) {
+        pointsEl.textContent = stats.rewardPoints;
+        animateElement(pointsEl);
+    }
+}
+// Update Session
+function updateSessions() {
+
+    stats.sessionsCount += 1;
+
+    if (sessionsEl) {
+        sessionsEl.textContent = stats.sessionsCount;
+        animateElement(sessionsEl);
+    }
+}
+// Update status
+function updateStatus() {
+
+    const randomStatus =
+        statuses[
+            Math.floor(Math.random() * statuses.length)
+        ];
+
+    window.mockData.userProfile.status =
+        randomStatus;
+
+if (statusEl) {
+ statusEl.textContent = randomStatus;
+// Reset colors
+        statusEl.style.color = "";
+// Status colors
+        if (randomStatus === "Active") {
+            statusEl.style.color = "#22c55e";
+        }
+
+        if (randomStatus === "Expired") {
+            statusEl.style.color = "#ef4444";
+        }
+
+        if (randomStatus === "Expiring Soon") {
+            statusEl.style.color = "#f59e0b";
+        }
+         animateElement(statusEl);
+    }
+}
+// Main loop
+setInterval(() => {
+
+    const randomUpdate =
+        Math.floor(Math.random() * 3);
+
+    switch(randomUpdate) {
+
+        case 0:
+            updatePoints();
+            break;
+
+        case 1:
+            updateSessions();
+            break;
+
+        case 2:
+            updateStatus();
+            break;
+    }
+
+}, 2000);
