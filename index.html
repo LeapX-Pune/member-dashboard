@@ -861,6 +861,186 @@
             </div>
         </main>
 
+            
+        <!------------ Settings View ------------>
+        <main class="main-content settings-view" id="settings-view" style="display: none;" aria-label="Settings">
+            <div class="setting-wrapper">
+                <div class="setting-panel">
+                    <!-- HEADER -->
+                    <div class="setting-header">
+                        <div class="setting-header-top">
+                            <div class="setting-header-icon">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                            <div>
+                                <h1>Settings</h1>
+                                <p>Manage your dashboard preferences and account settings</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABS -->
+                    <div class="setting-tabs">
+                        <button type="button" class="tab-btn active" data-tab="appearance">
+                            <i class="fa-solid fa-palette"></i> Appearance
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="profile">
+                            <i class="fa-regular fa-user"></i> Profile
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="notification">
+                            <i class="fa-regular fa-bell"></i> Notifications
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="system">
+                            <i class="fa-solid fa-gear"></i> System
+                        </button>
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="setting-content">
+                        <!-- APPEARANCE -->
+                        <div class="tab-content active" id="appearance">
+                            <div class="tab-section-title">
+                                <i class="fa-solid fa-palette tab-section-icon"></i>
+                                <div>
+                                    <h2>Appearance Settings</h2>
+                                    <p>Customize dashboard appearance and theme.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="theme-selector-container">
+                                <h3>Dashboard Theme</h3>
+                                <p class="theme-selector-desc">Select your preferred color theme. This will only affect the dashboard area.</p>
+                                
+                                <div class="theme-grid">
+                                    <label class="theme-card">
+                                        <input type="radio" name="dashboard-theme" value="light" class="theme-radio" checked>
+                                        <div class="theme-preview light-preview">
+                                            <div class="p-sidebar"></div>
+                                            <div class="p-main">
+                                                <div class="p-topbar"></div>
+                                                <div class="p-content">
+                                                    <div class="p-card"></div>
+                                                    <div class="p-card"></div>
+                                                </div>
+                                            </div>
+                                            <span class="theme-check-badge"><i class="fa-solid fa-check"></i></span>
+                                        </div>
+                                        <span class="theme-label"><i class="fa-solid fa-sun"></i> Light</span>
+                                    </label>
+
+                                    <label class="theme-card">
+                                        <input type="radio" name="dashboard-theme" value="dark" class="theme-radio">
+                                        <div class="theme-preview dark-preview">
+                                            <div class="p-sidebar"></div>
+                                            <div class="p-main">
+                                                <div class="p-topbar"></div>
+                                                <div class="p-content">
+                                                    <div class="p-card"></div>
+                                                    <div class="p-card"></div>
+                                                </div>
+                                            </div>
+                                            <span class="theme-check-badge"><i class="fa-solid fa-check"></i></span>
+                                        </div>
+                                        <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark</span>
+                                    </label>
+
+                                    <label class="theme-card">
+                                        <input type="radio" name="dashboard-theme" value="system" class="theme-radio">
+                                        <div class="theme-preview system-preview">
+                                            <div class="p-half light-half">
+                                                <div class="p-sidebar"></div>
+                                                <div class="p-main">
+                                                    <div class="p-topbar"></div>
+                                                    <div class="p-content">
+                                                        <div class="p-card"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="p-half dark-half">
+                                                <div class="p-main">
+                                                    <div class="p-topbar"></div>
+                                                    <div class="p-content">
+                                                        <div class="p-card"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="theme-check-badge"><i class="fa-solid fa-check"></i></span>
+                                        </div>
+                                        <span class="theme-label"><i class="fa-solid fa-desktop"></i> System</span>
+                                    </label>
+                                </div>
+
+                                <div class="theme-tip-row">
+                                    <i class="fa-regular fa-lightbulb"></i>
+                                    <span><strong>Tip:</strong> You can change themes anytime. Your preference will be saved automatically.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PROFILE -->
+                        <div class="tab-content" id="profile">
+                            <div class="tab-section-title">
+                                <i class="fa-regular fa-user tab-section-icon"></i>
+                                <div>
+                                    <h2>Profile Settings</h2>
+                                    <p>Manage your personal information.</p>
+                                </div>
+                            </div>
+                            <div class="profile-form">
+                                <input type="text" id="name" placeholder="Full Name" value="Sauryaman Bisen">
+                                <input type="email" id="email" placeholder="Email Address" value="sauryamanbisen@gmail.com">
+                                <input type="tel" id="phone" placeholder="Phone Number" value="+91 98765 43210">
+                                <input type="number" id="age" placeholder="Age" value="18">
+                                <select id="gender">
+                                    <option value="">Select Gender</option>
+                                    <option selected>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                                <button type="button" class="save-btn" id="saveProfile">Save Profile</button>
+                            </div>
+                        </div>
+
+                        <!-- NOTIFICATIONS -->
+                        <div class="tab-content" id="notification">
+                            <div class="tab-section-title">
+                                <i class="fa-regular fa-bell tab-section-icon"></i>
+                                <div>
+                                    <h2>Notification Preferences</h2>
+                                    <p>Choose which notifications you want to receive.</p>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <span>Email Notifications</span>
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="notification-item">
+                                <span>Membership Alerts</span>
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="notification-item">
+                                <span>Push Notifications</span>
+                                <input type="checkbox">
+                            </div>
+                        </div>
+
+                        <!-- SYSTEM -->
+                        <div class="tab-content" id="system">
+                            <div class="tab-section-title">
+                                <i class="fa-solid fa-gear tab-section-icon"></i>
+                                <div>
+                                    <h2>System Settings</h2>
+                                    <p>Manage system controls and account access.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="logout-btn">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
         <!------------ Analytics View ------------>
         <main class="wip-view analytics-override" id="wip-view" style="display: none;" aria-label="Analytics">
             <style>
