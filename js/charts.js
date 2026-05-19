@@ -12,45 +12,85 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     const data = window.mockData;
-
-    // --- Dynamic DOM Hydration for Top & Mid Rows ---
     const stats = data.membershipStats;
     
-    // Helper to update top ring cards
-    const setCardData = (idPrefix, value, goal, colorStr) => {
-        // Update top row card
+    // --- Dynamic DOM Hydration for Top & Mid Rows ---
+    // Prepare the rings for animation
+    const prepareRingData = (idPrefix, value, goal) => {
         const ring = document.getElementById(idPrefix + '-ring');
         const valEl = document.getElementById(idPrefix + '-val');
+        
+        if (valEl) valEl.textContent = '0';
+        if (ring) ring.style.setProperty('--ring-pct', `0%`);
         
         let numVal = parseFloat(value);
         let pct = Math.min((numVal / goal) * 100, 100);
 
-        if (valEl) valEl.textContent = value;
-        if (ring) {
-            ring.style.setProperty('--ring-pct', `${pct}%`);
-        }
+        return { ring, valEl, numVal, pct };
     };
 
     // Goals: Sessions(50), Points(2000), Attendance(100), Hours(200)
-    setCardData('stat-sessions', stats.sessionsCount, 50, '#39ff14');
-    setCardData('stat-points', stats.rewardPoints, 2000, '#ffd700');
-    setCardData('stat-attendance', parseFloat(stats.attendanceRate), 100, '#00f2fe');
-    setCardData('stat-hours', stats.totalHoursBurned, 200, '#ff8a8a');
+    const ringsData = [
+        prepareRingData('stat-sessions', stats.sessionsCount, 50),
+        prepareRingData('stat-points', stats.rewardPoints, 2000),
+        prepareRingData('stat-attendance', parseFloat(stats.attendanceRate), 100),
+        prepareRingData('stat-hours', stats.totalHoursBurned, 200)
+    ];
 
+    // Animation Function for a Single Ring
+    const animateRing = (item) => {
+        if (!item.ring) return;
+        const duration = 1000; // 1s duration
+        const startTime = performance.now();
+        
+        const step = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+            
+            const currentVal = (item.numVal * easeProgress);
+            const currentPct = (item.pct * easeProgress);
+            
+            if (item.valEl) item.valEl.textContent = Math.round(currentVal);
+            item.ring.style.setProperty('--ring-pct', `${currentPct}%`);
+            
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                if (item.valEl) item.valEl.textContent = item.numVal;
+                item.ring.style.setProperty('--ring-pct', `${item.pct}%`);
+            }
+        };
+        requestAnimationFrame(step);
+    };
 
     // 2. Global Theme Settings for Charts
+    // Extract computed styles from document to pass actual hex to canvas
+    const rootStyle = getComputedStyle(document.body);
     const THEME = {
-        primary: '#39ff14', // Green
-        primaryLight: 'rgba(57, 255, 20, 0.2)',
-        secondary: '#00f2fe', // Cyan
-        tertiary: '#ffd700', // Yellow
-        dark: '#1e1c1a',
-        text: '#a1a19a',
-        grid: 'rgba(255,255,255,0.05)',
+        primary: '#F15C05', // Fallback for Orange
+        dark: 'transparent',
+        text: '#A2A2A7',
+        grid: '#2C2C30',
+        surface: '#3A271B',
         fontFamily: "'Inter', sans-serif"
     };
 
-    // Set Chart.js global defaults if library is loaded
+    // Try to dynamically extract current CSS variable values (so chart matches theme)
+    const updateThemeFromCSS = () => {
+        const computed = getComputedStyle(document.getElementById('dashboardContainer') || document.body);
+        const primaryColor = computed.getPropertyValue('--chart-ring-exercise').trim();
+        const gridColor = computed.getPropertyValue('--chart-border').trim();
+        const textColor = computed.getPropertyValue('--chart-text-secondary').trim();
+        const surfaceColor = computed.getPropertyValue('--chart-surface').trim();
+        
+        if (primaryColor) THEME.primary = primaryColor;
+        if (gridColor) THEME.grid = gridColor;
+        if (textColor) THEME.text = textColor;
+        if (surfaceColor) THEME.surface = surfaceColor;
+    };
+    updateThemeFromCSS();
+
     if (typeof Chart !== 'undefined') {
         Chart.defaults.color = THEME.text;
         Chart.defaults.font.family = THEME.fontFamily;
@@ -83,6 +123,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 ]
             },
             options: {
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -94,7 +138,25 @@ window.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: THEME.surface,
+                        titleColor: THEME.text,
+                        bodyColor: THEME.primary,
+                        titleFont: { family: THEME.fontFamily, size: 12, weight: 'normal' },
+                        bodyFont: { family: THEME.fontFamily, size: 14, weight: 'bold' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        borderColor: THEME.grid,
+                        borderWidth: 1,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' Sessions';
+                            }
+                        }
+                    }
                 },
                 interaction: {
                     intersect: false,
@@ -104,9 +166,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-
-    // 5. Expose Timeframe Update Function for Activity Chart
+    // 4. Expose Timeframe Update Function for Activity Chart
     window.updateActivityTimeframe = (timeframe) => {
         if (!window.activityChart) return;
         
@@ -121,4 +181,50 @@ window.addEventListener('DOMContentLoaded', () => {
             window.activityChart.update();
         }
     };
+
+    // 5. Intersection Observer to Trigger Animations on View
+    const wipView = document.getElementById('wip-view');
+    let hasAnimated = false;
+    
+    if (wipView) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasAnimated) {
+                    hasAnimated = true;
+                    // Trigger Ring Animations
+                    ringsData.forEach(animateRing);
+                    
+                    // Trigger Line Chart Entrance Animation
+                    if (window.activityChart) {
+                        // Refresh theme colors just in case mode was toggled before tab opened
+                        updateThemeFromCSS();
+                        window.activityChart.data.datasets[0].borderColor = THEME.primary;
+                        window.activityChart.data.datasets[0].pointBorderColor = THEME.primary;
+                        window.activityChart.options.scales.x.ticks.color = THEME.text;
+                        window.activityChart.options.scales.y.grid.color = THEME.grid;
+                        
+                        // Update tooltips to match new theme
+                        window.activityChart.options.plugins.tooltip.backgroundColor = THEME.surface;
+                        window.activityChart.options.plugins.tooltip.titleColor = THEME.text;
+                        window.activityChart.options.plugins.tooltip.bodyColor = THEME.primary;
+                        window.activityChart.options.plugins.tooltip.borderColor = THEME.grid;
+                        
+                        window.activityChart.reset();
+                        window.activityChart.update();
+                    }
+                } else if (!entry.isIntersecting) {
+                    // Reset so the animation replays every time the user visits the tab
+                    hasAnimated = false;
+                    
+                    // Reset DOM state for rings
+                    ringsData.forEach(item => {
+                        if (item.ring) item.ring.style.setProperty('--ring-pct', '0%');
+                        if (item.valEl) item.valEl.textContent = '0';
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(wipView);
+    }
 });
