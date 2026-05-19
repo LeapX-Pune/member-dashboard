@@ -1,4 +1,4 @@
-// Central Orchestrator for coordinating multi-student module boot sequences safely
+
 const AppController = {
     config: {
         version: "1.2.0",
@@ -9,17 +9,17 @@ const AppController = {
     init() {
         this.log("Initializing dashboard application...");
 
-        // 1. Fire content parsing engine (Student 5 Core)
+        // 1. Fire content parsing engine 
         this.initDataModule();
 
-        // 2. Set up single-page tab handling structures (Student 3)
+        // 2. Set up single-page tab handling structures 
         this.initNavigationModule();
 
-        // 3. Render analytical graph elements (Students 7, 8, 9)
+        // 3. Render analytical graph elements
         this.initChartsModule();
     },
 
-    // Calls Student 5's template layout rendering machine
+    //  template layout rendering machine
     initDataModule() {
         if (typeof window.renderActiveDashboard === "function") {
             window.renderActiveDashboard();
