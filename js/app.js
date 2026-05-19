@@ -1,4 +1,4 @@
-
+//updated
 const AppController = {
     config: {
         version: "1.2.0",
