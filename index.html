@@ -475,7 +475,10 @@
                     <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <!-- Space for page title if needed -->
+                    <div class="mobile-logo" style="display: none; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.2rem; color: var(--text-main);">
+                        <i class="fa-solid fa-dumbbell" style="color: var(--accent);"></i>
+                        <span>FitPulse</span>
+                    </div>
                 </div>
 
                 <div class="navbar-right">
@@ -493,17 +496,17 @@
                         <!-- Profile Dropdown -->
                         <div class="profile-dropdown" id="profileDropdown" style="display: none;">
                             <div class="profile-header">
-                                <h4>Sauryaman Bisen</h4>
-                                <p class="membership-badge">Pro Member</p>
+                                <h4 id="dropdown-user-name">Sauryaman Bisen</h4>
+                                <p class="membership-badge" id="dropdown-membership-badge">Pro Member</p>
                             </div>
                             <div class="profile-info-list">
                                 <div class="info-row">
                                     <i class="fa-solid fa-phone"></i>
-                                    <span>+91 98765 43210</span>
+                                    <span id="dropdown-phone">+91 98765 43210</span>
                                 </div>
                                 <div class="info-row">
                                     <i class="fa-solid fa-envelope"></i>
-                                    <span>sauryaman@example.com</span>
+                                    <span id="dropdown-email">sauryaman@example.com</span>
                                 </div>
                                 <div class="info-row">
                                     <i class="fa-solid fa-location-dot"></i>
@@ -530,7 +533,7 @@
             <section class="welcome-card card-equal" aria-label="Welcome section">
                 <div class="welcome-content">
                     <h1 id="greetingText">Good&nbsp;Morning </h1>
-                    <p class="welcome-subtext">Welcome back, <strong>Sauryaman</strong>. Ready for today's workout?</p>
+                    <p class="welcome-subtext">Welcome back, <strong id="user-name">Sauryaman</strong>. Ready for today's workout?</p>
 
                     <div class="mini-stats">
                         <div class="m-stat">
@@ -567,19 +570,19 @@
                         <span>Active Plan</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>Elite Premium</h2>
-                        <p>Valid till Dec 2026</p>
+                        <h2 id="card-plan-name">Elite Premium</h2>
+                        <p id="card-expiry-date">Valid till Dec 2026</p>
                     </div>
                 </div>
 
                 <div class="dark-card">
                     <div class="dark-card-header">
                         <i class="fa-regular fa-hourglass-half text-orange"></i>
-                        <span>Expiry In</span>
+                        <span>Expiry Status</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>115 Days</h2>
-                        <p>Auto-renew ON</p>
+                        <h2 id="card-status-badge">Active</h2>
+                        <p id="stat-expiry-overview">115 Days</p>
                     </div>
                 </div>
 
@@ -589,7 +592,7 @@
                         <span>Total Sessions</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>84</h2>
+                        <h2 id="stat-sessions-count">84</h2>
                         <p>Goal: 200+ sessions</p>
                     </div>
                 </div>
@@ -600,7 +603,7 @@
                         <span>Reward Points</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>1,250</h2>
+                        <h2 id="stat-reward-points">1,250</h2>
                         <p>Goal: 2,000 pts</p>
                     </div>
                 </div>
@@ -616,7 +619,7 @@
                     <button type="button" class="view-all-btn" id="viewAllActivity">View All</button>
                 </div>
 
-                <div class="activity-list">
+                <div class="activity-list" id="recent-activities-list">
                     <div class="activity-item">
                         <img src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=fce9d5&color=e8813a&rounded=true&bold=true" alt="Sauryaman Bisen" class="act-avatar">
                         <div class="act-details">
@@ -1095,6 +1098,7 @@
                     padding: 7px;
                     background: conic-gradient(var(--ring-color, #39ff14) 0% var(--ring-pct, 0%), rgba(255,255,255,0.1) var(--ring-pct, 0%) 100%);
                     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+                    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
                 }
@@ -1245,10 +1249,35 @@
         </main>
 
     </div> <!-- End main-wrapper -->
+
+    <!-- Bottom Navigation Bar (Mobile / Tablet views only) -->
+    <nav class="bottom-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="#" class="active" data-target="dashboard-view">
+            <i class="fa-solid fa-table-cells-large"></i>
+            <span>Overview</span>
+        </a>
+        <a href="#" data-target="plans-view">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Plans</span>
+        </a>
+        <a href="#" data-target="wip-view">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Analytics</span>
+        </a>
+        <a href="#" data-target="settings-view">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
     </div> <!-- End dashboard-container -->
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/charts.js"></script>
     <script src="./js/script.js"></script>
     <script src="./js/setting_script.js"></script>
+    <script src="./js/tabs.js"></script>
 </body>
 </html>
