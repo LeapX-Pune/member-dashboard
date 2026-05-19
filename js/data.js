@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Global database of club members - Shared with Student 6 for simulation loops
 const allUsers = [
     { name: "Sankap Tiwari", plan: "Premium Pro", sessions: 45, points: 1200, status: "Active" },
@@ -152,3 +153,5 @@ window.renderActiveDashboard = () => {
         console.error("DOM injection failed:", error);
     }
 };
+=======
+>>>>>>> parent of b312579 (Final overview dashboard also resolved code conflicts)
