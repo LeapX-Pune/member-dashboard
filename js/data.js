@@ -1,3 +1,4 @@
+//Updated
 // Global database of club members - Shared with Student 6 for simulation loops
 const allUsers = [
     { name: "Sankap Tiwari", plan: "Premium Pro", sessions: 45, points: 1200, status: "Active" },
