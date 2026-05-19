@@ -15,12 +15,422 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Dashboard Styles -->
-    <link rel="stylesheet" href="./css/plan.css">
     <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/plan.css">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/setting_style.css">
+    <link rel="stylesheet" href="./css/landing.css">
 </head>
 <body>
 
-    <div class="dashboard-container">
+    <!-----------------------------------------------------------------------
+         LOGIN OVERLAY
+         Close button (×) skips login and goes straight to dashboard
+     ----------------------------------------------------------------------->
+    <div id="login-overlay" role="dialog" aria-modal="true" aria-label="FitPulse Login">
+
+        <!-- Background -->
+        <div class="login-bg" aria-hidden="true"></div>
+        <div class="login-gradient-fade" aria-hidden="true"></div>
+
+        <!-- Brand Badge -->
+        <div class="login-brand-badge" aria-hidden="true">
+            <i class="fa-solid fa-dumbbell"></i>
+            <span>FitPulse</span>
+        </div>
+
+        <!-- Close / Skip Button -->
+        <button type="button" id="loginCloseBtn" aria-label="Skip login and explore" title="Skip to explore">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Left Tagline (large screens) -->
+        <div class="login-tagline" aria-hidden="true">
+            <h2>Forge Your <span>Strongest</span><br>Self, Today.</h2>
+            <p>Track workouts, manage membership, crush goals — all from your personal FitPulse dashboard.</p>
+            <div class="login-stats">
+                <div class="login-stat-pill">
+                    <i class="fa-solid fa-fire-flame-curved"></i> 2,400+ Active Members
+                </div>
+                <div class="login-stat-pill">
+                    <i class="fa-solid fa-trophy"></i> 98% Goal Hit Rate
+                </div>
+                <div class="login-stat-pill">
+                    <i class="fa-solid fa-star"></i> 4.9 Rated App
+                </div>
+            </div>
+        </div>
+
+        <!-- Glass Login Card -->
+        <div class="login-card">
+
+            <!-- Card Header -->
+            <div class="login-card-header">
+                <div class="login-card-icon">
+                    <i class="fa-solid fa-dumbbell"></i>
+                </div>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your FitPulse account</p>
+            </div>
+
+            <!-- Form -->
+            <form class="login-form" id="loginForm">
+
+                <!-- Email -->
+                <div class="login-field">
+                    <label for="loginEmail">Email Address</label>
+                    <div class="login-input-wrap">
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            name="email"
+                            placeholder="you@gmail.com"
+                            autocomplete="email"
+                            required
+                        >
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="login-field">
+                    <label for="loginPassword">Password</label>
+                    <div class="login-input-wrap">
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            name="password"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                </div>
+
+                <!-- Remember + Forgot -->
+                <div class="login-row">
+                    <label class="login-remember">
+                        <input type="checkbox" id="rememberMe"> Remember me
+                    </label>
+                    <a href="#" class="login-forgot">Forgot password?</a>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="loginSubmitBtn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    Sign In to Dashboard
+                </button>
+
+                <!-- Divider -->
+                <div class="login-divider">
+                    <span></span><p>or continue with</p><span></span>
+                </div>
+
+                <!-- Social Buttons -->
+                <div class="login-social-row">
+                    <button type="button" class="login-social-btn" id="googleLoginBtn">
+                        <i class="fa-brands fa-google"></i> Google
+                    </button>
+                    <button type="button" class="login-social-btn" id="appleLoginBtn">
+                        <i class="fa-brands fa-apple"></i> Apple
+                    </button>
+                </div>
+
+                <!-- Signup -->
+                <p class="login-signup-link">
+                    New to FitPulse? <a href="#" id="signupLink">Create account</a>
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+    <!-- End Login Overlay -->
+
+    <!------------------------------------------------------
+         LANDING PAGE (Shown when login is skipped)
+     ------------------------------------------------------>
+    <div class="landing-container" id="landingContainer" style="display: none;">
+        <nav class="landing-nav">
+            <div class="landing-logo">
+                <i class="fa-solid fa-dumbbell"></i>
+                <span>FitPulse</span>
+            </div>
+            <div class="landing-links">
+                <a href="#exploreSection" onclick="document.getElementById('exploreSection').scrollIntoView({behavior: 'smooth'}); return false;">Explore</a>
+                <a href="#membershipTiers" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'}); return false;">Membership</a>
+                <a href="#trainersSection" onclick="document.getElementById('trainersSection').scrollIntoView({behavior: 'smooth'}); return false;">Trainers</a>
+                <a href="#aboutSection" onclick="document.getElementById('aboutSection').scrollIntoView({behavior: 'smooth'}); return false;">About Us</a>
+            </div>
+            <div class="landing-actions">
+                <button type="button" class="landing-btn-outline" id="openLoginBtn">Login</button>
+                <button type="button" class="landing-btn-primary">Join Now</button>
+            </div>
+        </nav>
+
+        <section class="landing-hero">
+            <div class="landing-hero-content">
+                <span class="landing-badge">Premium Fitness Experience</span>
+                <h1>Forge Your <span>Strongest</span> Self Today.</h1>
+                <p>Welcome to FitPulse. More than just a gym, we are a community dedicated to helping you reach your peak potential with state-of-the-art equipment and expert guidance.</p>
+                
+                <button type="button" class="landing-btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem;" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'})">Explore Plans</button>
+                
+                <div class="landing-hero-stats">
+                    <div class="l-stat">
+                        <h3>2.4k+</h3>
+                        <p>Active Members</p>
+                    </div>
+                    <div class="l-stat">
+                        <h3>50+</h3>
+                        <p>Expert Trainers</p>
+                    </div>
+                    <div class="l-stat">
+                        <h3>24/7</h3>
+                        <p>Facility Access</p>
+                    </div>
+                </div>
+            </div>
+            <div class="landing-hero-image">
+                <div class="landing-hero-img-wrapper">
+                    <img src="images/class_hero.png" alt="Group fitness class">
+                </div>
+            </div>
+        </section>
+
+        <section class="landing-features" id="exploreSection">
+            <div class="landing-section-header">
+                <h2>Discover Our Activities</h2>
+                <p>From high-intensity interval training to relaxing yoga sessions, we have everything you need to stay active and healthy.</p>
+            </div>
+            <div class="landing-grid">
+                <div class="landing-card">
+                    <div class="landing-card-icon"><i class="fa-solid fa-dumbbell"></i></div>
+                    <h3>Strength Training</h3>
+                    <p>Build muscle and increase your strength with our comprehensive free weights and modern resistance machines.</p>
+                </div>
+                <div class="landing-card">
+                    <div class="landing-card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h3>Cardio Zone</h3>
+                    <p>Boost your endurance with our extensive range of treadmills, ellipticals, and stationary bikes.</p>
+                </div>
+                <div class="landing-card">
+                    <div class="landing-card-icon"><i class="fa-solid fa-om"></i></div>
+                    <h3>Yoga & Pilates</h3>
+                    <p>Improve flexibility and core strength in our dedicated quiet studios with guided professional classes.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Membership Tiers (Based on Reference) ── -->
+        <section class="membership-tiers" id="membershipTiers">
+            <div class="tier-card tier-elite">
+                <h4>FitPulse</h4>
+                <h2>ELITE</h2>
+                <p>Unlimited access to group classes,<br>all gyms and at-home workouts</p>
+            </div>
+            <div class="tier-card tier-pro">
+                <h4>FitPulse</h4>
+                <h2>PRO</h2>
+                <p>Unlimited access to all PRO gyms<br>and at-home workouts</p>
+            </div>
+            <div class="tier-card tier-home">
+                <h4>FitPulse</h4>
+                <h2>HOME</h2>
+                <p>Unlimited access to at-home<br>workouts with calorie tracking</p>
+            </div>
+        </section>
+
+        <!-- ── Expert Trainers Section ── -->
+        <section class="trainers-section" id="trainersSection">
+            <div class="landing-section-header">
+                <h2>Meet Our Expert Coaches</h2>
+                <p>Train with industry-leading professionals who are dedicated to helping you achieve your personal best.</p>
+            </div>
+            
+            <div class="trainers-grid">
+                <!-- Trainer 1 -->
+                <div class="trainer-card">
+                    <img src="images/trainer_indian_1.png" alt="Coach Rahul" class="trainer-img">
+                    <div class="trainer-info">
+                        <h3>Rahul Sharma</h3>
+                        <p>Lead Strength Coach</p>
+                        <div class="trainer-socials">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer 2 -->
+                <div class="trainer-card">
+                    <img src="images/trainer_indian_2.png" alt="Coach Priya" class="trainer-img">
+                    <div class="trainer-info">
+                        <h3>Priya Yadav</h3>
+                        <p>HIIT & Endurance</p>
+                        <div class="trainer-socials">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainer 3 -->
+                <div class="trainer-card">
+                    <img src="images/trainer_indian_3.png" alt="Coach Vikram" class="trainer-img">
+                    <div class="trainer-info">
+                        <h3>Vikram Singh</h3>
+                        <p>Powerlifting Specialist</p>
+                        <div class="trainer-socials">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Dynamic Image Grid ── -->
+        <section class="fitness-image-section">
+            <div class="image-grid-wrapper">
+                
+                <div class="grid-img-left">
+                    <img src="images/yoga_pose.png" alt="Yoga pose">
+                </div>
+
+                <div class="image-overlay-text">
+                    <h2>One membership for your<br>entire fitness journey</h2>
+                    <br>
+                    <button type="button" class="landing-btn-primary" style="padding: 1rem 3rem; font-size: 1.25rem; border-radius: 50px;" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'})">Explore Now</button>
+                </div>
+
+                <div class="grid-img-right">
+                    <img src="images/workout_action.png" alt="High energy workout">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── Feature Carousel ── -->
+        <section class="carousel-section" aria-label="Feature Carousel">
+            <div class="carousel-wrapper">
+                <button type="button" class="carousel-arrow left-arrow" id="prevSlide" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
+                
+                <div class="carousel-track-container">
+                    <ul class="carousel-track" id="carouselTrack">
+                        <li class="carousel-slide prev-slide">
+                            <img src="images/carousel_1.png" alt="Heavy Deadlift">
+                            <div class="slide-label">Raw Power</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="images/carousel_2.png" alt="Spinning Class">
+                            <div class="slide-label">Endless Endurance</div>
+                        </li>
+                        <li class="carousel-slide current-slide">
+                            <img src="images/carousel_3.png" alt="Yoga Pose">
+                            <div class="slide-label">Find Balance</div>
+                        </li>
+                        <li class="carousel-slide next-slide">
+                            <img src="images/carousel_4.png" alt="Heavy Boxing">
+                            <div class="slide-label">Unleash Fury</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="images/carousel_5.png" alt="Sprint Treadmill">
+                            <div class="slide-label">Push Limits</div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <button type="button" class="carousel-arrow right-arrow" id="nextSlide" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            
+            <div class="carousel-dots" id="carouselDots">
+                <span class="dot" data-index="0">1</span>
+                <span class="dot" data-index="1">2</span>
+                <span class="dot active" data-index="2">3</span>
+                <span class="dot" data-index="3">4</span>
+                <span class="dot" data-index="4">5</span>
+            </div>
+        </section>
+
+        <!-- ── About Us / Footer Section ── -->
+        <footer class="landing-footer" id="aboutSection">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <div class="landing-logo">
+                        <i class="fa-solid fa-dumbbell"></i>
+                        <span>FitPulse</span>
+                    </div>
+                    <p>At FitPulse, we make group workouts fun, daily food healthy & tasty, mental fitness easy with yoga & meditation.<br><br>#BeBetterEveryDay</p>
+                </div>
+                
+                <div class="footer-links-grid">
+                    <div class="footer-col">
+                        <a href="#">FitPulse for business</a>
+                        <a href="#">FitPulse franchise</a>
+                        <a href="#">corporate partnerships</a>
+                        <a href="#">FitPulse network</a>
+                        <a href="#">t&c for business</a>
+                    </div>
+                    <div class="footer-col">
+                        <a href="#">partner.fit</a>
+                        <a href="#">blogs</a>
+                        <a href="#">security</a>
+                        <a href="#">careers</a>
+                    </div>
+                    <div class="footer-col">
+                        <a href="#">contact us</a>
+                        <a href="#">privacy policy</a>
+                        <a href="#">bmi calculator</a>
+                        <a href="#">terms & conditions</a>
+                    </div>
+                </div>
+
+                <div class="footer-apps">
+                    <!-- Wikipedia commons standard badges -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on App Store">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play">
+                    <div class="footer-socials">
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-related">
+                    <h4>Related Searches</h4>
+                    <div class="related-grid">
+                        <a href="#">Gym Near Me</a>
+                        <a href="#">Gyms in Bengaluru</a>
+                        <a href="#">Gyms in Hyderabad</a>
+                        <a href="#">Gyms in Mumbai</a>
+                        <a href="#">Gyms in Delhi</a>
+                        <a href="#">Gym Workout App</a>
+                        <a href="#">Yoga Classes</a>
+                        <a href="#">HIIT Workout</a>
+                        <a href="#">Home Workout</a>
+                    </div>
+                </div>
+                
+                <div class="footer-qr">
+                    <p>For better experience,<br>use FitPulse app</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=FitPulseApp" alt="Download App QR Code">
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- End Landing Page -->
+
+    <!-----------------------------------------------------
+         DASHBOARD (Shown after successful login)
+     ----------------------------------------------------->
+    <div class="dashboard-container" id="dashboardContainer" style="display: none;">
 
         <!------------ Sidebar (Left) ------------>
         <aside class="sidebar">
@@ -42,11 +452,18 @@
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Analytics</span>
                 </a>
-                <a href="#" id="nav-settings" data-target="wip-view">
+                <a href="#" id="nav-settings" data-target="settings-view">
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </a>
             </nav>
+
+            <div class="sidebar-bottom" style="margin-top: auto;">
+                <a href="#" id="sidebarLogoutBtn" class="sidebar-logout-btn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </aside>
 
         <!--------------------- Main Wrapper (Right) --------------------->
@@ -55,23 +472,49 @@
             <!-- Top Navbar (Profile & Alerts) -->
             <header class="top-navbar">
                 <div class="navbar-left">
-                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
                     <!-- Space for page title if needed -->
                 </div>
 
                 <div class="navbar-right">
-                    <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications">
+                    <button type="button" class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications">
                         <i class="fa-regular fa-bell"></i>
                     </button>
-                    <div class="user-profile">
+                    <div class="user-profile" style="position: relative;">
                         <img
                             src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=1e1c1a&color=fff&rounded=true&bold=true"
                             alt="Sauryaman Bisen Avatar"
                             class="avatar"
                             id="userAvatar"
+                            style="cursor: pointer;"
                         >
+                        <!-- Profile Dropdown -->
+                        <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                            <div class="profile-header">
+                                <h4>Sauryaman Bisen</h4>
+                                <p class="membership-badge">Pro Member</p>
+                            </div>
+                            <div class="profile-info-list">
+                                <div class="info-row">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <span>+91 98765 43210</span>
+                                </div>
+                                <div class="info-row">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <span>sauryaman@example.com</span>
+                                </div>
+                                <div class="info-row">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span>Pune, India</span>
+                                </div>
+                            </div>
+                            <div class="profile-actions">
+                                <button type="button" class="profile-action-btn"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
+                                <button type="button" class="profile-action-btn text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -86,7 +529,7 @@
             <!-- Welcome Card (left) -->
             <section class="welcome-card card-equal" aria-label="Welcome section">
                 <div class="welcome-content">
-                    <h1>Good&nbsp;Morning 🎉</h1>
+                    <h1 id="greetingText">Good&nbsp;Morning </h1>
                     <p class="welcome-subtext">Welcome back, <strong>Sauryaman</strong>. Ready for today's workout?</p>
 
                     <div class="mini-stats">
@@ -99,7 +542,7 @@
                             <span class="m-label">Workout Tier</span>
                         </div>
                         <div class="m-stat">
-                            <span class="m-val">48</span>
+                            <span class="m-val">84</span>
                             <span class="m-label">Sessions Done</span>
                         </div>
                     </div>
@@ -107,7 +550,7 @@
 
                 <!-- Trainer photo — blends seamlessly into beige via mix-blend-mode: multiply -->
                 <img
-                    src="images/fitness_model.png"
+                    src="images/trainer_indian_dashboard.png"
                     alt="Fitness trainer standing confidently"
                     class="fitness-image"
                     id="trainerImage"
@@ -124,8 +567,8 @@
                         <span>Active Plan</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>Pro Annual</h2>
-                        <p>Valid till Dec 2025</p>
+                        <h2>Elite Premium</h2>
+                        <p>Valid till Dec 2026</p>
                     </div>
                 </div>
 
@@ -135,7 +578,7 @@
                         <span>Expiry In</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2>142 Days</h2>
+                        <h2>115 Days</h2>
                         <p>Auto-renew ON</p>
                     </div>
                 </div>
@@ -147,7 +590,7 @@
                     </div>
                     <div class="dark-card-body">
                         <h2>84</h2>
-                        <p>Goal: 100 sessions</p>
+                        <p>Goal: 200+ sessions</p>
                     </div>
                 </div>
 
@@ -170,7 +613,7 @@
             <section class="content-card card-equal" aria-label="Recent activity">
                 <div class="section-header">
                     <h2>Recent Activity</h2>
-                    <button class="view-all-btn" id="viewAllActivity">View All</button>
+                    <button type="button" class="view-all-btn" id="viewAllActivity">View All</button>
                 </div>
 
                 <div class="activity-list">
@@ -262,19 +705,19 @@
                     <h2>Quick Actions</h2>
                 </div>
                 <div class="quick-actions-grid h-full">
-                    <button class="action-btn" id="actionBook" aria-label="Book a session">
+                    <button type="button" class="action-btn" id="actionBook" aria-label="Book a session">
                         <i class="fa-solid fa-dumbbell"></i>
-                        <span>Book</span>
+                        <span>Book Session</span>
                     </button>
-                    <button class="action-btn" id="actionSchedule" aria-label="View schedule">
+                    <button type="button" class="action-btn" id="actionSchedule" aria-label="View schedule">
                         <i class="fa-regular fa-calendar-days"></i>
                         <span>Schedule</span>
                     </button>
-                    <button class="action-btn" id="actionUpgrade" aria-label="Upgrade plan">
+                    <button type="button" class="action-btn" id="actionUpgrade" aria-label="Upgrade plan">
                         <i class="fa-solid fa-arrow-up-right-dots"></i>
                         <span>Upgrade</span>
                     </button>
-                    <button class="action-btn" id="actionRefer" aria-label="Refer a friend">
+                    <button type="button" class="action-btn" id="actionRefer" aria-label="Refer a friend">
                         <i class="fa-solid fa-user-plus"></i>
                         <span>Refer</span>
                     </button>
@@ -338,48 +781,6 @@
                 </div>
             </section>
 
-            <!------------ ROW 3: Feature Carousel ------------>
-            <section class="carousel-section" aria-label="Feature Carousel">
-                <div class="carousel-wrapper">
-                    <button class="carousel-arrow left-arrow" id="prevSlide" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
-                    
-                    <div class="carousel-track-container">
-                        <ul class="carousel-track" id="carouselTrack">
-                            <li class="carousel-slide prev-slide">
-                                <img src="images/fitness_model.png" alt="Trainer Profile">
-                                <div class="slide-label">Trainer Profile</div>
-                            </li>
-                            <li class="carousel-slide">
-                                <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=600&auto=format&fit=crop" alt="Smart Mirror tech">
-                                <div class="slide-label">Smart Mirror Tech</div>
-                            </li>
-                            <li class="carousel-slide current-slide">
-                                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1200&auto=format&fit=crop" alt="Female athlete mid-stride">
-                                <div class="slide-label">Overview Slide (3/5)</div>
-                            </li>
-                            <li class="carousel-slide next-slide">
-                                <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=600&auto=format&fit=crop" alt="Nutrition App">
-                                <div class="slide-label">Nutrition App</div>
-                            </li>
-                            <li class="carousel-slide">
-                                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop" alt="Outdoor Meditation">
-                                <div class="slide-label">Outdoor Meditation</div>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <button class="carousel-arrow right-arrow" id="nextSlide" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-                
-                <div class="carousel-dots" id="carouselDots">
-                    <span class="dot" data-index="0">1</span>
-                    <span class="dot" data-index="1">2</span>
-                    <span class="dot active" data-index="2">3</span>
-                    <span class="dot" data-index="3">4</span>
-                    <span class="dot" data-index="4">5</span>
-                </div>
-            </section>
-
         </main>
 
 
@@ -404,7 +805,7 @@
                         <li><i class="fa-solid fa-person-running text-orange"></i> Pro Tier Access</li>
                         <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
                     </ul>
-                    <button class="plan-btn">Select Plan</button>
+                    <button type="button" class="plan-btn">Select Plan</button>
                 </div>
                 
                 <!-- Gold Premium -->
@@ -421,7 +822,7 @@
                         <li><i class="fa-solid fa-heart-pulse text-orange"></i> Specialized Classes</li>
                         <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
                     </ul>
-                    <button class="plan-btn">Select Plan</button>
+                    <button type="button" class="plan-btn">Select Plan</button>
                 </div>
                 
                 <!-- Elite Plan -->
@@ -438,7 +839,7 @@
                         <li><i class="fa-solid fa-heart-pulse text-orange"></i> Specialized Classes</li>
                         <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
                     </ul>
-                    <button class="plan-btn">Select Plan</button>
+                    <button type="button" class="plan-btn">Select Plan</button>
                 </div>
                 
                 <!-- Elite Premium -->
@@ -455,7 +856,7 @@
                         <li><i class="fa-solid fa-person-running text-white"></i> 1-on-1 Sessions</li>
                         <li><i class="fa-solid fa-heart-pulse text-white"></i> Premium</li>
                     </ul>
-                    <button class="plan-btn">Select Plan</button>
+                    <button type="button" class="plan-btn">Select Plan</button>
                 </div>
             </div>
         </main>
@@ -667,6 +1068,7 @@
     </div> <!-- End dashboard-container -->
 
     <!-- Scripts -->
-    <script src="./js/overview.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="./js/setting_script.js"></script>
 </body>
 </html>

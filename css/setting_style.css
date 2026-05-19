@@ -1,0 +1,466 @@
+/* ---------------------------------------------------
+   Settings Page Styling — FitPulse Member Dashboard
+   --------------------------------------------------- */
+
+/* ---- Wrapper ---- */
+.setting-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeUp 0.4s ease-out;
+}
+
+.setting-panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ---- Header ---- */
+.setting-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+}
+
+.setting-header-top {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+/* Orange rounded-square icon box */
+.setting-header-icon {
+    width: 52px;
+    height: 52px;
+    background-color: var(--accent-light);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.setting-header-icon i {
+    font-size: 1.4rem;
+    color: var(--accent);
+}
+
+.setting-header h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.02em;
+}
+
+.setting-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* ---- Tabs ---- */
+.setting-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.setting-tabs::-webkit-scrollbar { height: 4px; }
+.setting-tabs::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 10px;
+}
+
+.tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--r-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--t-fast);
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.tab-btn i { font-size: 0.875rem; }
+
+.tab-btn:hover {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    background-color: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ---- Tab Content ---- */
+.setting-content { min-height: 400px; }
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active { display: block; }
+
+/* ---- Section Title Row (icon + heading + sub) ---- */
+.tab-section-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+}
+
+.tab-section-icon {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.tab-section-title h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.15rem;
+    letter-spacing: -0.01em;
+}
+
+.tab-section-title p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* ---- Notification / Setting Items ---- */
+.setting-item,
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.25rem;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 1rem;
+}
+
+.setting-item span,
+.notification-item span {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 0.975rem;
+}
+
+/* ---- Profile Form ---- */
+.profile-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.profile-form input,
+.profile-form select {
+    width: 100%;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 0.9rem 1rem;
+    border-radius: var(--r-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color var(--t-fast);
+}
+
+.profile-form input:focus,
+.profile-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.save-btn {
+    grid-column: 1 / -1;
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 0.5rem;
+    font-family: inherit;
+}
+
+.save-btn:hover { background-color: #d4722e; }
+
+/* ---- System / Logout ---- */
+.logout-btn {
+    background-color: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 0.9rem 2rem;
+    border-radius: var(--r-md);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.logout-btn:hover { background-color: #fee2e2; }
+
+/* ---- Animations ---- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Checkbox overrides ---- */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+/* ----------------------------------
+   Premium Theme Selector
+   ---------------------------------- */
+.theme-selector-container {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.theme-selector-container h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.3rem;
+}
+
+.theme-selector-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+/* ── Theme Grid ── */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.theme-card {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.theme-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---- Theme Preview Box ---- */
+.theme-preview {
+    width: 100%;
+    height: 100px;
+    border-radius: var(--r-sm);
+    border: 2px solid var(--border);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Highlight when selected */
+.theme-radio:checked + .theme-preview {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+/* ---- Checkmark Badge (hidden unless selected) ---- */
+.theme-check-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.6rem;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity var(--t-fast), transform var(--t-fast);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.theme-radio:checked + .theme-preview .theme-check-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ---- Theme Label ---- */
+.theme-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+
+.theme-radio:checked ~ .theme-label {
+    color: var(--accent);
+}
+
+/* ---- Light Theme Preview Colors ---- */
+.light-preview,
+.light-half { background-color: #f0ece6; }
+
+.light-preview .p-sidebar,
+.light-half .p-sidebar {
+    background-color: #fff;
+    border-right: 1px solid rgba(0,0,0,0.06);
+}
+
+.light-preview .p-topbar,
+.light-half .p-topbar {
+    background-color: #e8e3dc;
+}
+
+.light-preview .p-card,
+.light-half .p-card {
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ---- Dark Theme Preview Colors ---- */
+.dark-preview,
+.dark-half { background-color: #0f0e0d; }
+
+.dark-preview .p-sidebar,
+.dark-half .p-sidebar {
+    background-color: #1e1c1a;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.dark-preview .p-topbar,
+.dark-half .p-topbar { background-color: #0f0e0d; }
+
+.dark-preview .p-card,
+.dark-half .p-card {
+    background-color: #1e1c1a;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ---- System Theme Preview ---- */
+.system-preview { flex-direction: row; }
+
+.p-half {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.light-half { border-right: 1px solid rgba(0,0,0,0.1); }
+
+/* ---- Mockup Layout Structure ---- */
+.p-sidebar {
+    width: 25px;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.p-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    gap: 6px;
+}
+
+.p-topbar {
+    height: 10px;
+    border-radius: 2px;
+    width: 100%;
+}
+
+.p-content {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+}
+
+.p-card {
+    flex: 1;
+    border-radius: 4px;
+    height: 100%;
+}
+
+/* ---- Tip Row at Bottom of Theme Container ---- */
+.theme-tip-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+}
+
+.theme-tip-row i {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+/* ---- Ensure Settings view spans the full-width grid ---- */
+.settings-view {
+    grid-column: 1 / -1;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .profile-form { grid-template-columns: 1fr; }
+    .setting-panel { padding: 1.5rem; }
+    .theme-grid { grid-template-columns: 1fr; }
+    .setting-header-top { gap: 0.9rem; }
+    .setting-header h1 { font-size: 1.5rem; }
+}
