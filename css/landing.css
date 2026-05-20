@@ -29,6 +29,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .landing-logo {
@@ -54,11 +56,14 @@
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    transition: color 0.2s;
+    transition:
+        color 0.25s ease,
+        transform 0.2s ease;
 }
 
 .landing-links a:hover {
     color: #fff;
+    transform: translateY(-1px);
 }
 
 .landing-actions {
@@ -97,6 +102,15 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(232, 129, 58, 0.4);
 }
+
+/* Landing Page Focus Accessibility */
+.landing-btn-primary:focus-visible,
+.landing-btn-outline:focus-visible,
+.landing-links a:focus-visible {
+    outline: 2px solid #e8813a;
+    outline-offset: 4px;
+}
+
 
 /* ── Hero Section ── */
 .landing-hero {
@@ -239,6 +253,10 @@
     transform: translateY(-5px);
     background: rgba(255,255,255,0.06);
     border-color: rgba(255,255,255,0.1);
+}
+
+.landing-card:active {
+    transform: scale(0.98);
 }
 
 .landing-card-icon {
@@ -438,6 +456,10 @@
     transform: translateY(-8px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
     border-color: rgba(232, 129, 58, 0.3);
+}
+
+.trainer-card:active {
+    transform: scale(0.98);
 }
 
 .trainer-img {

@@ -12,6 +12,9 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    opacity: 0;
+    animation: loginOverlayFade 0.35s ease forwards;
 }
 
 /* ---- Background Image ---- */
@@ -195,6 +198,15 @@
     animation: slideUpFade 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+@keyframes loginOverlayFade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes slideUpFade {
     from {
         opacity: 0;
@@ -304,6 +316,15 @@
     box-shadow: 0 0 0 3px rgba(232, 129, 58, 0.12);
 }
 
+/* Prevent browser autofill from breaking login input design */
+.login-field input:-webkit-autofill,
+.login-field input:-webkit-autofill:hover,
+.login-field input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff;
+    box-shadow: 0 0 0 1000px rgba(255,255,255,0.06) inset;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
 .login-field input:focus + i,
 .login-input-wrap:focus-within i {
     color: #e8813a;
@@ -390,6 +411,15 @@
     box-shadow: 0 4px 16px rgba(232, 129, 58, 0.3);
 }
 
+#loginSubmitBtn:focus-visible,
+.login-social-btn:focus-visible,
+#loginCloseBtn:focus-visible,
+.login-forgot:focus-visible,
+.login-signup-link a:focus-visible {
+    outline: 2px solid #e8813a;
+    outline-offset: 3px;
+}
+
 /* Loading spinner state */
 #loginSubmitBtn.loading {
     pointer-events: none;
@@ -447,6 +477,10 @@
     transform: translateY(-1px);
 }
 
+.login-social-btn:active {
+    transform: scale(0.97);
+}
+
 .login-social-btn i {
     font-size: 0.95rem;
 }
@@ -473,9 +507,9 @@
 /* ---- Responsive: mobile centering ---- */
 @media (max-width: 899px) {
     .login-card {
-        max-width: 360px;
+        width: min(100%, 360px);
         padding: 2rem 1.5rem;
-        margin: 1rem;
+        margin: 0.85rem;
     }
 
     .login-brand-badge {
