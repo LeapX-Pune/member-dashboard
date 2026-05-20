@@ -15,12 +15,21 @@
     flex-direction: column;
     box-shadow: var(--shadow-sm);
     position: relative;
-    transition: transform var(--t-smooth), box-shadow var(--t-smooth);
+    border: 1px solid transparent;
+    transition: transform var(--t-smooth), box-shadow var(--t-smooth), border-color var(--t-smooth);
 }
 
 .plan-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-md);
+}
+
+.dashboard-container.theme-dark .plan-card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-container.theme-dark .plan-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .plan-light {
