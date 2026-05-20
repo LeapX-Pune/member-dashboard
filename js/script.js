@@ -10,6 +10,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardContainer = document.getElementById('dashboardContainer');
     let loginTimerId = null;
 
+    // ── Session persistence: restore dashboard on page load/refresh ──
+    const SESSION_KEY = 'fitpulse-session';
+    function isSessionActive() {
+        try { return !!JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return false; }
+    }
+    function persistSession() {
+        // session data is written by profile.js; we just ensure the key exists
+        if (!isSessionActive()) {
+            try { localStorage.setItem(SESSION_KEY, JSON.stringify({ loggedInAt: Date.now() })); } catch { /* private mode */ }
+        }
+    }
+    function destroySession() {
+        try { localStorage.removeItem(SESSION_KEY); } catch { /* private mode */ }
+    }
+
+    // On every load, if session exists → skip login and go straight to dashboard
+    if (isSessionActive()) {
+        if (loginOverlay)        loginOverlay.style.display = 'none';
+        if (landingContainer)    landingContainer.style.display = 'none';
+        if (dashboardContainer)  dashboardContainer.style.display = 'flex';
+    }
+
     // Placeholder links should not change the hash, scroll to the top, or
     // appear like the page has refreshed.
     document.addEventListener('click', (e) => {
@@ -77,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginSubmitBtn.disabled = false;
                     loginSubmitBtn.classList.remove('loading');
                 }
+                persistSession();       // ← save session so refresh keeps user in
                 dismissLogin('dashboard');
                 loginTimerId = null;
             }, 2000);
@@ -110,13 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const userAvatar = document.getElementById('userAvatar');
     const profileDropdown = document.getElementById('profileDropdown');
 
-    // Prevent reload/jump on Logout buttons (Sidebar and Profile Dropdown)
+    // Prevent reload/jump on Logout buttons (Sidebar and Settings)
     const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
-    const profileLogoutBtn = document.querySelector('.profile-action-btn.text-danger');
     const systemLogoutBtn = document.querySelector('.logout-btn');
 
     function handleLogout(e) {
         e.preventDefault();
+        destroySession();               // ← clear session so next load shows login
         // Go back to landing page
         if (dashboardContainer) dashboardContainer.style.display = 'none';
         if (landingContainer) landingContainer.style.display = 'flex';
@@ -124,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
-    if (profileLogoutBtn) profileLogoutBtn.addEventListener('click', handleLogout);
     if (systemLogoutBtn) systemLogoutBtn.addEventListener('click', handleLogout);
 
 
@@ -142,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Non-breaking space used between words for styling
-        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;🎉`;
+        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;`;
     }
 
     // Call immediately and check every minute
@@ -202,6 +224,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 profileDropdown.style.display = 'none';
             }
         });
+    }
+
+    // Notification Dropdown Toggle
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    if (notificationBtn && notificationDropdown) {
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (notificationDropdown.style.display === 'none' || notificationDropdown.style.display === '') {
+                notificationDropdown.style.display = 'block';
+                // Hide notification dot when opened
+                const dot = notificationBtn.querySelector('.notification-dot');
+                if (dot) dot.style.display = 'none';
+            } else {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+    }
+
+    // To-Do FAB Toggle
+    const todoFabBtn = document.getElementById('todoFabBtn');
+    const todoPanel = document.getElementById('todoPanel');
+    
+    if (todoFabBtn && todoPanel) {
+        todoFabBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (todoPanel.style.display === 'none' || todoPanel.style.display === '') {
+                todoPanel.style.display = 'block';
+                todoFabBtn.style.transform = 'rotate(45deg)';
+            } else {
+                todoPanel.style.display = 'none';
+                todoFabBtn.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!todoPanel.contains(e.target) && !todoFabBtn.contains(e.target)) {
+                todoPanel.style.display = 'none';
+                todoFabBtn.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    // Dynamic Avatar Initials
+    const navUserName = document.getElementById('navUserName');
+    const navAvatarInitials = document.getElementById('navAvatarInitials');
+    if (navUserName && navAvatarInitials) {
+        const nameText = navUserName.textContent.trim();
+        const words = nameText.split(' ').filter(w => w.length > 0);
+        if (words.length > 0) {
+            let initials = words[0].charAt(0).toUpperCase();
+            if (words.length > 1) {
+                initials += words[words.length - 1].charAt(0).toUpperCase();
+            }
+            navAvatarInitials.textContent = initials;
+        }
     }
 
 
@@ -295,7 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (track) {
 
         const slides = Array.from(track.children);
-        if (slides.length === 0) return;
+        if (slides.length === 0) {
+            // No slides — skip carousel setup safely without exiting the outer callback
+        } else {
 
         const nextButton = document.getElementById("nextSlide");
         const prevButton = document.getElementById("prevSlide");
@@ -393,6 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initial Carousel Load
         updateCarousel();
+        } // end else (slides.length > 0)
     }
 
 });

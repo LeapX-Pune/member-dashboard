@@ -41,7 +41,7 @@
 }
 
 .landing-logo i {
-    color: var(--accent-color);
+    color: var(--accent);
 }
 
 .landing-links {
@@ -136,7 +136,7 @@
 }
 
 .landing-hero h1 span {
-    color: var(--accent-color);
+    color: var(--accent);
 }
 
 .landing-hero p {
@@ -200,7 +200,11 @@
 /* ── Features/Activities Section ── */
 .landing-features {
     padding: 5rem 4rem;
-    background: var(--bg-card);
+    background: rgba(18, 14, 10, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .landing-section-header {
@@ -225,42 +229,63 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .landing-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
     padding: 2.5rem 2rem;
-    transition: transform 0.3s, background 0.3s;
+    transition: transform 0.3s, background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.landing-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232, 129, 58, 0.04) 0%, transparent 60%);
+    pointer-events: none;
 }
 
 .landing-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255,255,255,0.06);
-    border-color: rgba(255,255,255,0.1);
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(232, 129, 58, 0.35);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(232, 129, 58, 0.1);
 }
 
 .landing-card-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(232, 129, 58, 0.1);
-    border-radius: 12px;
+    width: 64px;
+    height: 64px;
+    background: rgba(232, 129, 58, 0.12);
+    border: 1px solid rgba(232, 129, 58, 0.2);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.landing-card:hover .landing-card-icon {
+    background: rgba(232, 129, 58, 0.2);
+    box-shadow: 0 0 20px rgba(232, 129, 58, 0.25);
 }
 
 .landing-card-icon i {
     font-size: 1.75rem;
-    color: var(--accent-color);
+    color: var(--accent);
 }
 
 .landing-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
+    color: #fff;
 }
 
 .landing-card p {
@@ -466,7 +491,7 @@
 }
 
 .trainer-info p {
-    color: var(--accent-color);
+    color: var(--accent);
     font-size: 0.95rem;
     font-weight: 600;
     margin-bottom: 1rem;

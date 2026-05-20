@@ -1,4 +1,3 @@
-//Updated
 // Global database of club members - Shared with Student 6 for simulation loops
 const allUsers = [
     { name: "Sankap Tiwari", plan: "Premium Pro", sessions: 45, points: 1200, status: "Active" },
@@ -26,11 +25,9 @@ const mockData = {
         sessionsCount: allUsers[0].sessions,
         rewardPoints: allUsers[0].points,
         attendanceRate: "94%",
-        totalHoursBurned: 142,
-        expiryOverview: "Valid until end of Dec 2026" // Fallback fallback string for missing property
+        totalHoursBurned: 142
     },
-    
-    // --- Chart datasets (consumed by Students 7, 8, and 9) ---
+    // Chart datasets (consumed by Students 7, 8, and 9)
     activity_weekly: {
         labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         data: [1, 2, 0, 3, 2, 4, 1]
@@ -43,22 +40,10 @@ const mockData = {
         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         data: [45, 52, 60, 38, 42, 50, 30, 22, 55, 68, 74, 90]
     },
-
-    // --- Doughnut Chart Data ---
-    doughnut_weekly: {
+    membershipUsage: {
         labels: ["Used Sessions", "Available Sessions", "Pending Approval"],
-        data: [13, 2, 1]
+        data: [45, 15, 5]
     },
-    doughnut_monthly: {
-        labels: ["Used Sessions", "Available Sessions", "Pending Approval"],
-        data: [57, 18, 5]
-    },
-    doughnut_yearly: {
-        labels: ["Used Sessions", "Available Sessions", "Pending Approval"],
-        data: [626, 84, 16]
-    },
-
-    // --- Activity Log ---
     recentActivities: [
         { date: "2026-05-15", time: "08:30 AM", activity: "High-Intensity Interval Training", duration: "45 mins", trainer: "Coach Alex" },
         { date: "2026-05-14", time: "06:15 PM", activity: "Vinyasa Yoga & Breathwork", duration: "60 mins", trainer: "Sarah Jenkins" },
@@ -129,7 +114,7 @@ window.renderActiveDashboard = () => {
         if (countSessions) countSessions.textContent = data.membershipStats.sessionsCount;
         if (countPoints) countPoints.textContent = data.membershipStats.rewardPoints;
         if (countPlanOverview) countPlanOverview.textContent = data.membershipStats.activePlan;
-        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview || "";
+        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview;
 
         // 5. Render Recent Activities Feed dynamically
         const activityLogWrapper = document.getElementById('activity-list') || document.getElementById('recent-activities-list');

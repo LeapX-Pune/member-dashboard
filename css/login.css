@@ -76,11 +76,11 @@
     font-size: 1.4rem;
 }
 
-/* ---- Close Button (top-right) ---- */
+/* ---- Close Button (top-right inside the login card) ---- */
 #loginCloseBtn {
     position: absolute;
-    top: 1.75rem;
-    right: 2rem;
+    top: 1rem;
+    right: 1rem;
     z-index: 10;
     width: 42px;
     height: 42px;
@@ -484,8 +484,8 @@
     }
 
     #loginCloseBtn {
-        right: 1.25rem;
-        top: 1.25rem;
+        top: 0.9rem;
+        right: 0.9rem;
     }
 }
 
