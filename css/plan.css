@@ -15,12 +15,19 @@
     flex-direction: column;
     box-shadow: var(--shadow-sm);
     position: relative;
-    transition: transform var(--t-smooth), box-shadow var(--t-smooth);
+    transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .plan-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-md);
+}
+
+.plan-card:active {
+    transform: scale(0.985);
 }
 
 .plan-light {
@@ -119,6 +126,11 @@
 .plan-btn:hover {
     opacity: 0.9;
     transform: scale(1.02);
+}
+
+.plan-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
 
 /* Elite Premium specific styling */
