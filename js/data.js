@@ -86,7 +86,7 @@ window.renderActiveDashboard = () => {
         const welcomeContainer = document.getElementById('user-name') || document.getElementById('welcome-message');
         if (welcomeContainer) {
             const currentName = data.userProfile.name ? data.userProfile.name.trim() : "";
-            welcomeContainer.textContent = currentName !== "" ? `Welcome back, ${currentName}` : "Guest Member";
+            welcomeContainer.textContent = currentName !== "" ? currentName : "Guest Member";
         }
 
         // 2. Membership Card Information
@@ -167,3 +167,9 @@ window.renderActiveDashboard = () => {
         console.error("DOM injection failed:", error);
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.renderActiveDashboard === 'function') {
+        window.renderActiveDashboard();
+    }
+});

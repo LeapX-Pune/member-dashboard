@@ -15,6 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
         'wip-view': document.getElementById('wip-view')
     };
 
+    Object.entries(sections).forEach(([id, section]) => {
+        if (!section) return;
+
+        if (id === 'dashboard-view') {
+            section.setAttribute('aria-hidden', 'false');
+        } else {
+            section.setAttribute('aria-hidden', 'true');
+        }
+    });
+
     /**
      * Switch view helper function
      * Hides all other views, displays target, and syncs active status
@@ -25,10 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Sync active class across all nav links pointing to this target
         tabButtons.forEach(btn => {
-            if (btn.getAttribute('data-target') === targetId) {
+            btn.classList.remove('active');
+            btn.removeAttribute('aria-current');
+        
+            if (btn.dataset.target === targetId) {
                 btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
+                btn.setAttribute('aria-current', 'page');
             }
         });
 
@@ -36,8 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.entries(sections).forEach(([id, section]) => {
             if (section) {
                 if (id === targetId) {
-                    // Respect the layout design of each view
+                    section.setAttribute('aria-hidden', 'false');
+                
                     if (id === 'dashboard-view') {
+                        section.style.display = 'grid';
+                    } else if (id === 'plans-view') {
                         section.style.display = 'grid';
                     } else if (id === 'wip-view') {
                         section.style.display = 'flex';
@@ -46,28 +61,48 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 } else {
                     section.style.display = 'none';
+                    section.setAttribute('aria-hidden', 'true');
                 }
             }
         });
 
-        // Close the mobile menu if open
-        const navLinksContainer = document.querySelector('.nav-links');
-        if (window.innerWidth <= 1024 && navLinksContainer) {
-            navLinksContainer.style.display = 'none';
-        }
-
         // Trigger a window resize event to redraw/responsive-recalculate Charts
         window.dispatchEvent(new Event('resize'));
+
+        if (targetId === 'wip-view') {
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 100);
+        }
     }
 
     // 3. Register click event listener on each tab button
-    tabButtons.forEach(button => {
+        tabButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
+
+            window.scrollTo(0, 0);
+
             const targetId = button.getAttribute('data-target');
+
             if (targetId) {
                 switchTab(targetId);
+
+                const sidebar = document.querySelector('.sidebar');
+
+                    if (window.innerWidth <= 1024 && sidebar) {
+                    sidebar.classList.remove('mobile-open');
+                    document.body.classList.remove('sidebar-open');
+
+                    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                    const icon = mobileMenuBtn?.querySelector('i');
+
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-xmark');
+                    }
+                }
             }
         });
     });
-});
+}); 
