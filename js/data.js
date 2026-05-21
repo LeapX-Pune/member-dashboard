@@ -1,13 +1,13 @@
 //Updated
 // Global database of club members - Shared with Student 6 for simulation loops
 const allUsers = [
-    { name: "Sankap Tiwari", plan: "Premium Pro", sessions: 45, points: 1200, status: "Active" },
+    { name: "Sauryaman Bisen", plan: "Elite Premium", sessions: 88, points: 2400, status: "Active" },
     { name: "Ksitij", plan: "Basic Tier", sessions: 12, points: 350, status: "Active" },
-    { name: "Shouryaman Bisen", plan: "Elite VIP", sessions: 88, points: 2500, status: "Active" },
     { name: "Pulak Shah", plan: "Pro Club", sessions: 30, points: 800, status: "Expiring Soon" },
+    { name: "Sankap Tiwari", plan: "Garib Premium", sessions: 45, points: 1200, status: "Active" },
     { name: "Anikit Bhalke", plan: "Premium Pro", sessions: 55, points: 1500, status: "Active" },
     { name: "Sai Shendege", plan: "Basic Tier", sessions: 5, points: 100, status: "Expired" },
-    { name: "Rehan Azim", plan: "Elite VIP", sessions: 72, points: 1900, status: "Active" },
+    { name: "Rehan Azim", plan: "Elite Premium", sessions: 72, points: 1900, status: "Active" },
     { name: "", plan: "N/A", sessions: 0, points: 0, status: "Unknown" }
 ];
 
@@ -16,7 +16,7 @@ const mockData = {
     userProfile: {
         name: allUsers[0].name,
         membershipPlan: allUsers[0].plan,
-        expiryDate: "December 31, 2026",
+        expiryDate: "August 16, 2026",
         status: allUsers[0].status,
         memberSince: "January 15, 2024"
     },
@@ -26,11 +26,9 @@ const mockData = {
         sessionsCount: allUsers[0].sessions,
         rewardPoints: allUsers[0].points,
         attendanceRate: "94%",
-        totalHoursBurned: 142,
-        expiryOverview: "Valid until end of Dec 2026" // Fallback fallback string for missing property
+        totalHoursBurned: 142
     },
-    
-    // --- Chart datasets (consumed by Students 7, 8, and 9) ---
+    // Chart datasets (consumed by Students 7, 8, and 9)
     activity_weekly: {
         labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         data: [1, 2, 0, 3, 2, 4, 1]
@@ -129,7 +127,7 @@ window.renderActiveDashboard = () => {
         if (countSessions) countSessions.textContent = data.membershipStats.sessionsCount;
         if (countPoints) countPoints.textContent = data.membershipStats.rewardPoints;
         if (countPlanOverview) countPlanOverview.textContent = data.membershipStats.activePlan;
-        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview || "";
+        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview;
 
         // 5. Render Recent Activities Feed dynamically
         const activityLogWrapper = document.getElementById('activity-list') || document.getElementById('recent-activities-list');
@@ -167,9 +165,3 @@ window.renderActiveDashboard = () => {
         console.error("DOM injection failed:", error);
     }
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof window.renderActiveDashboard === 'function') {
-        window.renderActiveDashboard();
-    }
-});

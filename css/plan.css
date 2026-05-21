@@ -15,10 +15,8 @@
     flex-direction: column;
     box-shadow: var(--shadow-sm);
     position: relative;
-    transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+    border: 1px solid transparent;
+    transition: transform var(--t-smooth), box-shadow var(--t-smooth), border-color var(--t-smooth);
 }
 
 .plan-card:hover {
@@ -26,8 +24,12 @@
     box-shadow: var(--shadow-md);
 }
 
-.plan-card:active {
-    transform: scale(0.985);
+.dashboard-container.theme-dark .plan-card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-container.theme-dark .plan-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .plan-light {
@@ -126,11 +128,6 @@
 .plan-btn:hover {
     opacity: 0.9;
     transform: scale(1.02);
-}
-
-.plan-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
 }
 
 /* Elite Premium specific styling */
