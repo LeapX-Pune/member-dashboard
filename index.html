@@ -20,7 +20,9 @@
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/setting_style.css">
     <link rel="stylesheet" href="./css/landing.css">
-    <link rel="stylesheet" href="./css/charts.css">
+    <link rel="stylesheet" href="./css/analytics.css">
+    <link rel="stylesheet" href="./css/profile.css">
+    <link rel="stylesheet" href="./css/navbar.css">
 </head>
 <body>
 
@@ -40,10 +42,7 @@
             <span>FitPulse</span>
         </div>
 
-        <!-- Close / Skip Button -->
-        <button type="button" id="loginCloseBtn" aria-label="Skip login and explore" title="Skip to explore">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+
 
         <!-- Left Tagline (large screens) -->
         <div class="login-tagline" aria-hidden="true">
@@ -64,6 +63,11 @@
 
         <!-- Glass Login Card -->
         <div class="login-card">
+
+            <!-- Close Button — top-right inside the card -->
+            <button type="button" id="loginCloseBtn" aria-label="Skip login and explore" title="Skip to explore">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
             <!-- Card Header -->
             <div class="login-card-header">
@@ -114,7 +118,7 @@
                     <label class="login-remember">
                         <input type="checkbox" id="rememberMe"> Remember me
                     </label>
-                    <a href="#" class="login-forgot">Forgot password?</a>
+                    <a href="#" class="login-forgot" data-alert="Password reset link sent to your email (simulated)!">Forgot password?</a>
                 </div>
 
                 <!-- Submit -->
@@ -140,7 +144,7 @@
 
                 <!-- Signup -->
                 <p class="login-signup-link">
-                    New to FitPulse? <a href="#" id="signupLink">Create account</a>
+                    New to FitPulse? <a href="#" id="signupLink" data-alert="Sign up page coming soon! Please login with any email for now.">Create account</a>
                 </p>
 
             </form>
@@ -159,14 +163,14 @@
                 <span>FitPulse</span>
             </div>
             <div class="landing-links">
-                <a href="#exploreSection" onclick="document.getElementById('exploreSection').scrollIntoView({behavior: 'smooth'}); return false;">Explore</a>
-                <a href="#membershipTiers" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'}); return false;">Membership</a>
-                <a href="#trainersSection" onclick="document.getElementById('trainersSection').scrollIntoView({behavior: 'smooth'}); return false;">Trainers</a>
-                <a href="#aboutSection" onclick="document.getElementById('aboutSection').scrollIntoView({behavior: 'smooth'}); return false;">About Us</a>
+                <a href="#exploreSection" data-scroll="true">Explore</a>
+                <a href="#membershipTiers" data-scroll="true">Membership</a>
+                <a href="#trainersSection" data-scroll="true">Trainers</a>
+                <a href="#aboutSection" data-scroll="true">About Us</a>
             </div>
             <div class="landing-actions">
                 <button type="button" class="landing-btn-outline" id="openLoginBtn">Login</button>
-                <button type="button" class="landing-btn-primary">Join Now</button>
+                <button type="button" class="landing-btn-primary" id="joinNowBtn">Join Now</button>
             </div>
         </nav>
 
@@ -176,7 +180,7 @@
                 <h1>Forge Your <span>Strongest</span> Self Today.</h1>
                 <p>Welcome to FitPulse. More than just a gym, we are a community dedicated to helping you reach your peak potential with state-of-the-art equipment and expert guidance.</p>
                 
-                <button type="button" class="landing-btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem;" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'})">Explore Plans</button>
+                <button type="button" class="landing-btn-primary" style="padding: 0.8rem 2rem; font-size: 1.1rem;" data-scroll-target="membershipTiers">Explore Plans</button>
                 
                 <div class="landing-hero-stats">
                     <div class="l-stat">
@@ -249,46 +253,64 @@
                 <h2>Meet Our Expert Coaches</h2>
                 <p>Train with industry-leading professionals who are dedicated to helping you achieve your personal best.</p>
             </div>
-            
-            <div class="trainers-grid">
-                <!-- Trainer 1 -->
-                <div class="trainer-card">
-                    <img src="images/trainer_indian_1.png" alt="Coach Rahul" class="trainer-img">
-                    <div class="trainer-info">
-                        <h3>Rahul Sharma</h3>
-                        <p>Lead Strength Coach</p>
-                        <div class="trainer-socials">
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+
+            <!-- Mobile carousel wrapper (arrows hidden on desktop via CSS) -->
+            <div class="trainers-carousel-wrapper">
+                <button class="trainers-carousel-btn trainers-prev" id="trainersPrev" aria-label="Previous trainer">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div class="trainers-grid" id="trainersGrid">
+                    <!-- Trainer 1 -->
+                    <div class="trainer-card">
+                        <img src="images/trainer_indian_1.png" alt="Coach Rahul" class="trainer-img">
+                        <div class="trainer-info">
+                            <h3>Rahul Sharma</h3>
+                            <p>Lead Strength Coach</p>
+                            <div class="trainer-socials">
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-instagram"></i></a>
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer 2 -->
+                    <div class="trainer-card">
+                        <img src="images/trainer_indian_2.png" alt="Coach Priya" class="trainer-img">
+                        <div class="trainer-info">
+                            <h3>Priya Yadav</h3>
+                            <p>HIIT &amp; Endurance</p>
+                            <div class="trainer-socials">
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-instagram"></i></a>
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trainer 3 -->
+                    <div class="trainer-card">
+                        <img src="images/trainer_indian_3.png" alt="Coach Vikram" class="trainer-img">
+                        <div class="trainer-info">
+                            <h3>Vikram Singh</h3>
+                            <p>Powerlifting Specialist</p>
+                            <div class="trainer-socials">
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-instagram"></i></a>
+                                <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-twitter"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Trainer 2 -->
-                <div class="trainer-card">
-                    <img src="images/trainer_indian_2.png" alt="Coach Priya" class="trainer-img">
-                    <div class="trainer-info">
-                        <h3>Priya Yadav</h3>
-                        <p>HIIT & Endurance</p>
-                        <div class="trainer-socials">
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
+                <button class="trainers-carousel-btn trainers-next" id="trainersNext" aria-label="Next trainer">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
 
-                <!-- Trainer 3 -->
-                <div class="trainer-card">
-                    <img src="images/trainer_indian_3.png" alt="Coach Vikram" class="trainer-img">
-                    <div class="trainer-info">
-                        <h3>Vikram Singh</h3>
-                        <p>Powerlifting Specialist</p>
-                        <div class="trainer-socials">
-                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
+            <!-- Dots indicator — mobile only -->
+            <div class="trainers-dots" id="trainersDots">
+                <span class="trainers-dot active" data-index="0"></span>
+                <span class="trainers-dot" data-index="1"></span>
+                <span class="trainers-dot" data-index="2"></span>
             </div>
         </section>
 
@@ -302,8 +324,6 @@
 
                 <div class="image-overlay-text">
                     <h2>One membership for your<br>entire fitness journey</h2>
-                    <br>
-                    <button type="button" class="landing-btn-primary" style="padding: 1rem 3rem; font-size: 1.25rem; border-radius: 50px;" onclick="document.getElementById('membershipTiers').scrollIntoView({behavior: 'smooth'})">Explore Now</button>
                 </div>
 
                 <div class="grid-img-right">
@@ -368,23 +388,23 @@
                 
                 <div class="footer-links-grid">
                     <div class="footer-col">
-                        <a href="#">FitPulse for business</a>
-                        <a href="#">FitPulse franchise</a>
-                        <a href="#">corporate partnerships</a>
-                        <a href="#">FitPulse network</a>
-                        <a href="#">t&c for business</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">FitPulse for business</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">FitPulse franchise</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">corporate partnerships</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">FitPulse network</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">t&c for business</a>
                     </div>
                     <div class="footer-col">
-                        <a href="#">partner.fit</a>
-                        <a href="#">blogs</a>
-                        <a href="#">security</a>
-                        <a href="#">careers</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">partner.fit</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">blogs</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">security</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">careers</a>
                     </div>
                     <div class="footer-col">
-                        <a href="#">contact us</a>
-                        <a href="#">privacy policy</a>
-                        <a href="#">bmi calculator</a>
-                        <a href="#">terms & conditions</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">contact us</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">privacy policy</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">bmi calculator</a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)">terms & conditions</a>
                     </div>
                 </div>
 
@@ -393,33 +413,15 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on App Store">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play">
                     <div class="footer-socials">
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" data-alert="Redirecting to social media... (simulated)"><i class="fa-brands fa-linkedin"></i></a>
                     </div>
                 </div>
             </div>
 
-            <div class="footer-bottom">
-                <div class="footer-related">
-                    <h4>Related Searches</h4>
-                    <div class="related-grid">
-                        <a href="#">Gym Near Me</a>
-                        <a href="#">Gyms in Bengaluru</a>
-                        <a href="#">Gyms in Hyderabad</a>
-                        <a href="#">Gyms in Mumbai</a>
-                        <a href="#">Gyms in Delhi</a>
-                        <a href="#">Gym Workout App</a>
-                        <a href="#">Yoga Classes</a>
-                        <a href="#">HIIT Workout</a>
-                        <a href="#">Home Workout</a>
-                    </div>
-                </div>
-                
-
-            </div>
         </footer>
 
     </div>
@@ -444,7 +446,7 @@
                 </a>
                 <a href="#" id="nav-plans" data-target="plans-view">
                     <i class="fa-solid fa-bolt"></i>
-                    <span>Plans</span>
+                    <span>Subscription</span>
                 </a>
                 <a href="#" id="nav-analytics" data-target="wip-view">
                     <i class="fa-solid fa-chart-pie"></i>
@@ -473,38 +475,55 @@
                     <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <div class="mobile-logo">
-                        <i class="fa-solid fa-dumbbell" style="color: var(--accent);"></i>
-                        <span>FitPulse</span>
-                    </div>
+                    <!-- Space for page title if needed -->
                 </div>
 
                 <div class="navbar-right">
-                    <button type="button" class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications">
-                        <i class="fa-regular fa-bell"></i>
-                    </button>
-                    <div class="user-profile" style="position: relative;">
-                        <img
-                            src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=1e1c1a&color=fff&rounded=true&bold=true"
-                            alt="Sauryaman Bisen Avatar"
-                            class="avatar"
-                            id="userAvatar"
-                            style="cursor: pointer;"
-                        >
+                    <div class="notification-wrapper" style="position: relative;">
+                        <button type="button" class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-dot" style="display: block; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background-color: #f97316; border-radius: 50%; border: 2px solid var(--bg-card);"></span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; right: 0; top: 50px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-md); width: 300px; box-shadow: var(--shadow-md); z-index: 1000; padding: 1rem;">
+                            <h4 style="margin-bottom: 0.8rem; font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; color: var(--text-main);">Notifications</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: var(--text-muted);">
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: start; gap: 0.5rem;">
+                                    <i class="fa-solid fa-circle-info" style="color: #f97316; margin-top: 2px;"></i>
+                                    <span>Update membership plan to Elite Premium for more benefits.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: start; gap: 0.5rem;">
+                                    <i class="fa-solid fa-calendar-check" style="color: #4ade80; margin-top: 2px;"></i>
+                                    <span>Your daily workout has been marked as complete.</span>
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: start; gap: 0.5rem;">
+                                    <i class="fa-solid fa-clock" style="color: #3b82f6; margin-top: 2px;"></i>
+                                    <span>Check out the new trainer schedules for next week!</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="user-profile" style="position: relative; display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="avatar-initials-container" id="userAvatar" style="cursor: pointer; width: 42px; height: 42px; border-radius: 50%; background-color: var(--bg-dark); border: 2px solid #fde68a; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">
+                            <span id="navAvatarInitials">SB</span>
+                        </div>
+                        <span class="user-name-display" id="navUserName" style="display: none;">Sauryaman Bisen</span>
                         <!-- Profile Dropdown -->
                         <div class="profile-dropdown" id="profileDropdown" style="display: none;">
                             <div class="profile-header">
-                                <h4 id="dropdown-user-name">Sauryaman Bisen</h4>
-                                <p class="membership-badge" id="dropdown-membership-badge">Pro Member</p>
+                                <h4 id="dropdownName">Sauryaman Bisen</h4>
+                                <p class="membership-badge">Pro Member</p>
                             </div>
                             <div class="profile-info-list">
                                 <div class="info-row">
                                     <i class="fa-solid fa-phone"></i>
-                                    <span id="dropdown-phone">+91 98765 43210</span>
+                                    <span id="dropdownPhone">+91 98765 43210</span>
                                 </div>
                                 <div class="info-row">
                                     <i class="fa-solid fa-envelope"></i>
-                                    <span id="dropdown-email">sauryaman@example.com</span>
+                                    <span id="dropdownEmail">sauryaman@example.com</span>
                                 </div>
                                 <div class="info-row">
                                     <i class="fa-solid fa-location-dot"></i>
@@ -512,8 +531,7 @@
                                 </div>
                             </div>
                             <div class="profile-actions">
-                                <button type="button" class="profile-action-btn"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
-                                <button type="button" class="profile-action-btn text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+                                <button type="button" class="profile-action-btn" id="dropdownEditProfileBtn"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
                             </div>
                         </div>
                     </div>
@@ -531,7 +549,7 @@
             <section class="welcome-card card-equal" aria-label="Welcome section">
                 <div class="welcome-content">
                     <h1 id="greetingText">Good&nbsp;Morning </h1>
-                    <p class="welcome-subtext" id="welcomeSubtext">Welcome back, <strong id="user-name">Sauryaman</strong>. Ready for today's workout?</p>
+                    <p class="welcome-subtext">Welcome back, <strong id="welcomeName">Sauryaman</strong>. Ready for today's workout?</p>
 
                     <div class="mini-stats">
                         <div class="m-stat">
@@ -551,12 +569,12 @@
 
                 <!-- Trainer photo — blends seamlessly into beige via mix-blend-mode: multiply -->
                 <img
-                    src="images/trainer_indian_dashboard.png"
+                    src="images/trainer_indian_dashboard.png?v=10"
                     alt="Fitness trainer standing confidently"
                     class="fitness-image"
                     id="trainerImage"
                     loading="eager"
-                >
+                    >
             </section>
 
             <!-- Dark Stats Grid (right) -->
@@ -568,19 +586,19 @@
                         <span>Active Plan</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2 id="card-plan-name">Elite Premium</h2>
-                        <p id="card-expiry-date">Valid till Dec 2026</p>
+                        <h2 id="stat-active-plan">Elite Premium</h2>
+                        <p id="stat-plan-expiry">Valid till Dec 2026</p>
                     </div>
                 </div>
 
                 <div class="dark-card">
                     <div class="dark-card-header">
                         <i class="fa-regular fa-hourglass-half text-orange"></i>
-                        <span>Expiry Status</span>
+                        <span>Expiry In</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2 id="card-status-badge">Active</h2>
-                        <p id="stat-expiry-overview">115 Days</p>
+                        <h2 id="stat-expiry-days">87 Days</h2>
+                        <p id="membership-status">Auto-renew ON</p>
                     </div>
                 </div>
 
@@ -590,7 +608,7 @@
                         <span>Total Sessions</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2 id="stat-sessions-count">84</h2>
+                        <h2 id="stat-sessions">84</h2>
                         <p>Goal: 200+ sessions</p>
                     </div>
                 </div>
@@ -601,7 +619,7 @@
                         <span>Reward Points</span>
                     </div>
                     <div class="dark-card-body">
-                        <h2 id="stat-reward-points">1,250</h2>
+                        <h2 id="stat-points">1,250</h2>
                         <p>Goal: 2,000 pts</p>
                     </div>
                 </div>
@@ -614,10 +632,10 @@
             <section class="content-card card-equal" aria-label="Recent activity">
                 <div class="section-header">
                     <h2>Recent Activity</h2>
-                    <button type="button" class="view-all-btn" id="viewAllActivity">View All</button>
+                    <button type="button" class="view-all-btn" id="viewAllActivity" >View All</button>
                 </div>
 
-                <div class="activity-list" id="recent-activities-list">
+                <div class="activity-list">
                     <div class="activity-item">
                         <img src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=fce9d5&color=e8813a&rounded=true&bold=true" alt="Sauryaman Bisen" class="act-avatar">
                         <div class="act-details">
@@ -643,6 +661,24 @@
                             <p>+50 pts · Priya Verma</p>
                         </div>
                         <div class="act-time">5h ago</div>
+                    </div>
+                    <div id="moreActivity" style="display:none;">
+                        <div class="activity-item">
+                            <img src="https://ui-avatars.com/api/?name=Kunal+Singh&background=fce9d5&color=e8813a&rounded=true&bold=true" alt="Kunal Singh" class="act-avatar">
+                            <div class="act-details">
+                                <h4>New Goal Set</h4>
+                                <p>Target: 10k steps · Kunal Singh</p>
+                            </div>
+                            <div class="act-time">1d ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <img src="https://ui-avatars.com/api/?name=Neha+Gupta&background=e2e8f0&color=475569&rounded=true&bold=true" alt="Neha Gupta" class="act-avatar">
+                            <div class="act-details">
+                                <h4>Workout Completed</h4>
+                                <p>Strength Training · Neha Gupta</p>
+                            </div>
+                            <div class="act-time">2d ago</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -706,15 +742,15 @@
                     <h2>Quick Actions</h2>
                 </div>
                 <div class="quick-actions-grid h-full">
-                    <button type="button" class="action-btn" id="actionBook" aria-label="Book a session">
+                    <button type="button" class="action-btn" id="actionBook" aria-label="Book a session" >
                         <i class="fa-solid fa-dumbbell"></i>
                         <span>Book Session</span>
                     </button>
-                    <button type="button" class="action-btn" id="actionSchedule" aria-label="View schedule">
+                    <button type="button" class="action-btn" id="actionSchedule" aria-label="View schedule" >
                         <i class="fa-regular fa-calendar-days"></i>
                         <span>Schedule</span>
                     </button>
-                    <button type="button" class="action-btn" id="actionUpgrade" aria-label="Upgrade plan">
+                    <button type="button" class="action-btn" id="actionUpgrade" aria-label="Upgrade plan" >
                         <i class="fa-solid fa-arrow-up-right-dots"></i>
                         <span>Upgrade</span>
                     </button>
@@ -729,7 +765,6 @@
             <section class="content-card card-equal" aria-label="Weekly goal progress">
                 <div class="section-header">
                     <h2>Weekly Goal Progress</h2>
-                    <i class="fa-solid fa-chevron-right text-muted" style="font-size:0.85rem;"></i>
                 </div>
 
                 <div class="progress-grid h-full">
@@ -756,18 +791,18 @@
                             </div>
                             <div class="prog-text">
                                 <h4>Workouts</h4>
-                                <p>4 / 5 sessions</p>
+                                <p>9 / 14 sessions</p>
                             </div>
                         </div>
                         <div class="progress-bar-container">
-                            <div class="progress-fill bg-dark-solid" style="width: 80%;"></div>
+                            <div class="progress-fill bg-dark-solid" style="width: 70%;"></div>
                         </div>
                     </div>
 
                     <div class="progress-item">
                         <div class="progress-info">
-                            <div class="prog-icon bg-green-light">
-                                <i class="fa-solid fa-droplet text-green"></i>
+                            <div class="prog-icon bg-blue-light">
+                                <i class="fa-solid fa-droplet text-blue"></i>
                             </div>
                             <div class="prog-text">
                                 <h4>Water</h4>
@@ -775,12 +810,47 @@
                             </div>
                         </div>
                         <div class="progress-bar-container">
-                            <div class="progress-fill bg-green-solid" style="width: 64%;"></div>
+                            <div class="progress-fill bg-blue-solid" style="width: 64%;"></div>
                         </div>
                     </div>
 
                 </div>
             </section>
+            
+            <!-- To-Do List Floating Action Button -->
+            <div class="todo-fab-container" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+                <button type="button" class="todo-fab" id="todoFabBtn" style="width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: white; border: none; box-shadow: 0 4px 15px rgba(232, 129, 58, 0.4); font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.2s;">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <!-- To-Do Dropdown/Panel -->
+                <div class="todo-panel" id="todoPanel" style="display: none; position: absolute; bottom: 70px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-md); width: 280px; box-shadow: var(--shadow-lg); padding: 1rem;">
+                    <h4 style="margin-bottom: 0.8rem; font-size: 1.05rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;">
+                        <span>My To-Do List</span>
+                        <i class="fa-solid fa-list-check" style="color: var(--accent);"></i>
+                    </h4>
+                    <ul id="todoListUl" style="list-style: none; padding: 0; margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--text-main); max-height: 200px; overflow-y: auto;">
+                        <li style="padding: 0.4rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="todo1">
+                            <label for="todo1" style="cursor: pointer; flex: 1;">Morning Cardio</label>
+                            <i class="fa-solid fa-trash text-muted" style="cursor: pointer; font-size: 0.9rem;"  title="Delete"></i>
+                        </li>
+                        <li style="padding: 0.4rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="todo2">
+                            <label for="todo2" style="cursor: pointer; flex: 1;">Meal Prep</label>
+                            <i class="fa-solid fa-trash text-muted" style="cursor: pointer; font-size: 0.9rem;"  title="Delete"></i>
+                        </li>
+                        <li style="padding: 0.4rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="todo3">
+                            <label for="todo3" style="cursor: pointer; flex: 1;">Stretching Routine</label>
+                            <i class="fa-solid fa-trash text-muted" style="cursor: pointer; font-size: 0.9rem;"  title="Delete"></i>
+                        </li>
+                    </ul>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="todoNewInput" placeholder="Add new task..." style="flex: 1; padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-main); color: var(--text-main); font-size: 0.85rem;">
+                        <button type="button" id="todoAddBtn" style="background: var(--accent); color: white; border: none; border-radius: var(--r-sm); padding: 0.4rem 0.8rem; cursor: pointer; font-size: 0.85rem;"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
 
         </main>
 
@@ -811,6 +881,7 @@
                 
                 <!-- Gold Premium -->
                 <div class="plan-card plan-dark">
+                    <div class="elite-badge">Gold</div>
                     <h3 class="plan-title">Gold Premium</h3>
                     <p class="plan-goal">Goal: 100 sessions</p>
                     <div class="plan-price">
@@ -987,18 +1058,44 @@
                                     <p>Manage your personal information.</p>
                                 </div>
                             </div>
+
+                            <!-- Profile Card -->
+                            <div class="profile-card-header">
+                                <div class="profile-card-avatar" id="settingsCardAvatar">SB</div>
+                                <div class="profile-card-info">
+                                    <h3 id="settingsCardName">Sauryaman Bisen</h3>
+                                    <p id="settingsCardEmail">sauryaman@example.com</p>
+                                    <span class="profile-membership-id" id="settingsCardMid">FIT0000</span>
+                                </div>
+                                <button type="button" class="profile-edit-btn" id="settingsEditProfileBtn">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+                                </button>
+                            </div>
+
+                            <!-- Completion Bar -->
+                            <div class="profile-completion-wrap">
+                                <h4>Profile Completion <span id="completionPct">0%</span></h4>
+                                <div class="completion-bar-track">
+                                    <div class="completion-bar-fill" id="completionBar" style="width:0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Read-only summary form (quick reference) -->
                             <div class="profile-form">
-                                <input type="text" id="name" placeholder="Full Name" value="Sauryaman Bisen">
-                                <input type="email" id="email" placeholder="Email Address" value="sauryamanbisen@gmail.com">
-                                <input type="tel" id="phone" placeholder="Phone Number" value="+91 98765 43210">
-                                <input type="number" id="age" placeholder="Age" value="18">
+                                <input type="text" id="name" placeholder="Full Name" value="Sauryaman Bisen" readonly>
+                                <input type="email" id="email" placeholder="Email Address" value="sauryamanbisen@gmail.com" readonly>
+                                <input type="tel" id="phone" placeholder="Phone Number" value="+91 98765 43210" readonly>
+                                <input type="number" id="age" placeholder="Age" value="18" readonly>
                                 <select id="gender">
                                     <option value="">Select Gender</option>
                                     <option selected>Male</option>
                                     <option>Female</option>
                                     <option>Other</option>
                                 </select>
-                                <button type="button" class="save-btn" id="saveProfile">Save Profile</button>
+                                <button type="button" class="save-btn" id="saveProfile"
+                                    id="editProfileBtn">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+                                </button>
                             </div>
                         </div>
 
@@ -1044,55 +1141,47 @@
 
         <!------------ Analytics View ------------>
         <main class="wip-view analytics-override" id="wip-view" style="display: none;" aria-label="Analytics">
-            <!-- External CSS specifically for analytics dashboard layout and theme overrides -->
-            <link rel="stylesheet" href="./css/charts.css">
-            
             <div class="analytics-dashboard">
-                <!-- Top Row: Displays 4 key membership metrics using circular animated rings -->
+                <!-- Top Row -->
                 <div class="analytics-top-row">
-                    
-                    <!-- Metric 1: Total Sessions -->
                     <div class="analytics-card">
                         <h3>Total Sessions</h3>
-                        <div class="ring-container" id="stat-sessions-ring">
+                        <div class="ring-container" id="stat-sessions-ring" style="--ring-color:#39ff14; --ring-glow:rgba(57,255,20,0.3); --ring-pct:0%;">
                             <div class="ring-content">
-                                <i class="fa-solid fa-dumbbell"></i>
+                                <i class="fa-solid fa-dumbbell" style="color:#39ff14"></i>
                                 <span class="value" id="stat-sessions-val">0</span>
                                 <span class="unit">Sessions</span>
                             </div>
                         </div>
 
                     </div>
-                    <!-- Metric 2: Reward Points -->
                     <div class="analytics-card">
                         <h3>Reward Points</h3>
-                        <div class="ring-container" id="stat-points-ring">
+                        <div class="ring-container" id="stat-points-ring" style="--ring-color:#ffd700; --ring-glow:rgba(255,215,0,0.3); --ring-pct:0%;">
                             <div class="ring-content">
-                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star" style="color:#ffd700"></i>
                                 <span class="value" id="stat-points-val">0</span>
                                 <span class="unit">Pts</span>
                             </div>
                         </div>
 
                     </div>
-                    <!-- Metric 3: Attendance Rate -->
                     <div class="analytics-card">
                         <h3>Attendance Rate</h3>
-                        <div class="ring-container" id="stat-attendance-ring">
+                        <div class="ring-container" id="stat-attendance-ring" style="--ring-color:#00f2fe; --ring-glow:rgba(0,242,254,0.3); --ring-pct:0%;">
                             <div class="ring-content">
-                                <i class="fa-regular fa-calendar-check"></i>
+                                <i class="fa-regular fa-calendar-check" style="color:#00f2fe"></i>
                                 <span class="value" id="stat-attendance-val">0</span>
                                 <span class="unit">%</span>
                             </div>
                         </div>
 
                     </div>
-                    <!-- Metric 4: Hours Burned -->
                     <div class="analytics-card">
                         <h3>Hours Burned</h3>
-                        <div class="ring-container" id="stat-hours-ring">
+                        <div class="ring-container" id="stat-hours-ring" style="--ring-color:#ff8a8a; --ring-glow:rgba(255,138,138,0.3); --ring-pct:0%;">
                             <div class="ring-content">
-                                <i class="fa-solid fa-fire"></i>
+                                <i class="fa-solid fa-fire" style="color:#ff8a8a"></i>
                                 <span class="value" id="stat-hours-val">0</span>
                                 <span class="unit">Hrs</span>
                             </div>
@@ -1103,15 +1192,13 @@
                 
 
                 
-                <!-- Bottom Row: Displays detailed charts and data visualizations -->
+                <!-- Bottom Row -->
                 <div class="analytics-bottom-row">
-                    
-                    <!-- Line Chart: Activity Progress -->
                     <div class="chart-card">
-                        <div class="activity-progress-header">
+                        <div class="chart-header">
                             <h3>Activity Progress</h3>
-                            <div class="activity-progress-legend">
-                                <span class="legend-item"><span class="legend-color-sessions"></span>Sessions</span>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot"></span>Sessions</span>
                             </div>
                         </div>
                         <div class="chart-container">
@@ -1119,27 +1206,295 @@
                         </div>
                     </div>
                     
-                    <!-- Placeholder Chart: Membership Usage -->
-                    <div class="chart-card">
-                        <h3>Membership Usage</h3>
-                        <div class="chart-container">
-                            
-                        </div>
-                    </div>
+
                 </div>
             </div>
+            
+            <!-- Dependencies for Charts to work in this view -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="./js/charts.js"></script>
         </main>
 
     </div> <!-- End main-wrapper -->
 
+    <!-- Edit Profile Modal -->
+    <div class="profile-modal-overlay" id="profileModalOverlay" role="dialog" aria-modal="true" aria-label="Edit Profile">
+        <div class="profile-modal">
+            <!-- Header -->
+            <div class="profile-modal-header">
+                <h2><i class="fa-solid fa-user-pen"></i> Edit Profile</h2>
+                <button type="button" class="profile-modal-close" id="profileModalCloseBtn" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="profile-modal-body">
+
+                <!-- Avatar picker -->
+                <div class="modal-avatar-picker">
+                    <div class="modal-avatar-preview" id="modalAvatarPreview">SB</div>
+                    <div class="modal-avatar-info">
+                        <h4>Profile Picture</h4>
+                        <p>Paste an image URL to set your avatar</p>
+                        <input
+                            type="url"
+                            id="modalAvatarUrl"
+                            class="modal-avatar-url-input"
+                            placeholder="https://example.com/photo.jpg"
+                        >
+                    </div>
+                </div>
+
+                <!-- Name & Phone -->
+                <div class="modal-field-group">
+                    <div class="modal-field">
+                        <label for="modalFullName">Full Name</label>
+                        <input type="text" id="modalFullName" placeholder="Your full name">
+                    </div>
+                    <div class="modal-field">
+                        <label for="modalPhone">Phone Number</label>
+                        <input type="tel" id="modalPhone" placeholder="+91 XXXXX XXXXX">
+                    </div>
+                </div>
+
+                <!-- Age & Goal -->
+                <div class="modal-field-group">
+                    <div class="modal-field">
+                        <label for="modalAge">Age</label>
+                        <input type="number" id="modalAge" placeholder="Age" min="10" max="100">
+                    </div>
+                    <div class="modal-field">
+                        <label for="modalGoal">Fitness Goal</label>
+                        <select id="modalGoal">
+                            <option value="Build Muscle">Build Muscle</option>
+                            <option value="Lose Weight">Lose Weight</option>
+                            <option value="Improve Stamina">Improve Stamina</option>
+                            <option value="Stay Active">Stay Active</option>
+                            <option value="Train for Competition">Train for Competition</option>
+                            <option value="Improve Flexibility">Improve Flexibility</option>
+                            <option value="General Fitness">General Fitness</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bio -->
+                <div class="modal-field-group full">
+                    <div class="modal-field">
+                        <label for="modalBio">About / Bio</label>
+                        <textarea id="modalBio" placeholder="Tell us a bit about yourself and your fitness journey…"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="profile-modal-footer">
+                <button type="button" class="modal-btn-cancel" id="profileModalCancelBtn">Cancel</button>
+                <button type="button" class="modal-btn-save" id="profileModalSaveBtn">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- /Edit Profile Modal -->
+
+    <!-- Schedule Modal -->
+    <div class="profile-modal-overlay" id="scheduleModalOverlay" role="dialog" aria-modal="true" aria-label="Gym Schedule">
+        <div class="profile-modal">
+            <!-- Header -->
+            <div class="profile-modal-header">
+                <h2><i class="fa-regular fa-calendar-days"></i> Today's Gym Schedule</h2>
+                <button type="button" class="profile-modal-close" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="profile-modal-body" style="padding: 1.5rem;">
+                <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-main); font-size: 1rem; line-height: 1.8;">
+                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong>06:00 AM</strong> <span>Open Gym</span>
+                    </li>
+                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong>08:00 AM</strong> <span>Yoga Class</span>
+                    </li>
+                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong>05:00 PM</strong> <span>HIIT Workout</span>
+                    </li>
+                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong>07:00 PM</strong> <span>Powerlifting</span>
+                    </li>
+                    <li style="display: flex; justify-content: space-between;">
+                        <strong>08:30 PM</strong> <span style="color: var(--text-muted);">Gym Closes</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Footer -->
+            <div class="profile-modal-footer">
+                <button type="button" class="modal-btn-save" style="width: 100%; justify-content: center;">
+                    Awesome!
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- /Schedule Modal -->
+
+    <!-- ── Logout Confirmation Modal ── -->
+    <div id="logoutModal" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+    ">
+        <div style="
+            background: var(--bg-card, #fff);
+            border-radius: 20px;
+            padding: 2.5rem 2rem 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: logoutModalIn 0.3s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+        ">
+            <!-- Icon -->
+            <div style="
+                width: 70px; height: 70px;
+                border-radius: 50%;
+                background: rgba(239,68,68,0.12);
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 1.25rem;
+            ">
+                <i class="fa-solid fa-right-from-bracket" style="font-size: 1.75rem; color: #ef4444;"></i>
+            </div>
+
+            <h3 style="margin: 0 0 0.5rem; font-size: 1.3rem; font-weight: 700; color: var(--text-main, #111);">
+                Leaving so soon?
+            </h3>
+            <p style="margin: 0 0 2rem; color: var(--text-muted, #666); font-size: 0.92rem; line-height: 1.5;">
+                Are you sure you want to log out of your FitPulse account?
+            </p>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 0.75rem;">
+                <button id="logoutCancelBtn" style="
+                    flex: 1;
+                    padding: 0.75rem 1rem;
+                    border-radius: 12px;
+                    border: 2px solid var(--border, #e5e7eb);
+                    background: transparent;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    color: var(--text-main, #111);
+                    cursor: pointer;
+                    transition: background 0.2s, border-color 0.2s;
+                " onmouseover="this.style.background='var(--bg-hover,#f3f4f6)'" onmouseout="this.style.background='transparent'">
+                    Cancel
+                </button>
+                <button id="logoutProceedBtn" style="
+                    flex: 1;
+                    padding: 0.75rem 1rem;
+                    border-radius: 12px;
+                    border: none;
+                    background: linear-gradient(135deg, #ef4444, #dc2626);
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    color: #fff;
+                    cursor: pointer;
+                    transition: opacity 0.2s, transform 0.15s;
+                    box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+                " onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 6px;"></i> Proceed
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- /Logout Confirmation Modal -->
+
+    <!-- ── Payment Modal ── -->
+    <div id="paymentModal" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+    ">
+        <div style="
+            background: var(--bg-card, #fff);
+            border-radius: 20px;
+            padding: 2.5rem 2rem 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: logoutModalIn 0.3s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+        ">
+            <h3 style="margin: 0 0 1rem; font-size: 1.3rem; font-weight: 700; color: var(--text-main, #111);" id="paymentTitle">
+                Complete Payment
+            </h3>
+            
+            <div id="paymentQrCode">
+                <p style="margin: 0 0 1rem; color: var(--text-muted, #666); font-size: 0.92rem; line-height: 1.5;">Scan this QR code to upgrade your plan.</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FitPulsePayment" alt="Payment QR" style="margin: 0 auto; display: block; border-radius: 10px; margin-bottom: 1.5rem;">
+            </div>
+            
+            <div id="paymentSuccess" style="display: none;">
+                <div style="
+                    width: 70px; height: 70px;
+                    border-radius: 50%;
+                    background: rgba(16,185,129,0.12);
+                    display: flex; align-items: center; justify-content: center;
+                    margin: 0 auto 1.25rem;
+                ">
+                    <i class="fa-solid fa-check" style="font-size: 1.75rem; color: #10b981;"></i>
+                </div>
+                <p style="margin: 0 0 2rem; color: var(--text-muted, #666); font-size: 0.92rem; line-height: 1.5;">Payment has been done successfully. Your plan is now upgraded.</p>
+            </div>
+        </div>
+    </div>
+    <!-- /Payment Modal -->
+    
     </div> <!-- End dashboard-container -->
 
+    <style>
+    @keyframes logoutModalIn {
+        from { opacity: 0; transform: scale(0.85) translateY(20px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    </style>
+
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- data.js must come first — it defines window.mockData used by app.js -->
     <script src="./js/data.js"></script>
-    <script src="./js/charts.js"></script>
+    <script src="./js/app.js"></script>
     <script src="./js/script.js"></script>
     <script src="./js/setting_script.js"></script>
-    <script src="./js/tabs.js"></script>
+    <script src="./js/profile.js"></script>
+
+    <!-- live-update flash animation for real-time stat changes -->
+    <style>
+    @keyframes statFlash {
+        0%   { opacity: 1; transform: scale(1); }
+        30%  { opacity: 0.4; transform: scale(1.12); color: var(--accent, #e8813a); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .live-update {
+        animation: statFlash 0.5s ease forwards;
+    }
+    </style>
+
+    <script src="./js/ui-interactions.js"></script>
 </body>
 </html>
