@@ -1,0 +1,222 @@
+/* -----------------------------------------------------------
+   Analytics View Styles — FitPulse Premium Dashboard
+   ----------------------------------------------------------- */
+
+:root {
+    --ring-empty: rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-container.theme-dark {
+    --ring-empty: rgba(255, 255, 255, 0.1);
+}
+
+/* Base override for the Analytics tab main container */
+.analytics-override {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
+/* Dashboard Layout */
+.analytics-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    font-family: var(--font);
+}
+
+/* Top Stats Row */
+.analytics-top-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+/* Analytics Stats Card */
+.analytics-card {
+    background-color: var(--bg-card);
+    border-radius: var(--r-xl);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: box-shadow var(--t-smooth), transform var(--t-smooth);
+}
+
+.analytics-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+/* Card Header */
+.analytics-card h3 {
+    color: var(--text-main);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* Progress Ring Container */
+.ring-container {
+    width: 130px;
+    height: 130px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* The actual progress ring */
+.ring-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 7px;
+    background: conic-gradient(
+        var(--ring-color, var(--accent)) 0% var(--ring-pct, 0%), 
+        var(--ring-empty) var(--ring-pct, 0%) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* Outer ring glow shadow */
+.ring-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--ring-glow, rgba(232, 129, 58, 0.2));
+    pointer-events: none;
+}
+
+/* Center Content of Ring */
+.ring-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-main);
+}
+
+.ring-content i {
+    font-size: 1.25rem;
+    margin-bottom: 0.35rem;
+}
+
+.ring-content .value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-main);
+}
+
+.ring-content .unit {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.analytics-card-footer {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Bottom Row Layout (Charts) */
+.analytics-bottom-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Chart Container Card */
+.chart-card {
+    background-color: var(--bg-card);
+    border-radius: var(--r-xl);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    transition: box-shadow var(--t-smooth), transform var(--t-smooth);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.chart-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.chart-card h3 {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.chart-container {
+    height: 350px;
+    width: 100%;
+}
+
+/* Clean classes for what was previously inline styles */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-header h3 {
+    margin: 0;
+}
+
+.chart-legend {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #39ff14;
+    box-shadow: 0 0 5px #39ff14;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+    .analytics-top-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .analytics-bottom-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .analytics-top-row {
+        grid-template-columns: 1fr;
+    }
+}

@@ -14,8 +14,16 @@
 
     --text-main:         #18181b;
     --text-muted:        #71717a;
-    --text-light:        #fafaf9;
+    --text-light:        #ffb27e;
     --text-dark-muted:   #a1a19a;
+
+    --welcome-bg:        #f5f0e8;
+    --welcome-subtext:   #6b5c46;
+    --welcome-label:     #8a7560;
+
+    --bg-progress-item:       #fafaf9;
+    --bg-progress-item-hover: #f5f3ef;
+    --bg-progress-track:      #e5e7eb;
 
     /* ── Accent — warm amber/orange ── */
     --accent:            #e8813a;          /* primary accent */
@@ -25,6 +33,9 @@
     /* ── Accent — emerald green ── */
     --green:             #34a853;
     --green-light:       #d1fae5;
+    /* ── Accent — blue ── */
+    --blue:              #3b82f6;
+    --blue-light:        #dbeafe;
 
     /* ── Borders & Shadows ── */
     --border:            rgba(0,0,0,0.06);
@@ -67,11 +78,46 @@
     --text-light:        #ffffff;
     --text-dark-muted:   #8a8a83;
 
+    --welcome-bg:        linear-gradient(145deg, var(--bg-dark) 0%, var(--bg-dark-2) 100%);
+    --welcome-subtext:   var(--text-muted);
+    --welcome-label:     var(--text-dark-muted);
+
+    --bg-progress-item:       #161513; 
+    --bg-progress-item-hover: #252320; 
+    --bg-progress-track:      rgba(255,255,255,0.06);
+
     --border:            rgba(255,255,255,0.08);
     --shadow-xs:         0 2px 8px  rgba(0,0,0,0.4);
     --shadow-sm:         0 4px 20px rgba(0,0,0,0.6);
     --shadow-md:         0 12px 40px rgba(0,0,0,0.8);
     --shadow-lg:         0 24px 60px rgba(0,0,0,0.9);
+
+    background-color: var(--bg-main) !important;
+}
+
+.dashboard-container.theme-dark .welcome-card {
+    background: linear-gradient(145deg, var(--bg-dark) 0%, var(--bg-dark-2) 100%) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.dashboard-container.theme-dark .welcome-subtext {
+    color: var(--text-muted) !important;
+}
+
+.dashboard-container.theme-dark .m-label {
+    color: var(--text-dark-muted) !important;
+}
+
+.dashboard-container.theme-dark .bg-dark-solid {
+    background-color: var(--text-light) !important;
+}
+
+.dashboard-container.theme-dark .bg-slate-light {
+    background-color: var(--bg-dark-hover) !important;
+}
+
+.dashboard-container.theme-dark .prog-icon .text-dark {
+    color: var(--text-main) !important;
 }
 
 /* ------------------------------------------------------
@@ -84,12 +130,6 @@
 }
 
 html { scroll-behavior: smooth; }
-
-/* Prevent Initial Layout Flicker */
-#landingContainer,
-#dashboardContainer {
-    display: none;
-}
 
 body {
     font-family: var(--font);
@@ -118,13 +158,16 @@ img { display: block; }
 .text-accent   { color: var(--accent); }
 .text-muted    { color: var(--text-muted); }
 .text-green    { color: var(--green); }
+.text-blue     { color: var(--blue); }
 .text-dark     { color: var(--bg-dark); }
 
 .bg-accent-light  { background-color: var(--accent-light); }
 .bg-green-light   { background-color: var(--green-light); }
 .bg-slate-light   { background-color: #e2e8f0; }
+.bg-blue-light    { background-color: var(--blue-light); }
 .bg-accent-solid  { background-color: var(--accent-mid); }
 .bg-green-solid   { background-color: #6ee7b7; }
+.bg-blue-solid    { background-color: #93c5fd; }
 .bg-dark-solid    { background-color: var(--bg-dark); }
 
 .h-full { height: 100%; }
@@ -140,6 +183,9 @@ img { display: block; }
     max-width: 100%;
     display: flex;
     gap: 0;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
 }
 
 .sidebar {
@@ -167,274 +213,7 @@ img { display: block; }
     padding: 1.5rem 3rem 1.5rem 2.5rem;
 }
 
-/* ------------------------------------------------------
-   Top Navbar (Profile & Alerts only)
-   ------------------------------------------------------ */
-.top-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0.5rem;
-    margin-bottom: 0.5rem;
-    position: relative;
-    z-index: 50;
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-
-/* Logo */
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-main);
-}
-
-.logo i { color: var(--accent); font-size: 1.1rem; }
-
-/* Navbar / Mobile Logo */
-.mobile-logo {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--text-main);
-}
-
-.mobile-logo i {
-    color: var(--accent);
-}
-
-/* Nav Links */
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.nav-links.vertical-nav {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-}
-
-.nav-links a {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 50px;
-    color: var(--text-muted);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: all var(--t-fast);
-    border: 1px solid transparent;
-}
-
-.nav-links a i { font-size: 1.1rem; width: 20px; text-align: center; }
-
-.nav-links a:hover {
-    color: var(--text-main);
-    background-color: rgba(0,0,0,0.03);
-}
-
-.nav-links a.active {
-    background-color: var(--accent-light);
-    color: var(--accent);
-    font-weight: 600;
-    border: 1px solid var(--accent);
-}
-
-.sidebar-logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 50px;
-    color: #ef4444; /* red color for logout */
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: all var(--t-fast);
-    border: 1px solid transparent;
-}
-
-.sidebar-logout-btn i { font-size: 1.1rem; width: 20px; text-align: center; }
-
-.sidebar-logout-btn:hover {
-    background-color: #fef2f2; /* light red background on hover */
-}
-
-/* Active click press effect */
-.nav-links a:active,
-.sidebar-logout-btn:active {
-    transform: scale(0.95);
-}
-
-/* Navbar Right */
-.navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.icon-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--r-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    color: var(--text-muted);
-    transition: all var(--t-fast);
-    position: relative;
-}
-
-.icon-btn:hover {
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    transform: scale(1.08);
-}
-
-/* Notification badge */
-.notification-btn::after {
-    content: '';
-    position: absolute;
-    top: 7px;
-    right: 7px;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: var(--r-full);
-    border: 2px solid var(--bg-card);
-}
-
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--r-full);
-    object-fit: cover;
-    border: 2px solid var(--accent-light);
-    transition: transform var(--t-fast), box-shadow var(--t-fast);
-}
-
-.avatar:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 3px var(--accent-light);
-}
-
-.mobile-menu-btn {
-    display: none;
-    font-size: 1.2rem;
-    color: var(--text-main);
-    padding: 0.5rem;
-    border-radius: var(--r-sm);
-    transition: background var(--t-fast);
-}
-
-.mobile-menu-btn:hover { background: var(--bg-main); }
-
-/* Profile Dropdown */
-.profile-dropdown {
-    position: absolute;
-    top: 55px;
-    right: 0;
-    width: 260px;
-    background: var(--bg-card);
-    border-radius: var(--r-md);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border);
-    z-index: 1300;
-    overflow: hidden;
-    animation: fadeUp 0.2s ease-out;
-}
-
-.profile-header {
-    padding: 1.25rem 1.25rem 1rem;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-}
-
-.profile-header h4 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 0.35rem;
-}
-
-.membership-badge {
-    display: inline-block;
-    background: var(--accent-light);
-    color: var(--accent);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.2rem 0.6rem;
-    border-radius: 50px;
-}
-
-.profile-info-list {
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.info-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-}
-
-.info-row i {
-    width: 16px;
-    text-align: center;
-    color: var(--accent);
-}
-
-.profile-actions {
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.profile-action-btn {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    background: transparent;
-    border: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-main);
-    border-radius: var(--r-sm);
-    transition: background 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.profile-action-btn:hover {
-    background: var(--bg-main);
-}
-
-.text-danger {
-    color: #ef4444;
-}
-
-.text-danger i {
-    color: #ef4444;
-}
+/* Navbar styles moved to navbar.css */
 
 /* ------------------------------------------------------
    Main Content Grid — 2 Column 50/50
@@ -484,14 +263,14 @@ img { display: block; }
    ROW 1 — Welcome Card (Seamless Trainer Blend)
    ------------------------------------------------------ */
 .welcome-card {
-    /* Single flat warm beige — critical for seamless multiply blend */
-    background-color: #f5f0e8;
+    /* Flat color in light theme, beautiful dark linear gradient in dark theme */
+    background: var(--welcome-bg);
     border-radius: var(--r-xl);
     padding: 2.5rem 2.5rem 0 2.5rem;
     position: relative;
     overflow: visible;   /* allow trainer head to pop out above the card */
     box-shadow: var(--shadow-md);
-    border: 1px solid rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
     /* Taller card so full trainer fits head to toe */
     min-height: 360px;
     display: flex;
@@ -522,7 +301,7 @@ img { display: block; }
 }
 
 .welcome-subtext {
-    color: #6b5c46;
+    color: var(--welcome-subtext);
     font-size: 0.92rem;
     font-weight: 400;
     margin-bottom: 2rem;
@@ -551,16 +330,16 @@ img { display: block; }
 }
 
 .m-label {
+    color: var(--welcome-label);
     font-size: 0.72rem;
-    color: #8a7560;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 /* ── Seamless Trainer Image ──
-   The magic: white-background PNG + mix-blend-mode: multiply
-   makes white areas invisible → trainer appears to float on beige.
+   The magic: transparent PNG + mix-blend-mode: normal
+   allows the trainer to appear perfectly sharp and clear on both Light and Dark themes.
    mask-image fades the bottom edge for a clean shadow-free base.
 */
 .fitness-image {
@@ -574,9 +353,8 @@ img { display: block; }
     z-index: 2;
     pointer-events: none;
 
-    /* Multiply blend combined with brightness/contrast boost forces the image's 
-       off-white background to pure white, making it 100% invisible against the card */
-    mix-blend-mode: multiply;
+    /* Transparent PNG allows using normal blend, keeping full crisp colors and contrast */
+    mix-blend-mode: normal;
     filter: contrast(1.15) brightness(1.05);
 
     /* Smooth bottom-only fade — head stays sharp, feet fade cleanly */
@@ -602,6 +380,12 @@ img { display: block; }
 
 .welcome-card:hover .fitness-image {
     transform: scale(1.02);
+}
+
+/* Dark mode overrides for the transparent trainer photo to fit the dark aesthetic */
+.dashboard-container.theme-dark .fitness-image {
+    mix-blend-mode: normal;
+    filter: brightness(0.95) contrast(1.05);
 }
 
 /* ------------------------------------------------------
@@ -798,10 +582,6 @@ img { display: block; }
     box-shadow: var(--shadow-lg);
 }
 
-.dark-card:active {
-    transform: scale(0.985);
-}
-
 .dark-card:hover::after { opacity: 1; }
 
 .dark-card-header {
@@ -853,18 +633,14 @@ img { display: block; }
     color: white;
 }
 
-.view-all-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
 /* Activity List */
 .activity-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    height: 100%;
-    justify-content: space-between;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .activity-item {
@@ -873,16 +649,10 @@ img { display: block; }
     gap: 1rem;
     padding: 0.85rem 1rem;
     border-radius: var(--r-md);
-    transition:
-    background var(--t-fast),
-    transform 0.18s ease;
+    transition: background var(--t-fast);
 }
 
-.activity-item:hover { background-color: #fafafa; }
-
-.activity-item:active {
-    transform: scale(0.99);
-}
+.activity-item:hover { background-color: #ffaf7a; }
 
 .act-avatar {
     width: 42px;
@@ -931,16 +701,10 @@ img { display: block; }
     gap: 1rem;
     padding: 0.85rem 1rem;
     border-radius: var(--r-md);
-    transition:
-    background var(--t-fast),
-    transform 0.18s ease;
+    transition: background var(--t-fast);
 }
 
-.workout-item:hover { background-color: #fafafa; }
-
-.workout-item:active {
-    transform: scale(0.99);
-}
+.workout-item:hover { background-color: #ffb98a; }
 
 .workout-icon img {
     width: 44px;
@@ -1024,44 +788,6 @@ img { display: block; }
     box-shadow: 0 8px 24px rgba(232,129,58,0.15);
 }
 
-.action-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
-/* Notification Button Active Feedback */
-.notification-active {
-    transform: scale(0.92);
-    transition: transform 0.2s ease;
-}
-
-/* Smooth Interactive Transitions */
-.action-btn,
-.profile-action-btn,
-.tab-btn {
-    transition:
-        background-color 0.25s ease,
-        color 0.25s ease,
-        transform 0.2s ease,
-        box-shadow 0.25s ease;
-}
-
-.action-btn:active {
-    transform: translateY(-1px) scale(0.98);
-}
-
-.profile-action-btn:active,
-.tab-btn:active {
-    transform: scale(0.97);
-}
-
-.action-btn:focus-visible,
-.profile-action-btn:focus-visible,
-.tab-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-}
-
 .action-btn i {
     font-size: 1.4rem;
     color: var(--text-muted);
@@ -1085,23 +811,16 @@ img { display: block; }
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    background: #fafaf9;
+    background: var(--bg-progress-item);
     padding: 1rem 1.25rem;
     border-radius: var(--r-md);
     border: 1px solid var(--border);
-    transition:
-    background var(--t-fast),
-    border-color var(--t-fast),
-    transform 0.18s ease;
+    transition: all var(--t-fast);
 }
 
 .progress-item:hover {
-    background: #f5f3ef;
+    background: var(--bg-progress-item-hover);
     border-color: rgba(232,129,58,0.2);
-}
-
-.progress-item:active {
-    transform: scale(0.99);
 }
 
 .progress-info {
@@ -1144,7 +863,7 @@ img { display: block; }
 .progress-bar-container {
     width: 100%;
     height: 7px;
-    background-color: #e5e7eb;
+    background-color: var(--bg-progress-track);
     border-radius: var(--r-full);
     overflow: hidden;
 }
@@ -1229,158 +948,58 @@ img { display: block; }
     }
 
     .welcome-card {
-        padding: 2rem 2rem 1rem 2rem;
+        padding: 2rem 2rem 0 2rem;
         min-height: 240px;
-        align-items: flex-start;
     }
 
-    .welcome-content { max-width: 60%; }
+    .welcome-content { max-width: 68%; }
 
     .fitness-image {
         max-height: 290px;
     }
 
-    .nav-links { 
-        display: flex;
-        flex-direction: column;
-    }
+    .nav-links { display: none; }
 
-    .mobile-menu-btn { display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .mobile-logo {
-        display: flex;
-    }
-
-    .sidebar {
-        position: fixed;
-        left: -100%;
-        transform: translateX(-8px);
-        top: 0;
-        height: 100vh;
-        width: min(75vw, 240px);
-        z-index: 1200;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        transition:
-            left 0.3s ease,
-            transform 0.3s ease,
-            box-shadow 0.3s ease;
-        box-shadow: var(--shadow-lg);
-        padding: 2rem 1.5rem;
-        gap: 2rem;
-        background: linear-gradient(160deg, var(--bg-card) 0%, #faf8f5 100%);
-    }
-
-    /* 4 & 5. Active outline removal & Color Hierarchy */
-    .sidebar .nav-links a {
-        color: #52525b; /* Stronger inactive contrast */
-        -webkit-tap-highlight-color: transparent; /* Remove blue tap flash */
-        outline: none;
-    }
-    .sidebar .nav-links a:focus,
-    .sidebar .nav-links a:active {
-        outline: none !important; /* Remove blue focus border */
-    }
-    /* 2. Navigation Item Spacing */
-    .sidebar .nav-links.vertical-nav {
-        gap: 0.35rem; /* Closer but breathable */
-    }
-    /* 7 & 9. Logout Button Position & Separation */
-    .sidebar-bottom {
-        margin-top: 3rem !important; /* Pulls up from the absolute bottom edge */
-        padding-top: 1.5rem;
-        border-top: 1px solid rgba(0,0,0,0.06); /* Subtle divider */
-    }
-
-    .sidebar.mobile-open {
-        left: 0;
-        transform: translateX(0);
-        box-shadow: 0 0 40px rgba(0,0,0,0.25);
-    }
-
-    .top-navbar {
-        z-index: 1000;
-    }
-
-    body.sidebar-open {
-        overflow: hidden;
-    }
-
-    body.sidebar-open::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        z-index: 1100;
-        animation: sidebarOverlayFade 0.25s ease forwards;
-    }
-
-    @keyframes sidebarOverlayFade {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-    html,
-    body {
-        overflow-x: hidden;
-    }
+    .mobile-menu-btn { display: block; }
 }
+
 /* ---------- Responsive — Mobile ≤768px ---------- */
 @media (max-width: 768px) {
     body { padding: 1rem; }
 
     .welcome-card {
-        padding: 2rem 1.5rem;
+        padding: 1.75rem;
         flex-direction: column;
-        overflow: hidden;
-        min-height: auto;
-        justify-content: center;
+        overflow: visible;
+        min-height: unset;
     }
 
     .welcome-content {
         max-width: 100%;
         padding-bottom: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .welcome-subtext {
-        margin-bottom: 0;
     }
 
     .fitness-image {
-        display: none;
-        /* Hides the image on small screens to save space and prevent layout issues. */
+        position: relative;
+        mix-blend-mode: multiply;
+        height: auto;
+        max-height: 220px;
+        align-self: flex-end;
+        margin-top: -2rem;
+        right: auto;
+        bottom: auto;
+        transform: none;
+        -webkit-mask-image: linear-gradient(to top, transparent 0%, black 25%);
+        mask-image: linear-gradient(to top, transparent 0%, black 25%);
     }
 
-    .mini-stats {
-        gap: 1.25rem;
-        margin-top: 1rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgba(0,0,0,0.06);
-        justify-content: space-between;
+    .welcome-card:hover .fitness-image {
+        transform: none;
     }
 
-    /* Hide Active Plan card and span the last card to maintain grid balance */
-    .dark-cards-grid .dark-card:first-child {
-        display: none;
-    }
-    
-    .dark-cards-grid { 
-        grid-template-columns: 1fr 1fr; 
-    }
-    
-    .dark-cards-grid .dark-card:last-child {
-        grid-column: 1 / -1;
-    }
+    .mini-stats { gap: 1.25rem; }
+
+    .dark-cards-grid { grid-template-columns: 1fr 1fr; }
 
     .quick-actions-grid { grid-template-columns: 1fr 1fr; }
 }
@@ -1389,19 +1008,4 @@ img { display: block; }
     .dark-cards-grid { grid-template-columns: 1fr; }
     .quick-actions-grid { grid-template-columns: 1fr; }
     .welcome-card h1 { font-size: 1.7rem; }
-}
-
-@media (max-width: 1024px) {
-    /* Adjust main-wrapper padding since bottom nav is removed */
-    .main-wrapper {
-        padding:
-            0.85rem
-            0.85rem
-            calc(1.5rem + env(safe-area-inset-bottom))
-            0.85rem;
-    }
-
-    .dashboard-container {
-        padding-bottom: 0 !important;
-    }
 }
