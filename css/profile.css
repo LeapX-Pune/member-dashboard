@@ -1,0 +1,552 @@
+/* ---------------------------------------------------
+   profile.css — Editable User Profile System 
+   Only styles NEW profile elements. Does NOT modify
+   any existing dashboard styles.
+   --------------------------------------------------- */
+
+/* --- Profile Avatar in Navbar --- */
+.avatar-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8813a, #c96a20);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid rgba(232, 129, 58, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+}
+
+.avatar-initials img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.avatar-initials:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px rgba(232, 129, 58, 0.3);
+}
+
+/* --- Profile Completion Bar (in settings) --- */
+.profile-completion-wrap {
+    background: var(--bg-card, #f5f0ea);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border, rgba(0,0,0,0.08));
+}
+
+.profile-completion-wrap h4 {
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-completion-wrap h4 span {
+    font-weight: 700;
+    color: #e8813a;
+}
+
+.completion-bar-track {
+    height: 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.completion-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #e8813a, #f5a361);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Profile Card in Settings --- */
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: var(--bg-card, #f5f0ea);
+    border-radius: 14px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border, rgba(0,0,0,0.08));
+}
+
+.profile-card-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8813a, #c96a20);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 3px solid rgba(232, 129, 58, 0.3);
+}
+
+.profile-card-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-card-info h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main, #1a1a1a);
+    margin: 0 0 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-card-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted, #888);
+    margin: 0 0 0.3rem;
+}
+
+.profile-card-info .profile-membership-id {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #e8813a;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.profile-edit-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #e8813a;
+    background: transparent;
+    color: #e8813a;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn:hover {
+    background: #e8813a;
+    color: #fff;
+}
+
+/* --- Membership ID badge in profile form --- */
+.profile-meta-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: rgba(232, 129, 58, 0.12);
+    color: #e8813a;
+    border: 1px solid rgba(232, 129, 58, 0.25);
+}
+
+/* --- Edit Profile Modal --- */
+.profile-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.profile-modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.profile-modal {
+    background: var(--bg-main, #faf7f3);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    scrollbar-width: thin;
+}
+
+.profile-modal-overlay.visible .profile-modal {
+    transform: translateY(0) scale(1);
+}
+
+.profile-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.08));
+    position: sticky;
+    top: 0;
+    background: var(--bg-main, #faf7f3);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
+}
+
+.profile-modal-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main, #1a1a1a);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.profile-modal-header h2 i {
+    color: #e8813a;
+    font-size: 1rem;
+}
+
+.profile-modal-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-card, #f0ece5);
+    color: var(--text-muted, #888);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: background 0.18s, color 0.18s;
+}
+
+.profile-modal-close:hover {
+    background: #e8813a;
+    color: #fff;
+}
+
+.profile-modal-body {
+    padding: 1.5rem;
+}
+
+/* Avatar picker inside modal */
+.modal-avatar-picker {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.08));
+}
+
+.modal-avatar-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8813a, #c96a20);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 3px solid rgba(232, 129, 58, 0.3);
+    position: relative;
+}
+
+.modal-avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.modal-avatar-info h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main, #1a1a1a);
+    margin: 0 0 0.25rem;
+}
+
+.modal-avatar-info p {
+    font-size: 0.78rem;
+    color: var(--text-muted, #888);
+    margin: 0 0 0.6rem;
+}
+
+.modal-avatar-url-input {
+    width: 100%;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border, rgba(0,0,0,0.12));
+    background: var(--bg-main, #faf7f3);
+    color: var(--text-main, #1a1a1a);
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.18s;
+}
+
+.modal-avatar-url-input:focus {
+    border-color: #e8813a;
+}
+
+/* Form fields in modal */
+.modal-field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-field-group.full {
+    grid-template-columns: 1fr;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.modal-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border, rgba(0,0,0,0.12));
+    background: var(--bg-main, #faf7f3);
+    color: var(--text-main, #1a1a1a);
+    font-size: 0.875rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.modal-field input:focus,
+.modal-field select:focus,
+.modal-field textarea:focus {
+    border-color: #e8813a;
+    box-shadow: 0 0 0 3px rgba(232, 129, 58, 0.15);
+}
+
+.modal-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.modal-field input[readonly] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Modal Footer */
+.profile-modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border, rgba(0,0,0,0.08));
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-main, #faf7f3);
+    border-radius: 0 0 20px 20px;
+}
+
+.modal-btn-cancel {
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border, rgba(0,0,0,0.12));
+    background: transparent;
+    color: var(--text-muted, #888);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.modal-btn-cancel:hover {
+    border-color: var(--text-muted, #888);
+    color: var(--text-main, #1a1a1a);
+}
+
+.modal-btn-save {
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #e8813a, #c96a20);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.modal-btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(232, 129, 58, 0.4);
+}
+
+.modal-btn-save.saving {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* Toast notification */
+.profile-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    z-index: 10001;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    transform: translateY(8px);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+}
+
+.profile-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.profile-toast i {
+    color: #39ff14;
+    font-size: 1rem;
+}
+
+/* --- Dark Mode overrides --- */
+.dashboard-container.theme-dark .profile-modal {
+    background: #1a1a1a;
+}
+
+.dashboard-container.theme-dark .profile-modal-header {
+    background: #1a1a1a;
+    border-bottom-color: rgba(255,255,255,0.08);
+}
+
+.dashboard-container.theme-dark .profile-modal-footer {
+    background: #1a1a1a;
+    border-top-color: rgba(255,255,255,0.08);
+}
+
+.dashboard-container.theme-dark .profile-modal-close {
+    background: rgba(255,255,255,0.08);
+    color: #aaa;
+}
+
+.dashboard-container.theme-dark .modal-field input,
+.dashboard-container.theme-dark .modal-field select,
+.dashboard-container.theme-dark .modal-field textarea,
+.dashboard-container.theme-dark .modal-avatar-url-input {
+    background: #111;
+    border-color: rgba(255,255,255,0.1);
+    color: #f0ece5;
+}
+
+.dashboard-container.theme-dark .modal-field input:focus,
+.dashboard-container.theme-dark .modal-field select:focus,
+.dashboard-container.theme-dark .modal-field textarea:focus {
+    border-color: #e8813a;
+}
+
+.dashboard-container.theme-dark .profile-card-header,
+.dashboard-container.theme-dark .profile-completion-wrap {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.08);
+}
+
+.dashboard-container.theme-dark .profile-card-info h3 {
+    color: #f0ece5;
+}
+
+.dashboard-container.theme-dark .modal-btn-cancel {
+    border-color: rgba(255,255,255,0.12);
+    color: #aaa;
+}
+
+.dashboard-container.theme-dark .modal-btn-cancel:hover {
+    color: #f0ece5;
+    border-color: rgba(255,255,255,0.3);
+}
+
+.dashboard-container.theme-dark .profile-toast {
+    background: #2a2a2a;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* --- Responsive --- */
+@media (max-width: 560px) {
+    .modal-field-group {
+        grid-template-columns: 1fr;
+    }
+    .profile-modal-footer {
+        flex-direction: column-reverse;
+    }
+    .modal-btn-cancel,
+    .modal-btn-save {
+        width: 100%;
+        justify-content: center;
+    }
+}
