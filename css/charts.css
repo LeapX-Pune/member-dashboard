@@ -1,9 +1,9 @@
 /* Light Theme (Default) */
 :root {
   /* Backgrounds & Surfaces */
-  --chart-bg-main: #DFCAB4;       /* Pure White App Background */
-  --chart-surface: #FDF4ED;       /* Light Beige Card Surface */
-  --chart-sidebar-bg: #F5E8DC;    /* Light Warm Beige Sidebar */
+  --chart-bg-main: #FDF4ED;       /* Pure White App Background */
+  --chart-surface: #DFCAB4;       /* Light Beige Card Surface */
+  --chart-sidebar-bg: #e4d1be;    /* Light Warm Beige Sidebar */
   
   /* Borders */
   --chart-border: #E1C4B0;        /* Tan / Light Brown Divider */
@@ -15,7 +15,7 @@
   /* Rings / Activity (Using Image Palette) */
   --chart-ring-move: #F15C05;     /* Vibrant Orange */
   --chart-ring-exercise: #593A27; /* Dark Brown */
-  --chart-ring-stand: #DFB4CA;    /* Tan / Light Brown */
+  --chart-ring-stand: #593A27;    /* Tan / Light Brown */
   
   /* States */
   --chart-focus: #593A27;         /* Elevated Card (Dark Brown) */
@@ -28,24 +28,263 @@
 .theme-dark {
   /* Backgrounds & Surfaces */
   --chart-bg-main: #1C1A17;       /* Earthy Charcoal App Background */
-  --chart-surface: #3A271B;       /* Dark Brown Card Surface */
+  --chart-surface: #1A1D1D;       /* Dark Brown Card Surface */
   --chart-sidebar-bg: #261A14;    /* Deep Mocha Sidebar */
   
   /* Borders */
-  --chart-border: #593A27;        /* Solid Brown Divider */
+  --chart-border: #2b3333;        /* Solid Brown Divider */
   
   /* Typography */
   --chart-text-primary: #FFFFFF;  /* Pure White Text */
   --chart-text-secondary: #B1A296;/* Muted Light Beige Text */
   
   /* Rings / Activity (Using Image Palette) */
-  --chart-ring-move: #F15C05;     /* Vibrant Orange */
-  --chart-ring-exercise: #FDF4ED; /* Light Beige */
-  --chart-ring-stand: #E1C4B0;    /* Tan / Light Brown */
+  --chart-ring-move: #Ff5C05;     /* Vibrant Orange */
+  --chart-ring-exercise: #E1C4B0; /* Light Beige total session */
+  --chart-ring-stand: #E1C4B0;    /* Tan / Light Brown attendance */
   
   /* States */
   --chart-focus: #E1C4B0;         /* Elevated Card (Tan) */
   --chart-alert: #FF5252;         /* Alert Red */
   --chart-goal: #F15C05;          /* Orange Accent */
   --chart-disabled: #2A1E15;      /* Disabled Dark Brown */
+}
+
+/* ==========================================================================
+   Analytics Dashboard Layout & Component Styles 
+   These styles are specifically for the Analytics tab to override 
+   the default dashboard styling and provide a custom theme-aware grid layout.
+   ========================================================================== */
+.analytics-override {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    background-color: var(--chart-bg-main);
+    width: 100%;
+    min-height: 100%;
+}
+.analytics-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    flex: 1;
+    padding: 1rem 0;
+}
+.analytics-top-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+.analytics-card {
+    background-color: var(--chart-surface);
+    border: 1px solid var(--chart-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.analytics-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+.analytics-card h3 {
+    color: var(--chart-text-primary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+/* ==========================================================================
+   Circular Progress Rings (Top Row Cards)
+   Creates an animated conic-gradient ring using a mask-composite approach
+   ========================================================================== */
+.ring-container {
+    width: 130px;
+    height: 130px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.ring-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 7px;
+    background: conic-gradient(var(--ring-color) 0% var(--ring-pct, 0%), var(--chart-disabled) var(--ring-pct, 0%) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* Adding glows */
+.ring-container::after { content:''; position:absolute; inset:0; border-radius:50%; box-shadow: 0 0 12px var(--ring-color); opacity: 0.4; pointer-events:none; }
+
+.ring-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--chart-text-primary);
+}
+.ring-content i {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+.ring-content .value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.ring-content .unit {
+    font-size: 0.65rem;
+    color: var(--chart-text-secondary);
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+}
+.analytics-card-footer {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--chart-text-secondary);
+}
+
+/* ==========================================================================
+   Charts & Data Visualization (Bottom Row)
+   ========================================================================== */
+.analytics-bottom-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    flex: 1;
+}
+.chart-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--chart-surface);
+    border: 1px solid var(--chart-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chart-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+.chart-card h3 {
+    color: var(--chart-text-primary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+.chart-container {
+    flex: 1;
+    min-height: 350px;
+    width: 100%;
+    position: relative;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints for Analytics Grid
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .analytics-top-row { grid-template-columns: repeat(2, 1fr); }
+    .analytics-bottom-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    .analytics-top-row { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Global Theme Overrides
+   Forces the sidebar, top-nav, and main background to match the Analytics
+   theme whenever the Analytics tab (#wip-view) is active/visible.
+   Uses the :has() selector for parent DOM manipulation without JS.
+   ========================================================================== */
+:root:has(#wip-view[style*="display: flex"]) #dashboardContainer,
+:root:has(#wip-view[style*="display: flex"]) #dashboardContainer .main-wrapper {
+    background-color: var(--chart-bg-main) !important;
+}
+
+:root:has(#wip-view[style*="display: flex"]) #dashboardContainer .sidebar {
+    background-color: var(--chart-sidebar-bg) !important;
+    border-right-color: var(--chart-border) !important;
+}
+
+:root:has(#wip-view[style*="display: flex"]) #dashboardContainer .top-navbar {
+    background-color: transparent !important;
+    border-bottom-color: var(--chart-border) !important;
+}
+
+/* ==========================================================================
+   Extracted Inline Styles (Dynamic Component Coloring)
+   Maps the specific CSS variables to individual ring components to ensure
+   they inherit the correct Light/Dark theme colors defined at the top.
+   ========================================================================== */
+#stat-sessions-ring {
+    --ring-color: var(--chart-ring-exercise);
+    --ring-pct: 0%;
+}
+#stat-sessions-ring .ring-content i {
+    color: var(--chart-ring-exercise);
+}
+
+#stat-points-ring {
+    --ring-color: var(--chart-goal);
+    --ring-pct: 0%;
+}
+#stat-points-ring .ring-content i {
+    color: var(--chart-goal);
+}
+
+#stat-attendance-ring {
+    --ring-color: var(--chart-ring-stand);
+    --ring-pct: 0%;
+}
+#stat-attendance-ring .ring-content i {
+    color: var(--chart-ring-stand);
+}
+
+#stat-hours-ring {
+    --ring-color: var(--chart-ring-move);
+    --ring-pct: 0%;
+}
+#stat-hours-ring .ring-content i {
+    color: var(--chart-ring-move);
+}
+
+.activity-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.activity-progress-header h3 {
+    margin: 0;
+}
+.activity-progress-legend {
+    font-size: 0.75rem;
+    color: var(--chart-text-secondary);
+    display: flex;
+    gap: 1rem;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.legend-color-sessions {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--chart-ring-exercise);
+    box-shadow: 0 0 5px var(--chart-ring-exercise);
 }

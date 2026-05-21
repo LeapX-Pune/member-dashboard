@@ -1,6 +1,7 @@
 /**
  * js/charts.js
  * Chart orchestration logic for the Member Dashboard.
+ * Handles the dynamic rendering of top stat rings and the Activity Progress line chart.
  * Designed for a single active user.
  */
 
@@ -14,8 +15,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const data = window.mockData;
     const stats = data.membershipStats;
     
-    // --- Dynamic DOM Hydration for Top & Mid Rows ---
-    // Prepare the rings for animation
+    // --- Dynamic DOM Hydration for Top Row Rings ---
+    // Helper function to initialize a ring's DOM elements and calculate its target percentage based on a goal.
     const prepareRingData = (idPrefix, value, goal) => {
         const ring = document.getElementById(idPrefix + '-ring');
         const valEl = document.getElementById(idPrefix + '-val');
@@ -38,6 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Animation Function for a Single Ring
+    // Animates the number value from 0 to the target value, and the ring progress from 0% to the target percentage using a custom easing function.
     const animateRing = (item) => {
         if (!item.ring) return;
         const duration = 1000; // 1s duration
@@ -65,7 +67,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     // 2. Global Theme Settings for Charts
-    // Extract computed styles from document to pass actual hex to canvas
+    // Extract base computed styles from document to pass actual hex colors to the canvas.
     const rootStyle = getComputedStyle(document.body);
     const THEME = {
         primary: '#F15C05', // Fallback for Orange
@@ -76,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
         fontFamily: "'Inter', sans-serif"
     };
 
-    // Try to dynamically extract current CSS variable values (so chart matches theme)
+    // Try to dynamically extract current CSS variable values (so chart matches the active Light/Dark theme overrides in charts.css)
     const updateThemeFromCSS = () => {
         const computed = getComputedStyle(document.getElementById('dashboardContainer') || document.body);
         const primaryColor = computed.getPropertyValue('--chart-ring-exercise').trim();
@@ -183,6 +185,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     // 5. Intersection Observer to Trigger Animations on View
+    // Ensures charts and rings only animate when the Analytics tab becomes visible.
     const wipView = document.getElementById('wip-view');
     let hasAnimated = false;
     

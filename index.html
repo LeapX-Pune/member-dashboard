@@ -1044,222 +1044,55 @@
 
         <!------------ Analytics View ------------>
         <main class="wip-view analytics-override" id="wip-view" style="display: none;" aria-label="Analytics">
-            <style>
-                .analytics-override {
-                    align-items: flex-start !important;
-                    justify-content: flex-start !important;
-                    background-color: var(--chart-bg-main);
-                    width: 100%;
-                    min-height: 100%;
-                }
-                .analytics-dashboard {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                    width: 100%;
-                    flex: 1;
-                    padding: 1rem 0;
-                }
-                .analytics-top-row {
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 1.5rem;
-                }
-                .analytics-card {
-                    background-color: var(--chart-surface);
-                    border: 1px solid var(--chart-border);
-                    border-radius: 16px;
-                    padding: 1.5rem;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    position: relative;
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                .analytics-card:hover {
-                    transform: translateY(-6px);
-                    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-                }
-
-                .analytics-card:active {
-                    transform: scale(0.985);
-                }
-
-                .analytics-card:focus-within,
-                .chart-card:focus-within {
-                    outline: 2px solid var(--chart-ring-exercise);
-                    outline-offset: 3px;
-                }
-
-                .analytics-card h3 {
-                    color: var(--chart-text-primary);
-                    font-size: 0.75rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.1em;
-                    margin-bottom: 1.5rem;
-                    font-weight: 600;
-                }
-                .ring-container {
-                    width: 130px;
-                    height: 130px;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 50%;
-                }
-                .ring-container::before {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    border-radius: 50%;
-                    padding: 7px;
-                    background: conic-gradient(var(--ring-color) 0% var(--ring-pct, 0%), var(--chart-disabled) var(--ring-pct, 0%) 100%);
-                    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                    -webkit-mask-composite: xor;
-                    mask-composite: exclude;
-                }
-                
-                /* Adding glows */
-                .ring-container::after { content:''; position:absolute; inset:0; border-radius:50%; box-shadow: 0 0 15px var(--ring-color); opacity: 0.4; pointer-events:none; }
-
-                .ring-content {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    color: var(--chart-text-primary);
-                }
-                .ring-content i {
-                    font-size: 1.2rem;
-                    margin-bottom: 0.25rem;
-                }
-                .ring-content .value {
-                    font-size: 2rem;
-                    font-weight: 700;
-                    line-height: 1.1;
-                }
-                .ring-content .unit {
-                    font-size: 0.65rem;
-                    color: var(--chart-text-secondary);
-                    text-transform: uppercase;
-                    margin-top: 0.25rem;
-                }
-                .analytics-card-footer {
-                    margin-top: 1.5rem;
-                    font-size: 0.75rem;
-                    color: var(--chart-text-secondary);
-                }
-
-
-
-                .analytics-bottom-row {
-                    display: grid;
-                    grid-template-columns: 2fr 1fr;
-                    gap: 1.5rem;
-                    flex: 1;
-                }
-                .chart-card {
-                    display: flex;
-                    flex-direction: column;
-                    background-color: var(--chart-surface);
-                    border: 1px solid var(--chart-border);
-                    border-radius: 16px;
-                    padding: 1.5rem;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                    transition: transform 0.25s ease,box-shadow 0.25s ease,border-color 0.25s ease; 
-                }
-                .chart-card:hover {
-                    transform: translateY(-6px);
-                    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-                }
-
-                .chart-card:active {
-                    transform: scale(0.985);
-                }
-
-                .chart-card h3 {
-                    color: var(--chart-text-primary);
-                    font-size: 0.85rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.1em;
-                    margin-bottom: 1.5rem;
-                    font-weight: 600;
-                }
-                .chart-container {
-                    flex: 1;
-                    min-height: 350px;
-                    width: 100%;
-                    position: relative;
-                }
-
-                @media (max-width: 1024px) {
-                    .analytics-top-row { grid-template-columns: repeat(2, 1fr); }
-                    .analytics-bottom-row { grid-template-columns: 1fr; }
-                }
-                @media (max-width: 600px) {
-                    .analytics-top-row { grid-template-columns: 1fr; }
-                }
-
-                /* Full Website Background Override for Analytics Tab */
-                :root:has(#wip-view[style*="display: flex"]) #dashboardContainer,
-                :root:has(#wip-view[style*="display: flex"]) #dashboardContainer .main-wrapper {
-                    background-color: var(--chart-bg-main) !important;
-                }
-                
-                :root:has(#wip-view[style*="display: flex"]) #dashboardContainer .sidebar {
-                    background-color: var(--chart-sidebar-bg) !important;
-                    border-right-color: var(--chart-border) !important;
-                }
-                
-                :root:has(#wip-view[style*="display: flex"]) #dashboardContainer .top-navbar {
-                    background-color: transparent !important;
-                    border-bottom-color: var(--chart-border) !important;
-                }
-            </style>
+            <!-- External CSS specifically for analytics dashboard layout and theme overrides -->
+            <link rel="stylesheet" href="./css/charts.css">
             
             <div class="analytics-dashboard">
-                <!-- Top Row -->
+                <!-- Top Row: Displays 4 key membership metrics using circular animated rings -->
                 <div class="analytics-top-row">
+                    
+                    <!-- Metric 1: Total Sessions -->
                     <div class="analytics-card">
                         <h3>Total Sessions</h3>
-                        <div class="ring-container" id="stat-sessions-ring" style="--ring-color:var(--chart-ring-exercise); --ring-pct:0%;">
+                        <div class="ring-container" id="stat-sessions-ring">
                             <div class="ring-content">
-                                <i class="fa-solid fa-dumbbell" style="color:var(--chart-ring-exercise)"></i>
+                                <i class="fa-solid fa-dumbbell"></i>
                                 <span class="value" id="stat-sessions-val">0</span>
                                 <span class="unit">Sessions</span>
                             </div>
                         </div>
 
                     </div>
+                    <!-- Metric 2: Reward Points -->
                     <div class="analytics-card">
                         <h3>Reward Points</h3>
-                        <div class="ring-container" id="stat-points-ring" style="--ring-color:var(--chart-goal); --ring-pct:0%;">
+                        <div class="ring-container" id="stat-points-ring">
                             <div class="ring-content">
-                                <i class="fa-solid fa-star" style="color:var(--chart-goal)"></i>
+                                <i class="fa-solid fa-star"></i>
                                 <span class="value" id="stat-points-val">0</span>
                                 <span class="unit">Pts</span>
                             </div>
                         </div>
 
                     </div>
+                    <!-- Metric 3: Attendance Rate -->
                     <div class="analytics-card">
                         <h3>Attendance Rate</h3>
-                        <div class="ring-container" id="stat-attendance-ring" style="--ring-color:var(--chart-ring-stand); --ring-pct:0%;">
+                        <div class="ring-container" id="stat-attendance-ring">
                             <div class="ring-content">
-                                <i class="fa-regular fa-calendar-check" style="color:var(--chart-ring-stand)"></i>
+                                <i class="fa-regular fa-calendar-check"></i>
                                 <span class="value" id="stat-attendance-val">0</span>
                                 <span class="unit">%</span>
                             </div>
                         </div>
 
                     </div>
+                    <!-- Metric 4: Hours Burned -->
                     <div class="analytics-card">
                         <h3>Hours Burned</h3>
-                        <div class="ring-container" id="stat-hours-ring" style="--ring-color:var(--chart-ring-move); --ring-pct:0%;">
+                        <div class="ring-container" id="stat-hours-ring">
                             <div class="ring-content">
-                                <i class="fa-solid fa-fire" style="color:var(--chart-ring-move)"></i>
+                                <i class="fa-solid fa-fire"></i>
                                 <span class="value" id="stat-hours-val">0</span>
                                 <span class="unit">Hrs</span>
                             </div>
@@ -1270,13 +1103,15 @@
                 
 
                 
-                <!-- Bottom Row -->
+                <!-- Bottom Row: Displays detailed charts and data visualizations -->
                 <div class="analytics-bottom-row">
+                    
+                    <!-- Line Chart: Activity Progress -->
                     <div class="chart-card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                            <h3 style="margin:0;">Activity Progress</h3>
-                            <div style="font-size:0.75rem; color:var(--chart-text-secondary); display:flex; gap:1rem;">
-                                <span style="display:flex; align-items:center; gap:0.4rem;"><span style="width:8px; height:8px; border-radius:50%; background:var(--chart-ring-exercise); box-shadow: 0 0 5px var(--chart-ring-exercise);"></span>Sessions</span>
+                        <div class="activity-progress-header">
+                            <h3>Activity Progress</h3>
+                            <div class="activity-progress-legend">
+                                <span class="legend-item"><span class="legend-color-sessions"></span>Sessions</span>
                             </div>
                         </div>
                         <div class="chart-container">
@@ -1284,9 +1119,10 @@
                         </div>
                     </div>
                     
+                    <!-- Placeholder Chart: Membership Usage -->
                     <div class="chart-card">
                         <h3>Membership Usage</h3>
-                        <div class="chart-container" style="position: relative;">
+                        <div class="chart-container">
                             
                         </div>
                     </div>
