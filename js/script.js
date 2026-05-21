@@ -26,6 +26,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function dismissLogin(target) {
         if (!loginOverlay) return;
 
+        if (loginTimerId) {
+            clearTimeout(loginTimerId);
+            loginTimerId = null;
+        }
+
+        if (loginSubmitBtn) {
+            loginSubmitBtn.disabled = false;
+            loginSubmitBtn.classList.remove('loading');
+            loginSubmitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Dashboard';
+        }
+
+        if (target === 'dashboard' && loginForm) {
+            loginForm.reset();
+        }
         // Immediately hide — do NOT rely on animationend which can fail when
         // the tab is inactive or CSS animations are disabled.
         loginOverlay.style.display = 'none';
@@ -41,13 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // X Button — skip to Landing Page (blocked while sign-in is in progress)
-    if (loginCloseBtn) {
-        loginCloseBtn.addEventListener('click', () => {
-            if (!loginSubmitBtn || !loginSubmitBtn.classList.contains('loading')) {
+        if (loginCloseBtn) {
+            loginCloseBtn.addEventListener('click', () => {
                 dismissLogin('landing');
-            }
-        });
-    }
+            });
+        }
 
     // Form submit — simulate login, then enter dashboard
     if (loginForm) {
@@ -85,10 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Open Login Overlay from Landing Page
     const openLoginBtn = document.getElementById('openLoginBtn');
+
     if (openLoginBtn) {
+
         openLoginBtn.addEventListener('click', (e) => {
+
             e.preventDefault();
+
+            const sidebar = document.querySelector('.sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const icon = mobileMenuBtn?.querySelector('i');
+
+            // Reset Sidebar State
+            if (sidebar) {
+                sidebar.classList.remove('mobile-open');
+            }
+
+            document.body.classList.remove('sidebar-open');
+
+            // Reset Hamburger Icon
+            if (icon) {
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-xmark');
+            }
+
+            // Reset Login Form
+            if (loginForm) {
+                loginForm.reset();
+            }
+
+            // Open Login Overlay
             if (loginOverlay) {
+
                 if (loginTimerId) {
                     clearTimeout(loginTimerId);
                     loginTimerId = null;
@@ -96,11 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 loginOverlay.style.display = 'flex';
                 loginOverlay.classList.remove('hidden');
-                // Reset submit button state
+
+                // Reset Submit Button State
                 if (loginSubmitBtn) {
+
                     loginSubmitBtn.classList.remove('loading');
                     loginSubmitBtn.disabled = false;
-                    loginSubmitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Dashboard';
+
+                    loginSubmitBtn.innerHTML =
+                        '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Dashboard';
                 }
             }
         });
@@ -110,6 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const userAvatar = document.getElementById('userAvatar');
     const profileDropdown = document.getElementById('profileDropdown');
 
+    const notificationBtn = document.getElementById('notificationBtn');
+    if (notificationBtn) {
+
+        notificationBtn.addEventListener('click', () => {
+            console.log('Notification panel triggered.');
+            notificationBtn.classList.add('notification-active');
+            setTimeout(() => {
+                notificationBtn.classList.remove('notification-active');
+            }, 250);
+        });
+    }
+
     // Prevent reload/jump on Logout buttons (Sidebar and Profile Dropdown)
     const sidebarLogoutBtn = document.getElementById('sidebarLogoutBtn');
     const profileLogoutBtn = document.querySelector('.profile-action-btn.text-danger');
@@ -117,10 +173,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleLogout(e) {
         e.preventDefault();
-        // Go back to landing page
+
         if (dashboardContainer) dashboardContainer.style.display = 'none';
         if (landingContainer) landingContainer.style.display = 'flex';
         if (profileDropdown) profileDropdown.style.display = 'none';
+
+        const sidebar = document.querySelector('.sidebar');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const icon = mobileMenuBtn?.querySelector('i');
+
+        if (sidebar) {
+            sidebar.classList.remove('mobile-open');
+        }
+
+        document.body.classList.remove('sidebar-open');
+
+        if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-xmark');
+        }
     }
 
     if (sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
@@ -153,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mobile Menu Elements
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.querySelector('.sidebar');
     const navLinksContainer = document.querySelector('.nav-links');
     const navLinks = document.querySelectorAll('.nav-links a');
 
@@ -162,25 +234,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsView = document.getElementById('settings-view');
     const wipView = document.getElementById('wip-view');
 
-    // Mobile Menu Toggle
-    if (mobileMenuBtn && navLinksContainer) {
+    // Mobile Sidebar Toggle
+    if (mobileMenuBtn && sidebar) {
 
-        mobileMenuBtn.addEventListener('click', () => {
-            if (navLinksContainer.style.display === 'flex') {
-                navLinksContainer.style.display = 'none';
-            } else {
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('mobile-open');
+            document.body.classList.toggle('sidebar-open', sidebar.classList.contains('mobile-open'));
 
-                navLinksContainer.style.display = 'flex';
-                navLinksContainer.style.flexDirection = 'column';
-                navLinksContainer.style.position = 'absolute';
-                navLinksContainer.style.top = '70px';
-                navLinksContainer.style.left = '0';
-                navLinksContainer.style.right = '0';
-                navLinksContainer.style.backgroundColor = 'var(--bg-card)';
-                navLinksContainer.style.padding = '1rem';
-                navLinksContainer.style.borderRadius = 'var(--radius-lg)';
-                navLinksContainer.style.boxShadow = 'var(--shadow-md)';
-                navLinksContainer.style.zIndex = '100';
+            const icon = mobileMenuBtn.querySelector('i');
+
+            if (icon) {
+                icon.classList.toggle('fa-bars', !sidebar.classList.contains('mobile-open'));
+                icon.classList.toggle('fa-xmark', sidebar.classList.contains('mobile-open'));
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            const clickedInsideSidebar = sidebar.contains(e.target);
+            const clickedMenuButton = mobileMenuBtn.contains(e.target);
+
+            if (
+                window.innerWidth <= 1024 &&
+                sidebar.classList.contains('mobile-open') &&
+                !clickedInsideSidebar &&
+                !clickedMenuButton
+            ) {
+                sidebar.classList.remove('mobile-open');
+                document.body.classList.remove('sidebar-open');
+
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-xmark');
+            }
             }
         });
     }
@@ -198,83 +286,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Close when clicking outside
         document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target) && e.target !== userAvatar) {
+        
+            const clickedInsideDropdown = profileDropdown.contains(e.target);
+            const clickedAvatar = userAvatar.contains(e.target);
+        
+            if (!clickedInsideDropdown && !clickedAvatar) {
                 profileDropdown.style.display = 'none';
             }
         });
     }
 
 
-    // Navigation Link Handling
-    navLinks.forEach(link => {
-
-        link.addEventListener('click', function (e) {
-
-            e.preventDefault();
-
-            // Remove Active Class
-            navLinks.forEach(l => l.classList.remove('active'));
-
-            // Add Active Class
-            this.classList.add('active');
-
-            // Target View
-            const targetView = this.getAttribute('data-target');
-
-
-
-            // Show Dashboard
-            if (targetView === 'dashboard-view') {
-                if (dashboardView) dashboardView.style.display = 'grid';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Plans
-            else if (targetView === 'plans-view') {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'block';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Settings
-            else if (targetView === 'settings-view') {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'block';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Working In Progress
-            else {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'flex';
-            }
-
-            // Close Mobile Menu
-            if (window.innerWidth <= 1024) {
-
-                if (navLinksContainer) navLinksContainer.style.display = 'none';
-            }
-        });
-    });
-
     // Window Resize Handling
-    window.addEventListener('resize', () => {
-        if (!navLinksContainer) return;
+        window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024 && sidebar) {
+            sidebar.classList.remove('mobile-open');
+            document.body.classList.remove('sidebar-open');
 
-        if (window.innerWidth > 1024) {
-
-            navLinksContainer.removeAttribute('style');
-
-        } else {
-            if (navLinksContainer.style.display !== 'flex') {
-                navLinksContainer.style.display = 'none';
-            }
+        const icon = mobileMenuBtn.querySelector('i');
+        if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-xmark');
+        }
         }
     });
 
