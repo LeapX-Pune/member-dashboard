@@ -201,19 +201,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------- Dynamic Greeting Logic -----------
     const greetingText = document.getElementById('greetingText');
+
+    // Welcome subtext and username element (for potential future dynamic updates)
+    const welcomeSubtext = document.getElementById('welcomeSubtext');
+    const userNameElement = document.getElementById('user-name');
+
     function updateGreeting() {
         if (!greetingText) return;
         const currentHour = new Date().getHours();
+
+        // Default to "Member"
+        const userName = userNameElement ? userNameElement.textContent : 'Member';
+
         let greeting = 'Good Morning';
+        let emoji = '🎉';
+        let subtext = `Welcome back, <strong id="user-name">${userName}</strong>. Ready for today's workout?`;
 
         if (currentHour >= 12 && currentHour < 17) {
             greeting = 'Good Afternoon';
-        } else if (currentHour >= 17 || currentHour < 4) {
+        emoji = '☀️';
+            subtext = `Welcome back, <strong id="user-name">${userName}</strong>. Let’s keep the momentum going.`;
+        } else if (currentHour >= 17 && currentHour < 21) {
             greeting = 'Good Evening';
+            emoji = '🎉';
+            subtext = `Welcome back, <strong id="user-name">${userName}</strong>. Ready for your evening workout?`;
+        } else if (currentHour >= 21 || currentHour < 5) {
+            greeting = 'Good Night';
+            emoji = '🌙';
+            subtext = `Welcome back, <strong id="user-name">${userName}</strong>. Time to review your progress.`;
         }
 
-        // Non-breaking space used between words for styling
-        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;🎉`;
+        // Non-breaking space ensures emoji stays inline safely
+        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;${emoji}`;
+        if (welcomeSubtext) {
+            welcomeSubtext.innerHTML = subtext;
+        }
     }
 
     // Call immediately and check every minute

@@ -1038,8 +1038,7 @@ img { display: block; }
 /* Smooth Interactive Transitions */
 .action-btn,
 .profile-action-btn,
-.tab-btn,
-.bottom-nav a {
+.tab-btn {
     transition:
         background-color 0.25s ease,
         color 0.25s ease,
@@ -1052,15 +1051,13 @@ img { display: block; }
 }
 
 .profile-action-btn:active,
-.tab-btn:active,
-.bottom-nav a:active {
+.tab-btn:active {
     transform: scale(0.97);
 }
 
 .action-btn:focus-visible,
 .profile-action-btn:focus-visible,
-.tab-btn:focus-visible,
-.bottom-nav a:focus-visible {
+.tab-btn:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
@@ -1263,7 +1260,7 @@ img { display: block; }
         transform: translateX(-8px);
         top: 0;
         height: 100vh;
-        width: min(82vw, 260px);
+        width: min(75vw, 240px);
         z-index: 1200;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -1272,6 +1269,30 @@ img { display: block; }
             transform 0.3s ease,
             box-shadow 0.3s ease;
         box-shadow: var(--shadow-lg);
+        padding: 2rem 1.5rem;
+        gap: 2rem;
+        background: linear-gradient(160deg, var(--bg-card) 0%, #faf8f5 100%);
+    }
+
+    /* 4 & 5. Active outline removal & Color Hierarchy */
+    .sidebar .nav-links a {
+        color: #52525b; /* Stronger inactive contrast */
+        -webkit-tap-highlight-color: transparent; /* Remove blue tap flash */
+        outline: none;
+    }
+    .sidebar .nav-links a:focus,
+    .sidebar .nav-links a:active {
+        outline: none !important; /* Remove blue focus border */
+    }
+    /* 2. Navigation Item Spacing */
+    .sidebar .nav-links.vertical-nav {
+        gap: 0.35rem; /* Closer but breathable */
+    }
+    /* 7 & 9. Logout Button Position & Separation */
+    .sidebar-bottom {
+        margin-top: 3rem !important; /* Pulls up from the absolute bottom edge */
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0,0,0,0.06); /* Subtle divider */
     }
 
     .sidebar.mobile-open {
@@ -1316,38 +1337,50 @@ img { display: block; }
     body { padding: 1rem; }
 
     .welcome-card {
-        padding: 1.75rem;
+        padding: 2rem 1.5rem;
         flex-direction: column;
-        overflow: visible;
-        min-height: unset;
+        overflow: hidden;
+        min-height: auto;
+        justify-content: center;
     }
 
     .welcome-content {
         max-width: 100%;
         padding-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .welcome-subtext {
+        margin-bottom: 0;
     }
 
     .fitness-image {
-        position: relative;
-        mix-blend-mode: multiply;
-        height: auto;
-        max-height: 190px;
-        align-self: flex-end;
-        margin-top: -2rem;
-        right: auto;
-        bottom: auto;
-        transform: none;
-        -webkit-mask-image: linear-gradient(to top, transparent 0%, black 25%);
-        mask-image: linear-gradient(to top, transparent 0%, black 25%);
+        display: none;
+        /* Hides the image on small screens to save space and prevent layout issues. */
     }
 
-    .welcome-card:hover .fitness-image {
-        transform: none;
+    .mini-stats {
+        gap: 1.25rem;
+        margin-top: 1rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0,0,0,0.06);
+        justify-content: space-between;
     }
 
-    .mini-stats { gap: 1.25rem; }
-
-    .dark-cards-grid { grid-template-columns: 1fr 1fr; }
+    /* Hide Active Plan card and span the last card to maintain grid balance */
+    .dark-cards-grid .dark-card:first-child {
+        display: none;
+    }
+    
+    .dark-cards-grid { 
+        grid-template-columns: 1fr 1fr; 
+    }
+    
+    .dark-cards-grid .dark-card:last-child {
+        grid-column: 1 / -1;
+    }
 
     .quick-actions-grid { grid-template-columns: 1fr 1fr; }
 }
@@ -1358,62 +1391,13 @@ img { display: block; }
     .welcome-card h1 { font-size: 1.7rem; }
 }
 
-/* ------------------------------------------------------
-   Bottom Navigation Bar (Mobile / Tablet ≤1024px)
-   ------------------------------------------------------ */
-.bottom-nav {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 65px;
-    background-color: #1e1c1a;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-    padding: 0 1rem;
-}
-
-.bottom-nav a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    color: var(--text-dark-muted);
-    text-decoration: none;
-    font-size: 0.68rem;
-    font-weight: 600;
-    transition: all var(--t-fast);
-    padding: 0.4rem 0;
-    width: 20%;
-    opacity: 0.7;
-}
-
-.bottom-nav a i {
-    font-size: 1.25rem;
-}
-
-.bottom-nav a.active {
-    color: var(--accent); /* FitPulse accent color */
-    opacity: 1;
-    transform: translateY(-2px);
-}
-
 @media (max-width: 1024px) {
-    .bottom-nav {
-        display: flex;
-    }
-    
-    /* Prevent fixed bottom nav from covering content */
+    /* Adjust main-wrapper padding since bottom nav is removed */
     .main-wrapper {
         padding:
             0.85rem
             0.85rem
-            calc(95px + env(safe-area-inset-bottom))
+            calc(1.5rem + env(safe-area-inset-bottom))
             0.85rem;
     }
 
