@@ -29,6 +29,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .landing-logo {
@@ -54,11 +56,14 @@
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    transition: color 0.2s;
+    transition:
+        color 0.25s ease,
+        transform 0.2s ease;
 }
 
 .landing-links a:hover {
     color: #fff;
+    transform: translateY(-1px);
 }
 
 .landing-actions {
@@ -97,6 +102,15 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(232, 129, 58, 0.4);
 }
+
+/* Landing Page Focus Accessibility */
+.landing-btn-primary:focus-visible,
+.landing-btn-outline:focus-visible,
+.landing-links a:focus-visible {
+    outline: 2px solid #e8813a;
+    outline-offset: 4px;
+}
+
 
 /* ── Hero Section ── */
 .landing-hero {
@@ -239,6 +253,10 @@
     transform: translateY(-5px);
     background: rgba(255,255,255,0.06);
     border-color: rgba(255,255,255,0.1);
+}
+
+.landing-card:active {
+    transform: scale(0.98);
 }
 
 .landing-card-icon {
@@ -440,6 +458,10 @@
     border-color: rgba(232, 129, 58, 0.3);
 }
 
+.trainer-card:active {
+    transform: scale(0.98);
+}
+
 .trainer-img {
     width: 100%;
     height: 350px;
@@ -638,5 +660,119 @@
     
     .landing-links {
         display: none;
+    }
+}
+
+/* ── Mobile Specific Fixes ── */
+@media (max-width: 767px) {
+    /* 1. Prevent White Side Borders / Gutters (Strict Enforcement) */
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    *, *::before, *::after {
+        box-sizing: inherit;
+    }
+    
+    .landing-container {
+        width: 100% !important;
+        max-width: none !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-attachment: scroll !important; /* Critical fix for iOS Safari background scaling bug */
+    }
+    
+    /* 2. Navbar Mobile Layout Issues */
+    .landing-nav {
+        padding: max(1rem, env(safe-area-inset-top)) 1.25rem 1rem;
+    }
+    
+    .landing-logo {
+        font-size: 1.25rem;
+    }
+    
+    .landing-actions {
+        gap: 0.5rem;
+    }
+    
+    .landing-btn-outline,
+    .landing-btn-primary {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.9rem;
+    }
+    
+    /* 3 & 5. Hero Section Width, Scaling & Vertical Spacing */
+    .landing-hero {
+        padding: 2rem 1.25rem 3rem;
+        gap: 2rem;
+    }
+    
+    .landing-hero h1 {
+        font-size: clamp(2.3rem, 9vw, 3rem);
+        margin-bottom: 1rem;
+    }
+    
+    /* 4. Paragraph Readability */
+    .landing-hero p {
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 2px 14px rgba(0,0,0,0.85);
+        font-size: 1.05rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* 6. Stats Section Visibility */
+    .landing-hero-stats {
+        gap: 1.5rem;
+        padding-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .l-stat h3 {
+        font-size: 1.6rem;
+    }
+    
+    /* Prevent side borders across remaining sections */
+    .landing-features,
+    .trainers-section,
+    .landing-footer {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+    
+    .membership-tiers {
+        padding: 3rem 1.25rem;
+    }
+    
+    .tier-card {
+        width: 100%;
+        max-width: 320px;
+    }
+    
+    .fitness-image-section {
+        padding: 4rem 1.25rem;
+    }
+    
+    .image-overlay-text h2 {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+    }
+    
+    .footer-main {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .footer-links-grid {
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+    
+    .related-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

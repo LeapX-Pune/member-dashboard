@@ -798,6 +798,10 @@ img { display: block; }
     box-shadow: var(--shadow-lg);
 }
 
+.dark-card:active {
+    transform: scale(0.985);
+}
+
 .dark-card:hover::after { opacity: 1; }
 
 .dark-card-header {
@@ -849,6 +853,11 @@ img { display: block; }
     color: white;
 }
 
+.view-all-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
 /* Activity List */
 .activity-list {
     display: flex;
@@ -864,10 +873,16 @@ img { display: block; }
     gap: 1rem;
     padding: 0.85rem 1rem;
     border-radius: var(--r-md);
-    transition: background var(--t-fast);
+    transition:
+    background var(--t-fast),
+    transform 0.18s ease;
 }
 
 .activity-item:hover { background-color: #fafafa; }
+
+.activity-item:active {
+    transform: scale(0.99);
+}
 
 .act-avatar {
     width: 42px;
@@ -916,10 +931,16 @@ img { display: block; }
     gap: 1rem;
     padding: 0.85rem 1rem;
     border-radius: var(--r-md);
-    transition: background var(--t-fast);
+    transition:
+    background var(--t-fast),
+    transform 0.18s ease;
 }
 
 .workout-item:hover { background-color: #fafafa; }
+
+.workout-item:active {
+    transform: scale(0.99);
+}
 
 .workout-icon img {
     width: 44px;
@@ -1003,6 +1024,11 @@ img { display: block; }
     box-shadow: 0 8px 24px rgba(232,129,58,0.15);
 }
 
+.action-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
 /* Notification Button Active Feedback */
 .notification-active {
     transform: scale(0.92);
@@ -1021,7 +1047,10 @@ img { display: block; }
         box-shadow 0.25s ease;
 }
 
-.action-btn:active,
+.action-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
 .profile-action-btn:active,
 .tab-btn:active,
 .bottom-nav a:active {
@@ -1063,12 +1092,19 @@ img { display: block; }
     padding: 1rem 1.25rem;
     border-radius: var(--r-md);
     border: 1px solid var(--border);
-    transition: all var(--t-fast);
+    transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    transform 0.18s ease;
 }
 
 .progress-item:hover {
     background: #f5f3ef;
     border-color: rgba(232,129,58,0.2);
+}
+
+.progress-item:active {
+    transform: scale(0.99);
 }
 
 .progress-info {
