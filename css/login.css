@@ -12,9 +12,6 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-
-    opacity: 0;
-    animation: loginOverlayFade 0.35s ease forwards;
 }
 
 /* ---- Background Image ---- */
@@ -24,7 +21,7 @@
     background-image: url('../images/gym_login_bg.png');
     background-size: cover;
     background-position: center;
-    filter: brightness(0.52) saturate(1.18);
+    filter: brightness(0.45) saturate(1.2);
     transform: scale(1.04);
     transition: transform 0.6s ease;
 }
@@ -79,11 +76,11 @@
     font-size: 1.4rem;
 }
 
-/* ---- Close Button (top-right) ---- */
+/* ---- Close Button (top-right inside the login card) ---- */
 #loginCloseBtn {
     position: absolute;
-    top: 1.75rem;
-    right: 2rem;
+    top: 1rem;
+    right: 1rem;
     z-index: 10;
     width: 42px;
     height: 42px;
@@ -185,33 +182,23 @@
 
     /* Glassmorphism */
     background: rgba(18, 14, 10, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(28px);
     -webkit-backdrop-filter: blur(28px);
     border-radius: 20px;
     padding: 2.5rem 2.25rem;
     box-shadow:
-        0 32px 80px rgba(0, 0, 0, 0.58),
-        0 0 0 0.5px rgba(232, 129, 58, 0.18) inset,
-        0 1px 0 rgba(255,255,255,0.08) inset,
-        0 0 28px rgba(232, 129, 58, 0.08);
+        0 32px 80px rgba(0, 0, 0, 0.55),
+        0 0 0 0.5px rgba(232, 129, 58, 0.15) inset,
+        0 1px 0 rgba(255,255,255,0.08) inset;
 
     animation: slideUpFade 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes loginOverlayFade {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
 }
 
 @keyframes slideUpFade {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(0.985);
+        transform: translateY(28px) scale(0.97);
     }
     to {
         opacity: 1;
@@ -222,7 +209,7 @@
 /* ---- Card Header ---- */
 .login-card-header {
     text-align: center;
-    margin-bottom: 2.2rem;
+    margin-bottom: 2rem;
 }
 
 .login-card-icon {
@@ -308,24 +295,13 @@
 }
 
 .login-field input::placeholder {
-    color: rgba(255,255,255,0.38);
+    color: rgba(255,255,255,0.25);
 }
 
 .login-field input:focus {
     border-color: rgba(232, 129, 58, 0.65);
     background: rgba(232, 129, 58, 0.06);
-    box-shadow:
-        0 0 0 3px rgba(232, 129, 58, 0.10),
-        0 0 18px rgba(232, 129, 58, 0.08);
-}
-
-/* Prevent browser autofill from breaking login input design */
-.login-field input:-webkit-autofill,
-.login-field input:-webkit-autofill:hover,
-.login-field input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #fff;
-    box-shadow: 0 0 0 1000px rgba(255,255,255,0.06) inset;
-    transition: background-color 9999s ease-in-out 0s;
+    box-shadow: 0 0 0 3px rgba(232, 129, 58, 0.12);
 }
 
 .login-field input:focus + i,
@@ -338,7 +314,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.1rem;
+    margin-top: -0.25rem;
 }
 
 .login-remember {
@@ -414,15 +390,6 @@
     box-shadow: 0 4px 16px rgba(232, 129, 58, 0.3);
 }
 
-#loginSubmitBtn:focus-visible,
-.login-social-btn:focus-visible,
-#loginCloseBtn:focus-visible,
-.login-forgot:focus-visible,
-.login-signup-link a:focus-visible {
-    outline: 2px solid #e8813a;
-    outline-offset: 3px;
-}
-
 /* Loading spinner state */
 #loginSubmitBtn.loading {
     pointer-events: none;
@@ -445,7 +412,7 @@
 
 .login-divider p {
     font-size: 0.78rem;
-    color: rgba(255,255,255,0.48);
+    color: rgba(255,255,255,0.35);
     white-space: nowrap;
     margin: 0;
 }
@@ -459,10 +426,10 @@
 .login-social-btn {
     flex: 1;
     padding: 0.65rem 0.5rem;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
-    color: rgba(255,255,255,0.86);
+    color: rgba(255,255,255,0.75);
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
@@ -480,10 +447,6 @@
     transform: translateY(-1px);
 }
 
-.login-social-btn:active {
-    transform: scale(0.97);
-}
-
 .login-social-btn i {
     font-size: 0.95rem;
 }
@@ -493,7 +456,7 @@
     text-align: center;
     font-size: 0.82rem;
     color: rgba(255,255,255,0.4);
-    margin-top: 0.35rem;
+    margin-top: 0.5rem;
 }
 
 .login-signup-link a {
@@ -509,31 +472,20 @@
 
 /* ---- Responsive: mobile centering ---- */
 @media (max-width: 899px) {
-    #login-overlay {
-            align-items: flex-start;
-            padding-top: max(6rem, env(safe-area-inset-top) + 4.5rem);
-            padding-bottom: max(2rem, env(safe-area-inset-bottom) + 1rem);
-            overflow-y: auto;
-        }
-        .login-bg,
-        .login-gradient-fade {
-            position: fixed !important;
-        }
-    
     .login-card {
-        width: min(100%, 360px);
+        max-width: 360px;
         padding: 2rem 1.5rem;
-        margin: auto;
+        margin: 1rem;
     }
 
     .login-brand-badge {
         left: 1.25rem;
-        top: max(1.5rem, env(safe-area-inset-top) + 1rem);
+        top: 1.25rem;
     }
 
     #loginCloseBtn {
-        right: 1.25rem;
-        top: max(1.5rem, env(safe-area-inset-top) + 1rem);
+        top: 0.9rem;
+        right: 0.9rem;
     }
 }
 
