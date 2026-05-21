@@ -620,25 +620,7 @@
     color: #a3a3a3;
 }
 
-.footer-qr {
-    background: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    color: #000;
-}
-
-.footer-qr p {
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.footer-qr img {
-    width: 100px;
-    height: 100px;
-}
-
+/* ── Responsive Fixes ── */
 @media (max-width: 1024px) {
     .landing-hero {
         flex-direction: column;
