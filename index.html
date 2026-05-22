@@ -1114,6 +1114,14 @@
                                 <span class="legend-item"><span class="legend-color-sessions"></span>Sessions</span>
                             </div>
                         </div>
+
+                        <!-- Toggle buttons for Line Chart (Weekly / Monthly / Yearly) -->
+                        <div class="chart-toggle-group" id="lineChartToggle" aria-label="Activity chart period">
+                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchLineChart('weekly')">Weekly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchLineChart('monthly')">Monthly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchLineChart('yearly')">Yearly</button>
+                        </div>
+
                         <div class="chart-container">
                             <canvas id="activityChart"></canvas>
                         </div>
@@ -1122,6 +1130,14 @@
                     <!-- Membership Usage Doughnut Chart — Student 8 -->
                     <div class="chart-card">
                         <h3>Membership Usage</h3>
+
+                        <!-- Toggle buttons for Doughnut Chart (Weekly / Monthly / Yearly) -->
+                        <div class="chart-toggle-group" id="doughnutChartToggle" aria-label="Membership usage chart period">
+                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchDoughnutChart('weekly')">Weekly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchDoughnutChart('monthly')">Monthly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchDoughnutChart('yearly')">Yearly</button>
+                        </div>
+
                         <div class="chart-container donut-chart-container">
                             <canvas id="doughnutChart" aria-label="Membership usage doughnut chart" role="img"></canvas>
                         </div>
