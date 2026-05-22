@@ -288,3 +288,53 @@
     background: var(--chart-ring-exercise);
     box-shadow: 0 0 5px var(--chart-ring-exercise);
 }
+
+/* ==========================================================================
+   Student 8 — Doughnut Chart (Membership Usage)
+   ========================================================================== */
+
+/* Override container height for the donut — shorter than the line chart */
+.donut-chart-container {
+    min-height: 220px;
+}
+
+/* Custom HTML legend below the donut canvas */
+.donut-legend {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-top: 1px solid var(--chart-border);
+    padding-top: 1rem;
+}
+.donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.8rem;
+    color: var(--chart-text-secondary);
+}
+.donut-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.donut-legend-label {
+    flex: 1;
+}
+.donut-legend-val {
+    font-weight: 700;
+    color: var(--chart-text-primary);
+    font-size: 0.85rem;
+}
+
+/* Responsive — stack donut below line chart on tablet/mobile (already handled
+   by the 1fr grid at ≤1024px) but shrink the canvas height on small screens */
+@media (max-width: 600px) {
+    .donut-chart-container {
+        min-height: 180px;
+    }
+}
