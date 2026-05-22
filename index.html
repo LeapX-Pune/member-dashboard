@@ -1119,12 +1119,30 @@
                         </div>
                     </div>
                     
-                    <!-- Placeholder Chart: Membership Usage -->
+                    <!-- Membership Usage Doughnut Chart — Student 8 -->
                     <div class="chart-card">
                         <h3>Membership Usage</h3>
-                        <div class="chart-container">
-                            
+                        <div class="chart-container donut-chart-container">
+                            <canvas id="doughnutChart" aria-label="Membership usage doughnut chart" role="img"></canvas>
                         </div>
+                        <!-- Custom legend — populated & kept in sync by charts.js (Student 8) -->
+                        <ul class="donut-legend" id="donutLegend" aria-label="Doughnut chart legend">
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-ring-exercise);"></span>
+                                <span class="donut-legend-label">Used Sessions</span>
+                                <span class="donut-legend-val" id="legend-used">–</span>
+                            </li>
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-goal);"></span>
+                                <span class="donut-legend-label">Available</span>
+                                <span class="donut-legend-val" id="legend-available">–</span>
+                            </li>
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
+                                <span class="donut-legend-label">Pending</span>
+                                <span class="donut-legend-val" id="legend-pending">–</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
