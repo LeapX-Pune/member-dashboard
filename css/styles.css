@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------
-   CSS Variables & Base Setup — FitPulse Premium Dashboard
+    CSS Variables & Base Setup — FitPulse Premium Dashboard
    ----------------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -63,7 +63,7 @@
 
 
 /* --------------------------
-   DARK THEME (Scoped to Dashboard Only)
+    DARK THEME (Scoped to Dashboard Only)
    -------------------------- */
 .dashboard-container.theme-dark {
     --bg-main:           #0f0e0d;
@@ -153,7 +153,47 @@ button {
 img { display: block; }
 
 /* ------------------------------------------------------
-   Utility Classes
+   Global Scroll Background & Overscroll Fix
+   Prevents white flashes/bleed during scrolling
+   ------------------------------------------------------ */
+html,
+body {
+    background-color: var(--bg-main);
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+}
+
+.dashboard-container {
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+
+.dashboard-container .main-wrapper {
+    background-color: var(--bg-main);
+}
+
+.dashboard-container.theme-dark,
+.dashboard-container.theme-dark .main-wrapper {
+    background-color: var(--bg-main) !important;
+}
+
+@media (max-width: 768px) {
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    .dashboard-container,
+    .dashboard-container .main-wrapper {
+        background-color: var(--bg-main);
+    }
+}
+
+/* ------------------------------------------------------
+    Utility Classes
    ------------------------------------------------------ */
 .text-accent   { color: var(--accent); }
 .text-muted    { color: var(--text-muted); }
@@ -173,10 +213,10 @@ img { display: block; }
 .h-full { height: 100%; }
 
 /* ------------------------------------------------------
-   Dashboard Shell
+    Dashboard Shell
    ------------------------------------------------------ */
 /* ------------------------------------------------------
-   Layout (Sidebar + Main Wrapper)
+    Layout (Sidebar + Main Wrapper)
    ------------------------------------------------------ */
 .dashboard-container {
     width: 100%;
@@ -214,7 +254,7 @@ img { display: block; }
 }
 
 /* ------------------------------------------------------
-   Top Navbar (Profile & Alerts only)
+    Top Navbar (Profile & Alerts only)
    ------------------------------------------------------ */
 .top-navbar {
     display: flex;
@@ -1316,10 +1356,34 @@ img { display: block; }
     body {
         overflow-x: hidden;
     }
+
+    /* Dark theme mobile sidebar overrides */
+    .dashboard-container.theme-dark .sidebar {
+        background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-dark-2) 100%);
+        border-right: 1px solid var(--border);
+    }
+    .dashboard-container.theme-dark .sidebar .nav-links a {
+        color: var(--text-muted);
+    }
+    .dashboard-container.theme-dark .sidebar .nav-links a:hover {
+        color: var(--text-main);
+        background-color: rgba(255,255,255,0.04);
+    }
+    .dashboard-container.theme-dark .sidebar .nav-links a.active {
+        background-color: rgba(232,129,58,0.16);
+        color: var(--accent);
+        border-color: var(--accent);
+    }
+    .dashboard-container.theme-dark .sidebar-bottom {
+        border-top-color: var(--border);
+    }
+    .dashboard-container.theme-dark .sidebar-logout-btn:hover {
+        background-color: rgba(239,68,68,0.12);
+    }
 }
 /* ---------- Responsive — Mobile ≤768px ---------- */
 @media (max-width: 768px) {
-    body { padding: 1rem; }
+    body { padding: 0; }
 
     .welcome-card {
         padding: 1.75rem;

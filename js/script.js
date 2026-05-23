@@ -193,19 +193,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------- Dynamic Greeting Logic -----------
     const greetingText = document.getElementById('greetingText');
+    const welcomeSubtext = document.querySelector('.welcome-subtext');
     function updateGreeting() {
         if (!greetingText) return;
         const currentHour = new Date().getHours();
         let greeting = 'Good Morning';
+        let emoji = '🎉';
+        let subMsg = "Ready for today's workout?";
 
-        if (currentHour >= 12 && currentHour < 17) {
+
+        if (currentHour >= 5 && currentHour < 12) {
+            greeting = 'Good Morning';
+            emoji = '🎉';
+            subMsg = "Ready for today's workout?";
+
+        } else if (currentHour >= 12 && currentHour < 17) {
             greeting = 'Good Afternoon';
-        } else if (currentHour >= 17 || currentHour < 4) {
+            emoji = '☀️';
+            subMsg = "Let’s keep the momentum going.";
+
+        } else if (currentHour >= 17 && currentHour < 21) {
             greeting = 'Good Evening';
+            emoji = '🎉';
+            subMsg = "Ready for your evening workout?";
+        } else {
+            greeting = 'Good Night';
+            emoji = '🌙';
+            subMsg = "Time to review your progress.";
         }
 
-        // Non-breaking space used between words for styling
-        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;`;
+        // Non-breaking space used between words for styling, keep emoji inline
+        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;${emoji}`;
+
+        if (welcomeSubtext) {
+            const welcomeNameEl = document.getElementById('welcomeName');
+            const name = welcomeNameEl ? welcomeNameEl.textContent : 'User';
+            welcomeSubtext.innerHTML = `Welcome back, <strong id="welcomeName">${name}</strong>. ${subMsg}`;
+        }
     }
 
     // Call immediately and check every minute
@@ -216,34 +240,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mobile Menu Elements
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navLinksContainer = document.querySelector('.nav-links');
-    const navLinks = document.querySelectorAll('.nav-links a');
-
-    // Views
-    const dashboardView = document.getElementById('dashboard-view');
-    const plansView = document.getElementById('plans-view');
-    const settingsView = document.getElementById('settings-view');
-    const wipView = document.getElementById('wip-view');
 
     // Mobile Menu Toggle
-    if (mobileMenuBtn && navLinksContainer) {
+    const sidebar = document.querySelector('.sidebar');
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('mobile-open');
+            document.body.classList.toggle('sidebar-open', sidebar.classList.contains('mobile-open'));
+            
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
+                if (sidebar.classList.contains('mobile-open')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                } else {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
 
-        mobileMenuBtn.addEventListener('click', () => {
-            if (navLinksContainer.style.display === 'flex') {
-                navLinksContainer.style.display = 'none';
-            } else {
-
-                navLinksContainer.style.display = 'flex';
-                navLinksContainer.style.flexDirection = 'column';
-                navLinksContainer.style.position = 'absolute';
-                navLinksContainer.style.top = '70px';
-                navLinksContainer.style.left = '0';
-                navLinksContainer.style.right = '0';
-                navLinksContainer.style.backgroundColor = 'var(--bg-card)';
-                navLinksContainer.style.padding = '1rem';
-                navLinksContainer.style.borderRadius = 'var(--radius-lg)';
-                navLinksContainer.style.boxShadow = 'var(--shadow-md)';
-                navLinksContainer.style.zIndex = '100';
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+                document.body.classList.remove('sidebar-open');
+                
+                const icon = mobileMenuBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                }
             }
         });
     }
@@ -370,89 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-    // Navigation Link Handling
-    navLinks.forEach(link => {
-
-        link.addEventListener('click', function (e) {
-
-            e.preventDefault();
-
-            // Remove Active Class
-            navLinks.forEach(l => l.classList.remove('active'));
-
-            // Add Active Class
-            this.classList.add('active');
-
-            // Target View
-            const targetView = this.getAttribute('data-target');
-
-
-
-            // Show Dashboard
-            if (targetView === 'dashboard-view') {
-                if (dashboardView) dashboardView.style.display = 'grid';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Plans
-            else if (targetView === 'plans-view') {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'block';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Settings
-            else if (targetView === 'settings-view') {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'block';
-                if (wipView) wipView.style.display = 'none';
-            }
-
-            // Show Working In Progress
-            else {
-                if (dashboardView) dashboardView.style.display = 'none';
-                if (plansView) plansView.style.display = 'none';
-                if (settingsView) settingsView.style.display = 'none';
-                if (wipView) wipView.style.display = 'flex';
-            }
-
-            // Close Mobile Menu
-            if (window.innerWidth <= 1024) {
-
-                if (navLinksContainer) navLinksContainer.style.display = 'none';
-            }
-        });
-    });
-
-    // Window Resize Handling
-        window.addEventListener('resize', () => {
-        if (!navLinksContainer) return;
-
-        if (window.innerWidth > 1024) {
-
-            navLinksContainer.removeAttribute('style');
-
-        } else {
-            if (navLinksContainer.style.display !== 'flex') {
-                navLinksContainer.style.display = 'none';
-        }
-        }
-    });
-
-    // Quick Action Buttons
-    const actionBtns = document.querySelectorAll('.action-btn');
-
-    actionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const actionText = btn.querySelector('span')?.textContent || 'Unknown action';
-            console.log(`Quick Action clicked: ${actionText}`);
-        });
-    });
+    // Duplicate Navigation Link Handling removed to let tabs.js act as source of truth
 
     // Carousel Elements
     const track = document.getElementById("carouselTrack");
@@ -797,7 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentTitle = document.getElementById('paymentTitle');
     let selectedPlanName = "";
     
-    if (planBtns.length > 0 && paymentModal) {
+    if (planBtns.length > 0 && paymentModal && paymentQrCode && paymentSuccess && paymentTitle) {
         planBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const planCard = e.target.closest('.plan-card');
