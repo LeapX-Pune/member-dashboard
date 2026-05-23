@@ -783,3 +783,166 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+
+// ============================================================
+// Chart Toggle Logic — Weekly / Monthly / Yearly
+// Separate controls for Line Chart and Doughnut Chart
+// Uses destroy() + new Chart() on every switch as required
+// ============================================================
+
+// --- Helper: highlight the clicked button, dim the rest ---
+function setActiveToggleBtn(groupId, period) {
+    var group = document.getElementById(groupId);
+    if (!group) return;
+
+    // Loop through all buttons in this group
+    var buttons = group.querySelectorAll('.chart-toggle-btn');
+    buttons.forEach(function(btn) {
+        if (btn.getAttribute('data-period') === period) {
+            btn.classList.add('active');    // highlight selected button
+        } else {
+            btn.classList.remove('active'); // dim all other buttons
+        }
+    });
+}
+
+// --- Line Chart Toggle ---
+// Destroys the old line chart and creates a fresh one with new period data
+// Does NOT touch the doughnut chart at all
+function switchLineChart(period) {
+    console.log("Line chart switching to:", period);
+
+    // Step 1: highlight the correct button
+    setActiveToggleBtn('lineChartToggle', period);
+
+    // Step 2: destroy the existing line chart before making a new one
+    if (window.activityChart) {
+        window.activityChart.destroy();
+        window.activityChart = null;
+    }
+
+    // Step 3: pick the correct dataset from data.js based on period
+    var lineData = window.mockData['activity_' + period];
+
+    // Step 4: read theme colors the same way charts.js does
+    var themeEl  = document.getElementById('dashboardContainer') || document.body;
+    var style    = getComputedStyle(themeEl);
+    var primary  = style.getPropertyValue('--chart-ring-exercise').trim() || '#F15C05';
+    var gridCol  = style.getPropertyValue('--chart-border').trim()        || '#2C2C30';
+    var textCol  = style.getPropertyValue('--chart-text-secondary').trim()|| '#A2A2A7';
+    var surface  = style.getPropertyValue('--chart-surface').trim()       || '#3A271B';
+    var fontFam  = "'Inter', sans-serif";
+
+    // Step 5: get the canvas and draw a brand new line chart
+    var lineCtx = document.getElementById('activityChart').getContext('2d');
+    window.activityChart = new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: lineData.labels,
+            datasets: [{
+                label: 'Sessions',
+                data: lineData.data,
+                borderColor: primary,
+                borderWidth: 3,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: 'transparent',
+                pointBorderColor: primary,
+                pointBorderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            animation: { duration: 1000, easing: 'easeOutQuart' },
+            scales: {
+                y: { beginAtZero: true, grid: { color: gridCol } },
+                x: { grid: { display: false }, ticks: { color: textCol } }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: surface,
+                    titleColor: textCol,
+                    bodyColor: primary,
+                    titleFont: { family: fontFam, size: 12, weight: 'normal' },
+                    bodyFont: { family: fontFam, size: 14, weight: 'bold' },
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    borderColor: gridCol,
+                    borderWidth: 1,
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' Sessions';
+                        }
+                    }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        }
+    });
+}
+
+// --- Doughnut Chart Toggle ---
+// Destroys the old doughnut chart and creates a fresh one with new period data
+// Does NOT touch the line chart at all
+function switchDoughnutChart(period) {
+    console.log("Doughnut chart switching to:", period);
+
+    // Step 1: highlight the correct button
+    setActiveToggleBtn('doughnutChartToggle', period);
+
+    // Step 2: destroy the existing doughnut chart before making a new one
+    if (window.doughnutChart) {
+        window.doughnutChart.destroy();
+        window.doughnutChart = null;
+    }
+
+    // Step 3: pick the correct dataset from data.js based on period
+    var doughnutData = window.mockData['doughnut_' + period];
+
+    // Step 4: read theme colors the same way charts.js does
+    var themeEl = document.getElementById('dashboardContainer') || document.body;
+    var style   = getComputedStyle(themeEl);
+    var color1  = style.getPropertyValue('--chart-ring-exercise').trim(); // Used Sessions
+    var color2  = style.getPropertyValue('--chart-ring-move').trim();     // Available Sessions
+    var color3  = style.getPropertyValue('--chart-alert').trim();         // Pending Approval
+
+    // Step 5: get the canvas and draw a brand new doughnut chart
+    var doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+    window.doughnutChart = new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+            labels: doughnutData.labels,
+            datasets: [{
+                data: doughnutData.data,
+                backgroundColor: [color1, color2, color3],
+                borderWidth: 3,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            cutout: '68%',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 900 },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(item) {
+                            return item.label + ': ' + item.parsed + ' sessions';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Step 6: update the HTML legend numbers below the doughnut chart
+    document.getElementById('legend-used').textContent      = doughnutData.data[0];
+    document.getElementById('legend-available').textContent = doughnutData.data[1];
+    document.getElementById('legend-pending').textContent   = doughnutData.data[2];
+}

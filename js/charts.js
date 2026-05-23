@@ -231,3 +231,93 @@ window.addEventListener('DOMContentLoaded', () => {
         observer.observe(wipView);
     }
 });
+
+
+// ============================================================
+// Student 8 - Donut Chart starts here
+// ============================================================
+
+window.addEventListener('DOMContentLoaded', function () {
+
+    // Get the data from data.js
+    var data = window.mockData.doughnut_weekly;
+
+    // Show the numbers in the legend below the chart
+    document.getElementById('legend-used').textContent      = data.data[0];
+    document.getElementById('legend-available').textContent = data.data[1];
+    document.getElementById('legend-pending').textContent   = data.data[2];
+
+    // Get the canvas element
+    var canvas = document.getElementById('doughnutChart');
+
+    // Read colours from charts.css so they work in both Light and Dark mode
+    // The same CSS variables are used by the ring cards at the top of Analytics
+    var themeEl = document.getElementById('dashboardContainer') || document.body;
+    var style   = getComputedStyle(themeEl);
+    var color1  = style.getPropertyValue('--chart-ring-exercise').trim(); // Used Sessions
+    var color2  = style.getPropertyValue('--chart-ring-move').trim();     // Available Sessions
+    var color3  = style.getPropertyValue('--chart-alert').trim();         // Pending Approval
+
+    // Draw the doughnut chart
+    window.doughnutChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                data: data.data,
+                backgroundColor: [color1, color2, color3],
+                borderWidth: 3,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            cutout: '68%',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 900
+            },
+            plugins: {
+                legend: {
+                    display: false   // we use our own HTML legend below the chart
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (item) {
+                            return item.label + ': ' + item.parsed + ' sessions';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // This function is called by Student 9's toggle buttons (Weekly / Monthly / Yearly)
+    window.updateDoughnutTimeframe = function (timeframe) {
+
+        // Pick the right data based on the button clicked
+        var newData;
+        if (timeframe === 'weekly') {
+            newData = window.mockData.doughnut_weekly;
+        } else if (timeframe === 'monthly') {
+            newData = window.mockData.doughnut_monthly;
+        } else if (timeframe === 'yearly') {
+            newData = window.mockData.doughnut_yearly;
+        }
+
+        // Update the chart with the new data
+        window.doughnutChart.data.labels           = newData.labels;
+        window.doughnutChart.data.datasets[0].data = newData.data;
+        window.doughnutChart.update();
+
+        // Update the legend numbers too
+        document.getElementById('legend-used').textContent      = newData.data[0];
+        document.getElementById('legend-available').textContent = newData.data[1];
+        document.getElementById('legend-pending').textContent   = newData.data[2];
+    };
+
+});
+
+// ============================================================
+// Student 8 - Donut Chart ends here
+// ============================================================

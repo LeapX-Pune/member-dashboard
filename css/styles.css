@@ -1453,3 +1453,31 @@ body {
         padding-bottom: 0 !important;
     }
 }
+/* --
+   REAL-TIME UPDATE ANIMATION
+-- */
+
+.live-update {
+
+    animation: pulseUpdate 0.5s ease;
+
+}
+
+@keyframes pulseUpdate {
+
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}

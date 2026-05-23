@@ -1392,6 +1392,7 @@
                                 </select>
                             </div>
                         </div>
+                      
                         <div class="modal-field-group full">
                             <div class="modal-field">
                                 <label for="scheduleNotes">Notes (optional)</label>
@@ -1399,7 +1400,52 @@
                                     placeholder="Any special requirements or goals for this session…"
                                     style="height:80px;"></textarea>
                             </div>
+
+                        <!-- Toggle buttons for Line Chart (Weekly / Monthly / Yearly) -->
+                        <div class="chart-toggle-group" id="lineChartToggle" aria-label="Activity chart period">
+                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchLineChart('weekly')">Weekly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchLineChart('monthly')">Monthly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchLineChart('yearly')">Yearly</button>
                         </div>
+
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Membership Usage Doughnut Chart — Student 8 -->
+                    <div class="chart-card">
+                        <h3>Membership Usage</h3>
+
+                        <!-- Toggle buttons for Doughnut Chart (Weekly / Monthly / Yearly) -->
+                        <div class="chart-toggle-group" id="doughnutChartToggle" aria-label="Membership usage chart period">
+                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchDoughnutChart('weekly')">Weekly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchDoughnutChart('monthly')">Monthly</button>
+                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchDoughnutChart('yearly')">Yearly</button>
+                        </div>
+
+                        <div class="chart-container donut-chart-container">
+                            <canvas id="doughnutChart" aria-label="Membership usage doughnut chart" role="img"></canvas>
+
+                        </div>
+                        <!-- Custom legend — populated & kept in sync by charts.js (Student 8) -->
+                        <ul class="donut-legend" id="donutLegend" aria-label="Doughnut chart legend">
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-ring-exercise);"></span>
+                                <span class="donut-legend-label">Used Sessions</span>
+                                <span class="donut-legend-val" id="legend-used">–</span>
+                            </li>
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-goal);"></span>
+                                <span class="donut-legend-label">Available</span>
+                                <span class="donut-legend-val" id="legend-available">–</span>
+                            </li>
+                            <li class="donut-legend-item">
+                                <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
+                                <span class="donut-legend-label">Pending</span>
+                                <span class="donut-legend-val" id="legend-pending">–</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
