@@ -338,3 +338,67 @@
         min-height: 180px;
     }
 }
+
+/* ==========================================================================
+   Chart Toggle Buttons (Weekly / Monthly / Yearly pill buttons)
+   Separate toggle groups for Line Chart and Doughnut Chart
+   ========================================================================== */
+
+/* Pill container — sits between the chart header and the canvas */
+.chart-toggle-group {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Base pill button — inactive state uses chart surface/border variables */
+.chart-toggle-btn {
+    padding: 0.3rem 0.9rem;
+    border-radius: 50px;
+    border: 1px solid var(--chart-border);
+    background-color: transparent;
+    color: var(--chart-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    letter-spacing: 0.03em;
+    outline: none;
+}
+
+/* Hover — subtle tint using the chart's primary orange */
+.chart-toggle-btn:hover {
+    background-color: rgba(241, 92, 5, 0.1);
+    color: var(--chart-text-primary);
+    border-color: var(--chart-goal);
+}
+
+/* Active / selected — filled with the chart's primary orange accent */
+.chart-toggle-btn.active {
+    background-color: var(--chart-goal);   /* #F15C05 orange — matches chart accent */
+    color: #ffffff;
+    border-color: var(--chart-goal);
+    box-shadow: 0 2px 10px rgba(241, 92, 5, 0.35);
+}
+
+/* Dark theme — inactive buttons get a slightly visible dark background */
+.theme-dark .chart-toggle-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--chart-text-secondary);
+    border-color: var(--chart-border);
+}
+
+.theme-dark .chart-toggle-btn:hover {
+    background-color: rgba(241, 92, 5, 0.15);
+    color: var(--chart-text-primary);
+    border-color: var(--chart-goal);
+}
+
+.theme-dark .chart-toggle-btn.active {
+    background-color: var(--chart-goal);
+    color: #ffffff;
+    border-color: var(--chart-goal);
+    box-shadow: 0 2px 12px rgba(241, 92, 5, 0.45);
+}
