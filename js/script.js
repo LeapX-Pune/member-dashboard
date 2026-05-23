@@ -111,6 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 persistSession();       // ← save session so refresh keeps user in
+                
+                // Reset theme to light on every fresh login — the dashboard always
+                // opens in light mode when user logs in with credentials.
+                try { localStorage.removeItem('fitpulse-theme'); } catch { /* private mode */ }
+
                 dismissLogin('dashboard');
                 loginTimerId = null;
             }, 2000);
@@ -558,6 +563,231 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCarousel();
         } // end else (slides.length > 0)
     }
+
+    // ═══════════════════════════════════════════════════════
+    // LIVE DASHBOARD UPDATES
+    // ═══════════════════════════════════════════════════════
+
+    // ── 1. Recent Activity — time labels refresh every 5 s ──
+    (function initActivityTimestamps() {
+        // Each item has an ordered set of labels to cycle through
+        const activityItems = [
+            { selector: '.activity-list .activity-item:nth-child(1) .act-time', labels: ['Just now', '1 min ago', '3 min ago', '5 min ago', '10 min ago', '15 min ago', '30 min ago', '1h ago'] },
+            { selector: '.activity-list .activity-item:nth-child(2) .act-time', labels: ['2h ago', '3h ago', '4h ago', '5h ago', '6h ago', '8h ago', '10h ago', '12h ago'] },
+            { selector: '.activity-list .activity-item:nth-child(3) .act-time', labels: ['5h ago', '6h ago', '8h ago', '10h ago', '12h ago', '16h ago', '20h ago', '1d ago'] },
+        ];
+
+        // Initialise index counters
+        const indices = activityItems.map(() => 0);
+
+        function tickActivityTimes() {
+            activityItems.forEach((item, i) => {
+                const el = document.querySelector(item.selector);
+                if (!el) return;
+                // Advance index
+                indices[i] = (indices[i] + 1) % item.labels.length;
+                // Animate: fade out → update → fade in
+                el.style.transition = 'opacity 0.4s';
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.textContent = item.labels[indices[i]];
+                    el.style.opacity = '1';
+                }, 400);
+            });
+        }
+
+        // Tick every 5 seconds
+        setInterval(tickActivityTimes, 5000);
+    })();
+
+
+    // ── 2. Recent Workouts — rotate by day, calories tick every ~8 s ──
+    (function initRecentWorkouts() {
+        // Pool of workouts keyed by day-of-week (0=Sun … 6=Sat)
+        // Each day has 3 workouts shown
+        const workoutsByDay = {
+            0: [ // Sunday
+                { initials: 'YS', name: 'Yoga Session',      time: '07:00 AM', dur: '40 min', cal: 160, intensity: 'Low',    badge: 'low'    },
+                { initials: 'MS', name: 'Meditation',        time: '08:00 AM', dur: '20 min', cal:  80, intensity: 'Low',    badge: 'low'    },
+                { initials: 'SW', name: 'Swimming',          time: '10:00 AM', dur: '45 min', cal: 350, intensity: 'Medium', badge: 'medium' },
+            ],
+            1: [ // Monday
+                { initials: 'MR', name: 'Morning Run',       time: '06:30 AM', dur: '45 min', cal: 420, intensity: 'High',   badge: 'high'   },
+                { initials: 'ST', name: 'Strength Training', time: '06:00 PM', dur: '60 min', cal: 380, intensity: 'Medium', badge: 'medium' },
+                { initials: 'YS', name: 'Yoga Session',      time: '08:00 PM', dur: '30 min', cal: 150, intensity: 'Low',    badge: 'low'    },
+            ],
+            2: [ // Tuesday
+                { initials: 'HC', name: 'HIIT Cardio',       time: '06:00 AM', dur: '30 min', cal: 480, intensity: 'High',   badge: 'high'   },
+                { initials: 'CS', name: 'Cycling Sprint',    time: '07:30 AM', dur: '40 min', cal: 390, intensity: 'High',   badge: 'high'   },
+                { initials: 'SB', name: 'Stretching',        time: '07:00 PM', dur: '25 min', cal: 110, intensity: 'Low',    badge: 'low'    },
+            ],
+            3: [ // Wednesday
+                { initials: 'PL', name: 'Pilates',           time: '07:00 AM', dur: '50 min', cal: 220, intensity: 'Medium', badge: 'medium' },
+                { initials: 'BC', name: 'Boxing Class',      time: '05:30 PM', dur: '60 min', cal: 540, intensity: 'High',   badge: 'high'   },
+                { initials: 'WA', name: 'Walk / Jog',        time: '07:30 PM', dur: '35 min', cal: 200, intensity: 'Low',    badge: 'low'    },
+            ],
+            4: [ // Thursday
+                { initials: 'DL', name: 'Deadlifts',         time: '06:00 AM', dur: '55 min', cal: 460, intensity: 'High',   badge: 'high'   },
+                { initials: 'SC', name: 'Spin Class',        time: '08:00 AM', dur: '45 min', cal: 410, intensity: 'High',   badge: 'high'   },
+                { initials: 'YS', name: 'Yoga Session',      time: '07:00 PM', dur: '30 min', cal: 150, intensity: 'Low',    badge: 'low'    },
+            ],
+            5: [ // Friday
+                { initials: 'MR', name: 'Morning Run',       time: '06:30 AM', dur: '50 min', cal: 450, intensity: 'High',   badge: 'high'   },
+                { initials: 'ST', name: 'Strength Training', time: '12:00 PM', dur: '60 min', cal: 400, intensity: 'Medium', badge: 'medium' },
+                { initials: 'ZM', name: 'Zumba',             time: '06:00 PM', dur: '50 min', cal: 320, intensity: 'Medium', badge: 'medium' },
+            ],
+            6: [ // Saturday
+                { initials: 'HC', name: 'HIIT Cardio',       time: '07:00 AM', dur: '35 min', cal: 490, intensity: 'High',   badge: 'high'   },
+                { initials: 'SW', name: 'Swimming',          time: '09:00 AM', dur: '60 min', cal: 380, intensity: 'Medium', badge: 'medium' },
+                { initials: 'CB', name: 'CrossFit Basics',   time: '05:00 PM', dur: '50 min', cal: 510, intensity: 'High',   badge: 'high'   },
+            ],
+        };
+
+        const workoutList = document.querySelector('.workout-list');
+        if (!workoutList) return;
+
+        // Current live cal values (will tick up)
+        let liveCals = [];
+
+        function renderWorkouts(day) {
+            const workouts = workoutsByDay[day] || workoutsByDay[1];
+            liveCals = workouts.map(w => w.cal);
+
+            workoutList.innerHTML = workouts.map((w, i) => `
+                <div class="workout-item">
+                    <div class="workout-icon">
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(w.initials)}&background=1e1c1a&color=fff&rounded=true&bold=true" alt="${w.name} icon">
+                    </div>
+                    <div class="workout-details">
+                        <h4>${w.name}</h4>
+                        <p>${w.time} &middot; ${w.dur}</p>
+                    </div>
+                    <div class="workout-stats">
+                        <span class="cal" id="wCal${i}">${liveCals[i]} cal</span>
+                        <span class="badge ${w.badge}">${w.intensity}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial render based on today's day
+        const today = new Date().getDay();
+        renderWorkouts(today);
+
+        // Tick calorie numbers every 8 seconds (±5–15 cal variance per item)
+        function tickCalories() {
+            liveCals = liveCals.map((cal, i) => {
+                const delta = Math.floor(Math.random() * 11) + 5; // 5–15
+                const increase = Math.random() > 0.3; // 70% chance to go up
+                const newCal = increase ? cal + delta : Math.max(cal - delta, 50);
+                const el = document.getElementById(`wCal${i}`);
+                if (el) {
+                    el.style.transition = 'opacity 0.3s';
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.textContent = `${newCal} cal`;
+                        el.style.opacity = '1';
+                    }, 300);
+                }
+                return newCal;
+            });
+        }
+
+        setInterval(tickCalories, 8000);
+
+        // Schedule a midnight re-render (so workouts change by day without refresh)
+        function scheduleNextDay() {
+            const now = new Date();
+            const msTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5).getTime() - now.getTime();
+            setTimeout(() => {
+                renderWorkouts(new Date().getDay());
+                scheduleNextDay(); // schedule again for the next midnight
+            }, msTillMidnight);
+        }
+        scheduleNextDay();
+    })();
+
+
+    // ── 3. Weekly Goal Progress — incremental live updates ──
+    (function initWeeklyGoalProgress() {
+        // Live state
+        const goals = {
+            steps:    { current: 68000, max: 70000, fillId: null,     textId: null     },
+            workouts: { current: 9,     max: 14,    fillId: null,     textId: null     },
+            water:    { current: 17.5,  max: 27.5,  fillId: null,     textId: null     },
+        };
+
+        // Get references to DOM elements
+        const progressItems = document.querySelectorAll('.progress-item');
+        if (progressItems.length < 3) return;
+
+        // Assign IDs dynamically so we can target them
+        const keys = ['steps', 'workouts', 'water'];
+        progressItems.forEach((item, i) => {
+            const key = keys[i];
+            if (!key) return;
+            const fill = item.querySelector('.progress-fill');
+            const text = item.querySelector('.prog-text p');
+            if (fill) { fill.id = `pgFill-${key}`; }
+            if (text) { text.id = `pgText-${key}`; }
+        });
+
+        function formatGoalText(key) {
+            const g = goals[key];
+            if (key === 'steps')    return `${g.current.toLocaleString()} / ${g.max.toLocaleString()}`;
+            if (key === 'workouts') return `${g.current} / ${g.max} sessions`;
+            if (key === 'water')    return `${g.current.toFixed(1)}L / ${g.max}L`;
+            return '';
+        }
+
+        function updateGoalUI(key) {
+            const g = goals[key];
+            const pct = Math.min(100, Math.round((g.current / g.max) * 100));
+            const fill = document.getElementById(`pgFill-${key}`);
+            const text = document.getElementById(`pgText-${key}`);
+            if (fill) fill.style.width = `${pct}%`;
+            if (text) {
+                text.style.transition = 'opacity 0.3s';
+                text.style.opacity = '0';
+                setTimeout(() => {
+                    text.textContent = formatGoalText(key);
+                    text.style.opacity = '1';
+                }, 300);
+            }
+        }
+
+        // Steps: increment by 10–30 steps every ~25 s (realistic pedometer pace)
+        function tickSteps() {
+            if (goals.steps.current < goals.steps.max) {
+                goals.steps.current = Math.min(goals.steps.current + Math.floor(Math.random() * 21) + 10, goals.steps.max);
+                updateGoalUI('steps');
+            }
+        }
+        setInterval(tickSteps, 25000);
+
+        // Water: increment by 0.1–0.2 L every ~20 s
+        function tickWater() {
+            if (goals.water.current < goals.water.max) {
+                const inc = parseFloat((Math.random() * 0.1 + 0.1).toFixed(1));
+                goals.water.current = parseFloat(Math.min(goals.water.current + inc, goals.water.max).toFixed(1));
+                updateGoalUI('water');
+            }
+        }
+        setInterval(tickWater, 20000);
+
+        // Workouts: increment by 1 every 60 s (one session takes time)
+        function tickWorkouts() {
+            if (goals.workouts.current < goals.workouts.max) {
+                goals.workouts.current += 1;
+                updateGoalUI('workouts');
+            }
+        }
+        setInterval(tickWorkouts, 60000);
+
+        // Initial render
+        keys.forEach(k => updateGoalUI(k));
+    })();
+
 
     // ----------- Payment Flow Logic -----------
     const planBtns = document.querySelectorAll('.plan-btn');
