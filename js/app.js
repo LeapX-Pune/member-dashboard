@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     AppController.init();
 });
 
-
 window.addEventListener('DOMContentLoaded', () => {
     // 1. Verify Data Exists
     if (!window.mockData) {
@@ -92,9 +91,10 @@ window.addEventListener('DOMContentLoaded', () => {
         // --- STATUS COLOR CODING 
         if (statusEl) {
             statusEl.textContent = data.userProfile.status;
+
             // Clear existing styles
-            statusEl.style.color = ""; 
-            
+            statusEl.style.color = "";
+
             // Apply logic based on status
             if (data.userProfile.status === "Active") statusEl.style.color = "#22c55e"; // Green
             if (data.userProfile.status === "Expired") statusEl.style.color = "#ef4444"; // Red
@@ -111,7 +111,8 @@ window.addEventListener('DOMContentLoaded', () => {
         // --- RECENT ACTIVITY LIST 
         const activityList = document.getElementById('activity-list');
         if (activityList) {
-            activityList.innerHTML = ""; 
+            activityList.innerHTML = "";
+
             data.recentActivities.forEach(item => {
                 const li = document.createElement('li');
                 li.innerHTML = `<span>${item.date}</span> - <strong>${item.activity}</strong>`;
@@ -121,6 +122,8 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     renderDashboard();
+});
+
 // js/app.js
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -136,6 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // 1. Name Injection (with "Guest" protection)
         const nameEl = document.getElementById('user-name');
+
         if (nameEl) {
             // If name is empty (""), use "Guest Member" instead
             nameEl.textContent = data.userProfile.name || "Guest Member";
@@ -143,6 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         // 2. Status Styling (The "If/Then" logic)
         const statusEl = document.getElementById('membership-status');
+
         if (statusEl) {
             const currentStatus = data.userProfile.status;
             statusEl.textContent = currentStatus;
@@ -160,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 3. Stats Injection (Sessions and Points) [cite: 113]
+        // 3. Stats Injection (Sessions and Points)
         const sessionsEl = document.getElementById('stat-sessions');
         const pointsEl = document.getElementById('stat-points');
 
@@ -171,4 +176,104 @@ window.addEventListener('DOMContentLoaded', () => {
     // Run the function!
     injectData();
 });
+// REAL-TIME SIMULATION
+const stats = window.mockData.membershipStats;
+// Dom Elements
+const sessionsEl = document.getElementById('stat-sessions');
+const pointsEl = document.getElementById('stat-points');
+const statusEl = document.getElementById('membership-status');
+// Status option
+const statuses = [
+    "Active",
+    "Expiring Soon",
+    "Expired"
+];
+// Animation Function
+function animateElement(element) {
+if (!element) return;
 
+    element.classList.add('live-update');
+
+    setTimeout(() => {
+        element.classList.remove('live-update');
+    }, 500);
+}
+// Update points
+function updatePoints() {
+
+    const randomChange =
+        Math.floor(Math.random() * 20) - 5;
+
+    stats.rewardPoints += randomChange;
+
+    if (stats.rewardPoints < 0) {
+        stats.rewardPoints = 0;
+    }
+
+    if (pointsEl) {
+        pointsEl.textContent = stats.rewardPoints;
+        animateElement(pointsEl);
+    }
+}
+// Update Session
+function updateSessions() {
+
+    stats.sessionsCount += 1;
+
+    if (sessionsEl) {
+        sessionsEl.textContent = stats.sessionsCount;
+        animateElement(sessionsEl);
+    }
+}
+// Update status
+function updateStatus() {
+
+    const randomStatus =
+        statuses[
+            Math.floor(Math.random() * statuses.length)
+        ];
+
+    window.mockData.userProfile.status =
+        randomStatus;
+
+if (statusEl) {
+ statusEl.textContent = randomStatus;
+// Reset colors
+        statusEl.style.color = "";
+// Status colors
+        if (randomStatus === "Active") {
+            statusEl.style.color = "#22c55e";
+        }
+
+        if (randomStatus === "Expired") {
+            statusEl.style.color = "#ef4444";
+        }
+
+        if (randomStatus === "Expiring Soon") {
+            statusEl.style.color = "#f59e0b";
+        }
+        animateElement(statusEl);
+    }
+}
+// Main loop
+setInterval(() => {
+
+    const randomUpdate =
+        Math.floor(Math.random() * 3);
+
+    switch(randomUpdate) {
+
+        case 0:
+            updatePoints();
+            break;
+
+        case 1:
+            updateSessions();
+            break;
+
+        case 2:
+            updateStatus();
+            break;
+    }
+
+}, 2000);
