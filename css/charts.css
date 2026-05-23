@@ -290,6 +290,62 @@
 }
 
 /* ==========================================================================
+   Analytics Layout Overrides to prevent horizontal overflow/white gutters
+   ========================================================================== */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+#dashboardContainer,
+#dashboardContainer .main-wrapper {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+.analytics-override,
+.analytics-dashboard,
+.analytics-top-row,
+.analytics-bottom-row,
+.analytics-card,
+.chart-card,
+.chart-container {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+.chart-container canvas {
+    max-width: 100% !important;
+}
+body:has(#wip-view[style*="display: flex"]) {
+    overflow-x: hidden !important;
+}
+body:has(#wip-view[style*="display: flex"]) #dashboardContainer,
+body:has(#wip-view[style*="display: flex"]) .main-wrapper,
+body:has(#wip-view[style*="display: flex"]) #wip-view.analytics-override {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+}
+@media (max-width: 768px) {
+    .analytics-dashboard {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .analytics-top-row,
+    .analytics-bottom-row {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+    .analytics-card,
+    .chart-card {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+/* ========================================================================== 
    Student 8 — Doughnut Chart (Membership Usage)
    ========================================================================== */
 
@@ -402,3 +458,4 @@
     border-color: var(--chart-goal);
     box-shadow: 0 2px 12px rgba(241, 92, 5, 0.45);
 }
+

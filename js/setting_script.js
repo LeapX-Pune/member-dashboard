@@ -87,8 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
         systemPrefersDark.addListener(handleSystemThemeChange);
     }
 
-    // Load saved theme on startup
-    const savedTheme = getStoredTheme();
+    // Load saved theme on startup.
+    // If no theme has ever been stored (first login), always default to 'light'
+    // so the dashboard always opens in light mode on first visit.
+    const isFirstTime = !(function() {
+        try { return !!localStorage.getItem('fitpulse-theme'); } catch { return false; }
+    })();
+
+    const savedTheme = isFirstTime ? 'light' : getStoredTheme();
+    if (isFirstTime) {
+        storeTheme('light');  // persist the default so second load respects user changes
+        // Ensure dark class is stripped immediately (prevents flash)
+        if (dashboardContainer) dashboardContainer.classList.remove('theme-dark');
+    }
+
     const savedRadio = document.querySelector(`.theme-radio[value="${savedTheme}"]`);
     if (savedRadio) savedRadio.checked = true;
     applyTheme(savedTheme);
