@@ -197,23 +197,29 @@ window.addEventListener('DOMContentLoaded', () => {
                     // Trigger Ring Animations
                     ringsData.forEach(animateRing);
                     
+                    // Refresh theme colors
+                    updateThemeFromCSS();
+                    
                     // Trigger Line Chart Entrance Animation
                     if (window.activityChart) {
-                        // Refresh theme colors just in case mode was toggled before tab opened
-                        updateThemeFromCSS();
                         window.activityChart.data.datasets[0].borderColor = THEME.primary;
                         window.activityChart.data.datasets[0].pointBorderColor = THEME.primary;
                         window.activityChart.options.scales.x.ticks.color = THEME.text;
                         window.activityChart.options.scales.y.grid.color = THEME.grid;
-                        
-                        // Update tooltips to match new theme
                         window.activityChart.options.plugins.tooltip.backgroundColor = THEME.surface;
                         window.activityChart.options.plugins.tooltip.titleColor = THEME.text;
                         window.activityChart.options.plugins.tooltip.bodyColor = THEME.primary;
                         window.activityChart.options.plugins.tooltip.borderColor = THEME.grid;
-                        
+                        window.activityChart.resize();
                         window.activityChart.reset();
                         window.activityChart.update();
+                    }
+                    
+                    // Refresh Doughnut Chart when tab becomes visible (canvas had no size when hidden)
+                    if (window.doughnutChart) {
+                        window.doughnutChart.resize();
+                        window.doughnutChart.reset();
+                        window.doughnutChart.update();
                     }
                 } else if (!entry.isIntersecting) {
                     // Reset so the animation replays every time the user visits the tab
@@ -234,31 +240,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 // ============================================================
-// Student 8 - Donut Chart starts here
+// Student 8 - Donut Chart
 // ============================================================
 
 window.addEventListener('DOMContentLoaded', function () {
 
-    // Get the data from data.js
     var data = window.mockData.doughnut_weekly;
-
-    // Show the numbers in the legend below the chart
-    document.getElementById('legend-used').textContent      = data.data[0];
-    document.getElementById('legend-available').textContent = data.data[1];
-    document.getElementById('legend-pending').textContent   = data.data[2];
-
-    // Get the canvas element
     var canvas = document.getElementById('doughnutChart');
+    if (!canvas) return;
 
     // Read colours from charts.css so they work in both Light and Dark mode
-    // The same CSS variables are used by the ring cards at the top of Analytics
     var themeEl = document.getElementById('dashboardContainer') || document.body;
     var style   = getComputedStyle(themeEl);
-    var color1  = style.getPropertyValue('--chart-ring-exercise').trim(); // Used Sessions
-    var color2  = style.getPropertyValue('--chart-ring-move').trim();     // Available Sessions
-    var color3  = style.getPropertyValue('--chart-alert').trim();         // Pending Approval
+    var color1  = style.getPropertyValue('--chart-ring-exercise').trim();
+    var color2  = style.getPropertyValue('--chart-ring-move').trim();
+    var color3  = style.getPropertyValue('--chart-alert').trim();
 
-    // Draw the doughnut chart
     window.doughnutChart = new Chart(canvas, {
         type: 'doughnut',
         data: {
@@ -274,13 +271,9 @@ window.addEventListener('DOMContentLoaded', function () {
             cutout: '68%',
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                duration: 900
-            },
+            animation: { duration: 900 },
             plugins: {
-                legend: {
-                    display: false   // we use our own HTML legend below the chart
-                },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function (item) {
@@ -292,10 +285,14 @@ window.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Legend numbers
+    document.getElementById('legend-used').textContent      = data.data[0];
+    document.getElementById('legend-available').textContent = data.data[1];
+    document.getElementById('legend-pending').textContent   = data.data[2];
+
     // This function is called by Student 9's toggle buttons (Weekly / Monthly / Yearly)
     window.updateDoughnutTimeframe = function (timeframe) {
 
-        // Pick the right data based on the button clicked
         var newData;
         if (timeframe === 'weekly') {
             newData = window.mockData.doughnut_weekly;
@@ -305,12 +302,10 @@ window.addEventListener('DOMContentLoaded', function () {
             newData = window.mockData.doughnut_yearly;
         }
 
-        // Update the chart with the new data
         window.doughnutChart.data.labels           = newData.labels;
         window.doughnutChart.data.datasets[0].data = newData.data;
         window.doughnutChart.update();
 
-        // Update the legend numbers too
         document.getElementById('legend-used').textContent      = newData.data[0];
         document.getElementById('legend-available').textContent = newData.data[1];
         document.getElementById('legend-pending').textContent   = newData.data[2];

@@ -104,10 +104,6 @@
     text-align: center;
 }
 
-.text-orange {
-    color: var(--accent);
-}
-
 .text-white {
     color: var(--text-light);
 }

@@ -742,29 +742,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentSuccess = document.getElementById('paymentSuccess');
     const paymentTitle = document.getElementById('paymentTitle');
     let selectedPlanName = "";
+    let paymentWaitingTimer = null;
+    let paymentCloseTimer = null;
+
+    function clearPaymentTimers() {
+        if (paymentWaitingTimer) {
+            clearTimeout(paymentWaitingTimer);
+            paymentWaitingTimer = null;
+        }
+        if (paymentCloseTimer) {
+            clearTimeout(paymentCloseTimer);
+            paymentCloseTimer = null;
+        }
+    }
+
+    function closePaymentModal() {
+        if (!paymentModal || !paymentQrCode || !paymentSuccess || !paymentTitle) return;
+        clearPaymentTimers();
+        paymentModal.style.display = 'none';
+        paymentQrCode.style.display = 'block';
+        paymentSuccess.style.display = 'none';
+        paymentTitle.textContent = 'Complete Payment';
+    }
     
     if (planBtns.length > 0 && paymentModal && paymentQrCode && paymentSuccess && paymentTitle) {
         planBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const planCard = e.target.closest('.plan-card');
+                const planCard = e.currentTarget.closest('.plan-card');
                 if (planCard) {
                     const titleEl = planCard.querySelector('.plan-title');
                     selectedPlanName = titleEl ? titleEl.textContent : "New Plan";
+                } else {
+                    selectedPlanName = "New Plan";
                 }
-                
-                // Show modal with QR
+
+                clearPaymentTimers();
+
+                // Show waiting payment state first
                 paymentModal.style.display = 'flex';
                 paymentQrCode.style.display = 'block';
                 paymentSuccess.style.display = 'none';
                 paymentTitle.textContent = `Complete Payment for ${selectedPlanName}`;
                 
-                // After 3 seconds, show success
-                setTimeout(() => {
+                // Then show success state
+                paymentWaitingTimer = setTimeout(() => {
                     paymentQrCode.style.display = 'none';
                     paymentSuccess.style.display = 'block';
                     paymentTitle.textContent = "Payment Successful";
                     
-                    // Update user plan
                     if (window.mockData) {
                         window.mockData.userProfile.membershipPlan = selectedPlanName;
                         window.mockData.membershipStats.activePlan = selectedPlanName;
@@ -773,12 +798,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                     
-                    // Close modal after another 2 seconds
-                    setTimeout(() => {
-                        paymentModal.style.display = 'none';
+                    paymentCloseTimer = setTimeout(() => {
+                        closePaymentModal();
                     }, 2000);
                 }, 5000);
             });
+        });
+
+        // Allow closing the modal by clicking outside the payment card
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) {
+                closePaymentModal();
+            }
         });
     }
 

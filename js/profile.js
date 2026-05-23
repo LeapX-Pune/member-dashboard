@@ -364,13 +364,6 @@ function showProfileToast(message) {
 // LOGOUT
 // ─────────────────────────────────────────────
 
-function handleProfileLogout() {
-    clearSession();
-    // The existing script.js handleLogout() manages the UI hide/show,
-    // so we just clear storage here. The event listener is added below
-    // after DOMContentLoaded to avoid double-binding.
-}
-
 // ─────────────────────────────────────────────
 // MAIN INIT — runs after DOMContentLoaded
 // ─────────────────────────────────────────────
@@ -481,24 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── 4. Logout — show confirmation modal (script.js handles the actual logic) ──
-    const _logoutTriggers = ['sidebarLogoutBtn'];
-    _logoutTriggers.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            // Remove any direct logout listener; script.js already wired showLogoutModal
-            btn.removeEventListener('click', handleProfileLogout);
-        }
-    });
-    // Settings panel logout button — redirect to modal
-    document.querySelectorAll('.logout-btn').forEach(btn => {
-        btn.removeEventListener('click', handleProfileLogout);
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const modal = document.getElementById('logoutModal');
-            if (modal) modal.style.display = 'flex';
-        });
-    });
+    // ── 4. Logout — handled by script.js (showLogoutModal) ──
 
     // ── 5. Session guard — If user navigates back after logout ──
     //    We only enforce this if the dashboard is currently visible on load
