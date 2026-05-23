@@ -390,18 +390,7 @@ body {
     transform: scale(1.08);
 }
 
-/* Notification badge */
-.notification-btn::after {
-    content: '';
-    position: absolute;
-    top: 7px;
-    right: 7px;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: var(--r-full);
-    border: 2px solid var(--bg-card);
-}
+
 
 .avatar {
     width: 36px;
@@ -919,7 +908,7 @@ body {
 }
 
 /* Accent icon tints */
-.text-orange  { color: var(--accent-mid); }
+.text-orange  { color: var(--accent); }
 .icon-crown   { color: #fbbf24; }
 
 /* ------------------------------------------------------

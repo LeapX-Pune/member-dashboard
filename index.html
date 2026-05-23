@@ -23,7 +23,6 @@
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/setting_style.css">
     <link rel="stylesheet" href="./css/landing.css">
-    <link rel="stylesheet" href="./css/analytics.css">
     <link rel="stylesheet" href="./css/charts.css">
     <link rel="stylesheet" href="./css/profile.css">
     <!-- <link rel="stylesheet" href="./css/navbar.css"> -->
@@ -919,7 +918,7 @@
                             <li><i class="fa-regular fa-calendar-days text-orange"></i> 1 Month Duration</li>
                             <li><i class="fa-solid fa-dumbbell text-orange"></i> 50 Standard Streak Days</li>
                             <li><i class="fa-solid fa-person-running text-orange"></i> Pro Tier Access</li>
-                            <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
+                            <li><i class="fa-solid fa-heart-pulse text-orange"></i> Basic Tier Access</li>
                         </ul>
                         <button type="button" class="plan-btn">Select Plan</button>
                     </div>
@@ -937,7 +936,7 @@
                             <li><i class="fa-solid fa-dumbbell text-orange"></i> 150 Standard Streak Days</li>
                             <li><i class="fa-solid fa-person-running text-orange"></i> Pro Tier Access</li>
                             <li><i class="fa-solid fa-heart-pulse text-orange"></i> Specialized Classes</li>
-                            <li><i class="fa-solid fa-heart-pulse text-orange"></i> Pro Tier Access</li>
+                            <li><i class="fa-solid fa-utensils text-orange"></i> Nutrition Guidance</li>
                         </ul>
                         <button type="button" class="plan-btn">Select Plan</button>
                     </div>
@@ -1248,30 +1247,64 @@
 
 
 
-                    <!-- Bottom Row: Displays detailed charts and data visualizations -->
-                    <div class="analytics-bottom-row">
-
-                        <!-- Line Chart: Activity Progress -->
-                        <div class="chart-card">
-                            <div class="activity-progress-header">
-                                <h3>Activity Progress</h3>
-                                <div class="activity-progress-legend">
-                                    <span class="legend-item"><span class="legend-color-sessions"></span>Sessions</span>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="activityChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Placeholder Chart: Membership Usage -->
-                        <div class="chart-card">
-                            <h3>Membership Usage</h3>
-                            <div class="chart-container">
-
-                            </div>
-                        </div>
-                    </div>
+                     <!-- Bottom Row: Displays detailed charts and data visualizations -->
+                     <div class="analytics-bottom-row">
+ 
+                         <!-- Line Chart: Activity Progress -->
+                         <div class="chart-card">
+                             <div class="activity-progress-header">
+                                 <h3>Activity Progress</h3>
+                                 <div class="activity-progress-legend">
+                                     <span class="legend-item"><span class="legend-color-sessions"></span>Sessions</span>
+                                 </div>
+                             </div>
+                             
+                             <!-- Toggle buttons for Line Chart (Weekly / Monthly / Yearly) -->
+                             <div class="chart-toggle-group" id="lineChartToggle" aria-label="Activity chart period">
+                                 <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchLineChart('weekly')">Weekly</button>
+                                 <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchLineChart('monthly')">Monthly</button>
+                                 <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchLineChart('yearly')">Yearly</button>
+                             </div>
+ 
+                             <div class="chart-container">
+                                 <canvas id="activityChart"></canvas>
+                             </div>
+                         </div>
+ 
+                         <!-- Membership Usage Doughnut Chart -->
+                         <div class="chart-card">
+                             <h3>Membership Usage</h3>
+ 
+                             <!-- Toggle buttons for Doughnut Chart (Weekly / Monthly / Yearly) -->
+                             <div class="chart-toggle-group" id="doughnutChartToggle" aria-label="Membership usage chart period">
+                                 <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchDoughnutChart('weekly')">Weekly</button>
+                                 <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchDoughnutChart('monthly')">Monthly</button>
+                                 <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchDoughnutChart('yearly')">Yearly</button>
+                             </div>
+ 
+                             <div class="chart-container donut-chart-container">
+                                 <canvas id="doughnutChart" aria-label="Membership usage doughnut chart" role="img"></canvas>
+                             </div>
+                             <!-- Custom legend — populated & kept in sync by charts.js (Student 8) -->
+                             <ul class="donut-legend" id="donutLegend" aria-label="Doughnut chart legend">
+                                 <li class="donut-legend-item">
+                                     <span class="donut-legend-dot" style="background:var(--chart-ring-exercise);"></span>
+                                     <span class="donut-legend-label">Used Sessions</span>
+                                     <span class="donut-legend-val" id="legend-used">–</span>
+                                 </li>
+                                 <li class="donut-legend-item">
+                                     <span class="donut-legend-dot" style="background:var(--chart-goal);"></span>
+                                     <span class="donut-legend-label">Available</span>
+                                     <span class="donut-legend-val" id="legend-available">–</span>
+                                 </li>
+                                 <li class="donut-legend-item">
+                                     <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
+                                     <span class="donut-legend-label">Pending</span>
+                                     <span class="donut-legend-val" id="legend-pending">–</span>
+                                 </li>
+                             </ul>
+                         </div>
+                     </div>
                 </div>
             </main>
 
@@ -1400,52 +1433,7 @@
                                     placeholder="Any special requirements or goals for this session…"
                                     style="height:80px;"></textarea>
                             </div>
-
-                        <!-- Toggle buttons for Line Chart (Weekly / Monthly / Yearly) -->
-                        <div class="chart-toggle-group" id="lineChartToggle" aria-label="Activity chart period">
-                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchLineChart('weekly')">Weekly</button>
-                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchLineChart('monthly')">Monthly</button>
-                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchLineChart('yearly')">Yearly</button>
                         </div>
-
-                        <div class="chart-container">
-                            <canvas id="activityChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- Membership Usage Doughnut Chart — Student 8 -->
-                    <div class="chart-card">
-                        <h3>Membership Usage</h3>
-
-                        <!-- Toggle buttons for Doughnut Chart (Weekly / Monthly / Yearly) -->
-                        <div class="chart-toggle-group" id="doughnutChartToggle" aria-label="Membership usage chart period">
-                            <button type="button" class="chart-toggle-btn active" data-period="weekly" onclick="switchDoughnutChart('weekly')">Weekly</button>
-                            <button type="button" class="chart-toggle-btn" data-period="monthly" onclick="switchDoughnutChart('monthly')">Monthly</button>
-                            <button type="button" class="chart-toggle-btn" data-period="yearly" onclick="switchDoughnutChart('yearly')">Yearly</button>
-                        </div>
-
-                        <div class="chart-container donut-chart-container">
-                            <canvas id="doughnutChart" aria-label="Membership usage doughnut chart" role="img"></canvas>
-
-                        </div>
-                        <!-- Custom legend — populated & kept in sync by charts.js (Student 8) -->
-                        <ul class="donut-legend" id="donutLegend" aria-label="Doughnut chart legend">
-                            <li class="donut-legend-item">
-                                <span class="donut-legend-dot" style="background:var(--chart-ring-exercise);"></span>
-                                <span class="donut-legend-label">Used Sessions</span>
-                                <span class="donut-legend-val" id="legend-used">–</span>
-                            </li>
-                            <li class="donut-legend-item">
-                                <span class="donut-legend-dot" style="background:var(--chart-goal);"></span>
-                                <span class="donut-legend-label">Available</span>
-                                <span class="donut-legend-val" id="legend-available">–</span>
-                            </li>
-                            <li class="donut-legend-item">
-                                <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
-                                <span class="donut-legend-label">Pending</span>
-                                <span class="donut-legend-val" id="legend-pending">–</span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
 

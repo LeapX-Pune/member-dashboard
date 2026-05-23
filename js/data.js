@@ -26,7 +26,8 @@ const mockData = {
         sessionsCount: allUsers[0].sessions,
         rewardPoints: allUsers[0].points,
         attendanceRate: "94%",
-        totalHoursBurned: 142
+        totalHoursBurned: 142,
+        expiryOverview: "Valid till Dec 2026"
     },
     // Chart datasets (consumed by Students 7, 8, and 9)
     activity_weekly: {
@@ -127,7 +128,7 @@ window.renderActiveDashboard = () => {
         if (countSessions) countSessions.textContent = data.membershipStats.sessionsCount;
         if (countPoints) countPoints.textContent = data.membershipStats.rewardPoints;
         if (countPlanOverview) countPlanOverview.textContent = data.membershipStats.activePlan;
-        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview;
+        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview || data.membershipStats.expiryStatus;
 
         // 5. Render Recent Activities Feed dynamically
         const activityLogWrapper = document.getElementById('activity-list') || document.getElementById('recent-activities-list');

@@ -299,16 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // ─── 8. PROFILE SETTINGS EDIT BUTTON ────────────────────────────────────
-    const editProfileBtn = document.getElementById('editProfileBtn');
-    if (editProfileBtn) {
-        editProfileBtn.addEventListener('click', () => {
-            const actualSettingsBtn = document.getElementById('settingsEditProfileBtn');
-            if (actualSettingsBtn) actualSettingsBtn.click();
-        });
-    }
-
-    // ─── 9. PROFILE MODAL CLOSE (close schedule modal too if open) ───────────
+    // ─── 8. PROFILE MODAL CLOSE (close schedule modal too if open) ───────────
     // The profile modal close buttons also close the edit profile modal
     const editProfileModalClose = document.getElementById('profileModalCloseBtn');
     const editProfileOverlay    = document.getElementById('profileModalOverlay');
