@@ -30,9 +30,9 @@ window.addEventListener('DOMContentLoaded', () => {
         return { ring, valEl, numVal, pct };
     };
 
-    // Goals: Sessions(50), Points(2000), Attendance(100), Hours(200)
+    // Goals: Sessions(200), Points(2000), Attendance(100), Hours(200)
     const ringsData = [
-        prepareRingData('stat-sessions', stats.sessionsCount, 50),
+        prepareRingData('stat-sessions', stats.sessionsCount, 200),
         prepareRingData('stat-points', stats.rewardPoints, 2000),
         prepareRingData('stat-attendance', parseFloat(stats.attendanceRate), 100),
         prepareRingData('stat-hours', stats.totalHoursBurned, 200)
@@ -194,6 +194,28 @@ window.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !hasAnimated) {
                     hasAnimated = true;
+
+                    // Retrieve latest values from Overview elements
+                    const pointsEl = document.getElementById('stat-points');
+                    if (pointsEl) {
+                        const numVal = parseInt(pointsEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+                        const item = ringsData.find(d => d.ring && d.ring.id === 'stat-points-ring');
+                        if (item) {
+                            item.numVal = numVal;
+                            item.pct = Math.min((numVal / 2000) * 100, 100);
+                        }
+                    }
+
+                    const sessionsEl = document.getElementById('stat-sessions');
+                    if (sessionsEl) {
+                        const numVal = parseInt(sessionsEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+                        const item = ringsData.find(d => d.ring && d.ring.id === 'stat-sessions-ring');
+                        if (item) {
+                            item.numVal = numVal;
+                            item.pct = Math.min((numVal / 200) * 100, 100);
+                        }
+                    }
+
                     // Trigger Ring Animations
                     ringsData.forEach(animateRing);
                     
@@ -236,6 +258,44 @@ window.addEventListener('DOMContentLoaded', () => {
         
         observer.observe(wipView);
     }
+
+    // --- Real-time Synchronization between Overview and Analytics tabs ---
+    // Sets up MutationObservers to instantly reflect point and session changes in the Analytics tab.
+    const syncRingWithOverview = (overviewId, valElId, ringId, goal) => {
+        const overviewEl = document.getElementById(overviewId);
+        const valEl = document.getElementById(valElId);
+        const ringEl = document.getElementById(ringId);
+        if (!overviewEl || !valEl || !ringEl) return;
+
+        let debounceTimeout = null;
+        const observer = new MutationObserver(() => {
+            if (debounceTimeout) clearTimeout(debounceTimeout);
+
+            debounceTimeout = setTimeout(() => {
+                const valStr = overviewEl.textContent || '0';
+                const numVal = parseInt(valStr.replace(/[^\d]/g, ''), 10) || 0;
+                const pct = Math.min((numVal / goal) * 100, 100);
+
+                // Update the ringsData so future entry animations use the correct target
+                const item = ringsData.find(d => d.ring === ringEl);
+                if (item) {
+                    item.numVal = numVal;
+                    item.pct = pct;
+                }
+
+                // If the entrance animation has already run, update the UI instantly
+                if (hasAnimated) {
+                    valEl.textContent = numVal.toLocaleString();
+                    ringEl.style.setProperty('--ring-pct', `${pct}%`);
+                }
+            }, 50); // 50ms debounce ensures we wait until Overview's count-up animation stabilizes before repainting
+        });
+
+        observer.observe(overviewEl, { characterData: true, childList: true, subtree: true });
+    };
+
+    syncRingWithOverview('stat-points', 'stat-points-val', 'stat-points-ring', 2000);
+    syncRingWithOverview('stat-sessions', 'stat-sessions-val', 'stat-sessions-ring', 200);
 });
 
 
