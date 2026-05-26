@@ -1,0 +1,510 @@
+/* ═══════════════════════════════════════════════════════════
+   FitPulse — Premium Realtime UI (glass modals, live engine)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Expiry status card (interactive) ── */
+.expiry-status-card {
+    cursor: pointer;
+    transition: transform var(--t-smooth), box-shadow var(--t-smooth), border-color var(--t-smooth);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.expiry-status-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-smooth);
+    box-shadow: 0 0 28px rgba(34, 197, 94, 0.35);
+}
+
+.expiry-status-card:hover {
+    transform: translateY(-3px);
+}
+
+.expiry-status-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.expiry-status-card.status-active::after { opacity: 1; box-shadow: 0 0 32px rgba(34, 197, 94, 0.4); }
+.expiry-status-card.status-expiring::after { opacity: 1; box-shadow: 0 0 32px rgba(245, 158, 11, 0.45); }
+.expiry-status-card.status-expired::after { opacity: 1; box-shadow: 0 0 32px rgba(239, 68, 68, 0.4); }
+
+.expiry-status-card.fp-card-glow {
+    animation: fpCardGlow 0.85s ease;
+}
+
+.expiry-date-sub {
+    font-size: 0.72rem;
+    color: var(--text-dark-muted);
+    margin-top: 0.35rem;
+    opacity: 0.85;
+}
+
+.membership-status-label {
+    font-weight: 600;
+    transition: color var(--t-smooth);
+}
+
+/* ── Premium overlays ── */
+.fp-premium-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(10, 10, 12, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s;
+}
+
+.fp-premium-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fp-glass-modal {
+    width: min(440px, 100%);
+    max-height: 90vh;
+    overflow: auto;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(245, 240, 232, 0.88));
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 22px;
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: scale(0.92) translateY(16px);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+.dashboard-container.theme-dark .fp-glass-modal {
+    background: linear-gradient(145deg, rgba(42, 39, 36, 0.95), rgba(30, 28, 26, 0.92));
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.fp-premium-overlay.visible .fp-glass-modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.fp-glass-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.fp-glass-modal-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-main);
+}
+
+.fp-glass-modal-header h2 i {
+    color: var(--accent);
+}
+
+.fp-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-main);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+
+.fp-modal-close:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    transform: rotate(90deg);
+}
+
+.fp-glass-modal-body {
+    padding: 1.25rem 1.5rem 1rem;
+}
+
+.fp-glass-modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.fp-confirm-booking {
+    background: linear-gradient(135deg, #e8813a, #f59e0b) !important;
+    border: none !important;
+    color: #fff !important;
+    box-shadow: 0 6px 20px rgba(232, 129, 58, 0.35);
+}
+
+.fp-confirm-booking:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+/* ── Booking success ── */
+.fp-success-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 12, 0.45);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.fp-success-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fp-success-card {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+    transform: scale(0.85);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    max-width: 360px;
+    width: 90%;
+}
+
+.fp-success-overlay.visible .fp-success-card {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.fp-success-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #15803d;
+    margin: 1rem 0 0.35rem;
+}
+
+.fp-success-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.fp-success-check {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto;
+}
+
+.fp-checkmark-circle {
+    stroke: #22c55e;
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: fpStrokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.fp-checkmark-check {
+    stroke: #22c55e;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: fpStrokeCheck 0.35s 0.45s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+@keyframes fpStrokeCircle {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes fpStrokeCheck {
+    to { stroke-dashoffset: 0; }
+}
+
+/* ── Calendar ── */
+.fp-calendar-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.fp-calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.fp-calendar-nav h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.fp-cal-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background var(--t-fast), transform var(--t-fast);
+}
+
+.fp-cal-nav-btn:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.fp-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.fp-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.fp-cal-day {
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+
+.fp-cal-day:hover:not(:disabled) {
+    background: var(--accent-light);
+    transform: scale(1.08);
+}
+
+.fp-cal-day.other-month {
+    color: var(--text-muted);
+    opacity: 0.45;
+}
+
+.fp-cal-day.selected {
+    background: linear-gradient(135deg, var(--accent), #f59e0b);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(232, 129, 58, 0.4);
+}
+
+.fp-cal-day.today:not(.selected) {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.fp-cal-day:disabled {
+    cursor: default;
+    opacity: 0.2;
+}
+
+.fp-calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.legend-active { background: #22c55e; }
+.legend-expiring { background: #f59e0b; }
+.legend-expired { background: #ef4444; }
+
+/* ── Activity items (live) ── */
+.activity-item {
+    position: relative;
+}
+
+.activity-item.fp-slide-in {
+    animation: fpActivitySlide 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fpActivitySlide {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.act-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.act-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--r-full);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.act-badge-booked {
+    background: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+}
+
+.act-badge-completed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+}
+
+.act-done-btn {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--r-full);
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+
+.act-done-btn:hover:not(:disabled) {
+    background: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.act-done-btn:disabled,
+.act-done-btn.completed {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+    cursor: default;
+    transform: none;
+}
+
+.activity-item.is-completed {
+    opacity: 0.88;
+}
+
+.activity-item.is-completed .act-details h4 {
+    text-decoration: line-through;
+    text-decoration-color: rgba(0, 0, 0, 0.15);
+}
+
+/* ── Hero / stat microinteractions ── */
+.welcome-card.fp-hero-pulse {
+    animation: fpHeroPulse 0.9s ease;
+}
+
+@keyframes fpHeroPulse {
+    0%, 100% { box-shadow: var(--shadow-sm); }
+    50% { box-shadow: 0 0 40px rgba(232, 129, 58, 0.25), var(--shadow-md); }
+}
+
+#heroStreakStat.fp-stat-glow,
+#heroSessionsStat.fp-stat-glow,
+.dark-card.fp-card-glow {
+    animation: fpStatGlow 0.75s ease;
+}
+
+@keyframes fpStatGlow {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.04); }
+}
+
+@keyframes fpCardGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.08); }
+}
+
+.m-stat.fp-pulse .m-val {
+    animation: fpCounterPulse 0.6s ease;
+}
+
+@keyframes fpCounterPulse {
+    0%, 100% { transform: scale(1); color: inherit; }
+    50% { transform: scale(1.15); color: var(--accent); }
+}
+
+.dark-card.fp-live-tick h2 {
+    animation: fpCounterPulse 0.5s ease;
+}
+
+.progress-fill.fp-bar-animate {
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcome-card #heroMotivation {
+    display: inline;
+    transition: color 0.4s ease;
+}
+
+.welcome-card #heroMotivation.fp-motivation-flash {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .fp-glass-modal {
+        width: 100%;
+        border-radius: 18px 18px 0 0;
+        align-self: flex-end;
+        max-height: 85vh;
+    }
+
+    .fp-premium-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .act-meta {
+        min-width: 72px;
+    }
+}

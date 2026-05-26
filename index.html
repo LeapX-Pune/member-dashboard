@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="./css/landing.css">
     <link rel="stylesheet" href="./css/charts.css">
     <link rel="stylesheet" href="./css/profile.css">
+    <link rel="stylesheet" href="./css/realtime-premium.css">
     <!-- <link rel="stylesheet" href="./css/navbar.css"> -->
 </head>
 
@@ -577,20 +578,20 @@
                 <section class="welcome-card card-equal" aria-label="Welcome section">
                     <div class="welcome-content">
                         <h1 id="greetingText">Good&nbsp;Morning </h1>
-                        <p class="welcome-subtext">Welcome back, <strong id="welcomeName">Sauryaman</strong>. Ready for
-                            today's workout?</p>
+                        <p class="welcome-subtext">Welcome back, <strong id="welcomeName">Sauryaman</strong>. <span
+                                id="heroMotivation">Ready for today's workout?</span></p>
 
                         <div class="mini-stats">
-                            <div class="m-stat">
-                                <span class="m-val">12</span>
+                            <div class="m-stat" id="heroStreakStat">
+                                <span class="m-val" id="heroStreak">12</span>
                                 <span class="m-label">Streak Days</span>
                             </div>
                             <div class="m-stat">
                                 <span class="m-val">Pro</span>
                                 <span class="m-label">Workout Tier</span>
                             </div>
-                            <div class="m-stat">
-                                <span class="m-val">84</span>
+                            <div class="m-stat" id="heroSessionsStat">
+                                <span class="m-val" id="heroSessions">84</span>
                                 <span class="m-label">Sessions Done</span>
                             </div>
                         </div>
@@ -615,14 +616,16 @@
                         </div>
                     </div>
 
-                    <div class="dark-card">
+                    <div class="dark-card expiry-status-card" id="expiryStatusCard" role="button" tabindex="0"
+                        aria-label="View and update membership expiry">
                         <div class="dark-card-header">
-                            <i class="fa-regular fa-hourglass-half text-orange"></i>
-                            <span>Expiry In</span>
+                            <i class="fa-regular fa-hourglass-half text-orange" id="expiryStatusIcon"></i>
+                            <span>Expiry Status</span>
                         </div>
                         <div class="dark-card-body">
                             <h2 id="stat-expiry-days">87 Days</h2>
-                            <p id="membership-status">Auto-renew ON</p>
+                            <p id="membership-status" class="membership-status-label">Active</p>
+                            <p class="expiry-date-sub" id="expiryDateDisplay">Aug 16, 2026</p>
                         </div>
                     </div>
 
@@ -659,36 +662,7 @@
                         <button type="button" class="view-all-btn" id="viewAllActivity">View All</button>
                     </div>
 
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <img src="https://ui-avatars.com/api/?name=Sauryaman+Bisen&background=fce9d5&color=e8813a&rounded=true&bold=true"
-                                alt="Sauryaman Bisen" class="act-avatar">
-                            <div class="act-details">
-                                <h4>Session Booked</h4>
-                                <p>Yoga Session · 08:00 AM</p>
-                            </div>
-                            <div class="act-time">Just now</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <img src="https://ui-avatars.com/api/?name=Aarav+Sharma&background=e2e8f0&color=475569&rounded=true&bold=true"
-                                alt="Aarav Sharma" class="act-avatar">
-                            <div class="act-details">
-                                <h4>Plan Renewed</h4>
-                                <p>Pro Annual · Aarav Sharma</p>
-                            </div>
-                            <div class="act-time">2h ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <img src="https://ui-avatars.com/api/?name=Priya+Verma&background=d1fae5&color=059669&rounded=true&bold=true"
-                                alt="Priya Verma" class="act-avatar">
-                            <div class="act-details">
-                                <h4>Points Earned</h4>
-                                <p>+50 pts · Priya Verma</p>
-                            </div>
-                            <div class="act-time">5h ago</div>
-                        </div>
+                    <div class="activity-list" id="activityList" aria-live="polite">
                         <div id="moreActivity" style="display:none;">
                             <div class="activity-item">
                                 <img src="https://ui-avatars.com/api/?name=Kunal+Singh&background=fce9d5&color=e8813a&rounded=true&bold=true"
@@ -801,48 +775,48 @@
 
                     <div class="progress-grid h-full">
 
-                        <div class="progress-item">
+                        <div class="progress-item" data-goal="steps">
                             <div class="progress-info">
                                 <div class="prog-icon bg-accent-light">
                                     <i class="fa-solid fa-shoe-prints text-accent"></i>
                                 </div>
                                 <div class="prog-text">
                                     <h4>Steps</h4>
-                                    <p>68,000 / 70,000</p>
+                                    <p id="goalStepsText">68,000 / 70,000</p>
                                 </div>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="progress-fill bg-accent-solid" style="width: 97%;"></div>
+                                <div class="progress-fill bg-accent-solid" id="goalStepsBar" style="width: 97%;"></div>
                             </div>
                         </div>
 
-                        <div class="progress-item">
+                        <div class="progress-item" data-goal="workouts">
                             <div class="progress-info">
                                 <div class="prog-icon bg-slate-light">
                                     <i class="fa-solid fa-dumbbell text-dark"></i>
                                 </div>
                                 <div class="prog-text">
                                     <h4>Workouts</h4>
-                                    <p>9 / 14 sessions</p>
+                                    <p id="goalWorkoutsText">9 / 14 sessions</p>
                                 </div>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="progress-fill bg-dark-solid" style="width: 70%;"></div>
+                                <div class="progress-fill bg-dark-solid" id="goalWorkoutsBar" style="width: 70%;"></div>
                             </div>
                         </div>
 
-                        <div class="progress-item">
+                        <div class="progress-item" data-goal="water">
                             <div class="progress-info">
                                 <div class="prog-icon bg-blue-light">
                                     <i class="fa-solid fa-droplet text-blue"></i>
                                 </div>
                                 <div class="prog-text">
                                     <h4>Water</h4>
-                                    <p>17.5L / 27.5L</p>
+                                    <p id="goalWaterText">17.5L / 27.5L</p>
                                 </div>
                             </div>
                             <div class="progress-bar-container">
-                                <div class="progress-fill bg-blue-solid" style="width: 64%;"></div>
+                                <div class="progress-fill bg-blue-solid" id="goalWaterBar" style="width: 64%;"></div>
                             </div>
                         </div>
 
@@ -1390,6 +1364,106 @@
         </div>
         <!-- /Edit Profile Modal -->
 
+        <!-- Book Session Modal -->
+        <div class="fp-premium-overlay" id="bookingModalOverlay" role="dialog" aria-modal="true"
+            aria-label="Book a session" hidden>
+            <div class="fp-glass-modal fp-booking-modal">
+                <div class="fp-glass-modal-header">
+                    <h2><i class="fa-solid fa-dumbbell"></i> Book Session</h2>
+                    <button type="button" class="fp-modal-close" id="bookingModalCloseBtn" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="fp-glass-modal-body">
+                    <div class="modal-field-group">
+                        <div class="modal-field">
+                            <label for="bookingSessionType">Session Type</label>
+                            <select id="bookingSessionType">
+                                <option value="Yoga Session">Yoga Session</option>
+                                <option value="HIIT Workout">HIIT Workout</option>
+                                <option value="Strength Training">Strength Training</option>
+                                <option value="Cardio Blast">Cardio Blast</option>
+                                <option value="1-on-1 Training">1-on-1 Training</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label for="bookingTrainer">Trainer</label>
+                            <select id="bookingTrainer">
+                                <option value="Coach Alex">Coach Alex</option>
+                                <option value="Sarah Jenkins">Sarah Jenkins</option>
+                                <option value="Marcus Iron">Marcus Iron</option>
+                                <option value="Priya Verma">Priya Verma</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-field-group">
+                        <div class="modal-field">
+                            <label for="bookingDate">Date</label>
+                            <input type="date" id="bookingDate">
+                        </div>
+                        <div class="modal-field">
+                            <label for="bookingTime">Time</label>
+                            <input type="time" id="bookingTime" value="08:00">
+                        </div>
+                    </div>
+                </div>
+                <div class="fp-glass-modal-footer">
+                    <button type="button" class="modal-btn-cancel" id="bookingModalCancelBtn">Cancel</button>
+                    <button type="button" class="modal-btn-save fp-confirm-booking" id="bookingConfirmBtn">
+                        <i class="fa-solid fa-calendar-check"></i> Confirm Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Success Overlay -->
+        <div class="fp-success-overlay" id="bookingSuccessOverlay" hidden aria-live="assertive">
+            <div class="fp-success-card">
+                <div class="fp-success-check" aria-hidden="true">
+                    <svg viewBox="0 0 52 52" class="fp-checkmark">
+                        <circle class="fp-checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="fp-checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+                    </svg>
+                </div>
+                <h3>Session Booked Successfully</h3>
+                <p id="bookingSuccessDetail">Your session is confirmed.</p>
+            </div>
+        </div>
+
+        <!-- Expiry Calendar Modal -->
+        <div class="fp-premium-overlay" id="expiryCalendarOverlay" role="dialog" aria-modal="true"
+            aria-label="Membership expiry calendar" hidden>
+            <div class="fp-glass-modal fp-calendar-modal">
+                <div class="fp-glass-modal-header">
+                    <h2><i class="fa-regular fa-calendar"></i> Membership Expiry</h2>
+                    <button type="button" class="fp-modal-close" id="expiryCalendarCloseBtn" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="fp-glass-modal-body">
+                    <p class="fp-calendar-hint">Select your membership expiry date. Status updates in real time.</p>
+                    <div class="fp-calendar-nav">
+                        <button type="button" class="fp-cal-nav-btn" id="calendarPrevMonth" aria-label="Previous month">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <h3 id="calendarMonthLabel">May 2026</h3>
+                        <button type="button" class="fp-cal-nav-btn" id="calendarNextMonth" aria-label="Next month">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="fp-calendar-weekdays" aria-hidden="true">
+                        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                    </div>
+                    <div class="fp-calendar-grid" id="calendarGrid" role="grid"></div>
+                    <div class="fp-calendar-legend">
+                        <span><i class="legend-dot legend-active"></i> Active (&gt;30d)</span>
+                        <span><i class="legend-dot legend-expiring"></i> Expiring Soon</span>
+                        <span><i class="legend-dot legend-expired"></i> Expired</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Schedule Modal -->
         <div class="profile-modal-overlay" id="scheduleModalOverlay" role="dialog" aria-modal="true"
             aria-label="Gym Schedule">
@@ -1754,6 +1828,7 @@
     </style>
 
     <script src="./js/ui-interactions.js"></script>
+    <script src="./js/realtime-engine.js"></script>
 </body>
 
 </html>

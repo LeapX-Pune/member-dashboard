@@ -123,15 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── 5. DASHBOARD QUICK ACTIONS ──────────────────────────────────────────
 
-    // ── 5a. Book Session ──
-    const actionBook = document.getElementById('actionBook');
-    if (actionBook) {
-        actionBook.addEventListener('click', () => {
-            actionBook.classList.add('btn-clicked');
-            setTimeout(() => actionBook.classList.remove('btn-clicked'), 600);
-            showToast('✅ Session Booked!', 'Your gym session has been successfully booked for today.', 'success');
-        });
-    }
+    // ── 5a. Book Session — handled by realtime-engine.js (openBookingModal) ──
 
     // ── 5b. Schedule Update Modal ──
     const actionSchedule  = document.getElementById('actionSchedule');
