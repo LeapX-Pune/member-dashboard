@@ -250,20 +250,6 @@ Use:
 
 ---
 
-# 👨‍💻 Team Contribution
-
-| Component | Developer |
-|---|---|
-| Settings Tab UI | Sai |
-| Dark Mode System | Sai |
-| Profile Validation | Sai |
-| Skeleton Loaders | Sai |
-| Error-State Banners | Sai |
-| Responsive Design | Sai |
-| localStorage Persistence | Sai |
-| Logout System | Sai |
-
----
 
 # 🔗 Important Files
 
@@ -290,6 +276,6 @@ Use:
 
 # 👤 Author
 
-Developed by Sai 🚀
+Developed by Sai 
 
 ---
