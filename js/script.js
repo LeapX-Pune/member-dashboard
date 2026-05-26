@@ -340,8 +340,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.innerHTML = `
                     <input type="checkbox" id="${uniqueId}">
                     <label for="${uniqueId}" style="cursor: pointer; flex: 1;">${taskText}</label>
-                    <i class="fa-solid fa-trash text-muted" style="cursor: pointer; font-size: 0.9rem;" onclick="this.parentElement.remove()" title="Delete"></i>
+                    <i class="fa-solid fa-trash text-muted" style="cursor: pointer; font-size: 0.9rem;" title="Delete"></i>
                 `;
+                
+                const checkbox = li.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        if (window.addRewardPoints) window.addRewardPoints(15);
+                        li.querySelector('label').style.textDecoration = 'line-through';
+                        li.querySelector('label').style.color = '#9ca3af';
+                    } else {
+                        li.querySelector('label').style.textDecoration = 'none';
+                        li.querySelector('label').style.color = '';
+                    }
+                });
+
+                const trashIcon = li.querySelector('.fa-trash');
+                trashIcon.addEventListener('click', () => {
+                    li.remove();
+                });
                 
                 todoListUl.appendChild(li);
                 todoNewInput.value = ''; // clear input
@@ -516,33 +533,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 1. Recent Activity — time labels refresh every 5 s ──
     (function initActivityTimestamps() {
-        // Each item has an ordered set of labels to cycle through
         const activityItems = [
-            { selector: '.activity-list .activity-item:nth-child(1) .act-time', labels: ['Just now', '1 min ago', '3 min ago', '5 min ago', '10 min ago', '15 min ago', '30 min ago', '1h ago'] },
-            { selector: '.activity-list .activity-item:nth-child(2) .act-time', labels: ['2h ago', '3h ago', '4h ago', '5h ago', '6h ago', '8h ago', '10h ago', '12h ago'] },
-            { selector: '.activity-list .activity-item:nth-child(3) .act-time', labels: ['5h ago', '6h ago', '8h ago', '10h ago', '12h ago', '16h ago', '20h ago', '1d ago'] },
+            { selector: '.activity-list .activity-item:nth-child(1) .act-time', timestamp: Date.now() - 60000 },
+            { selector: '.activity-list .activity-item:nth-child(2) .act-time', timestamp: Date.now() - 7200000 },
+            { selector: '.activity-list .activity-item:nth-child(3) .act-time', timestamp: Date.now() - 18000000 }
         ];
 
-        // Initialise index counters
-        const indices = activityItems.map(() => 0);
+        function formatTimeAgo(msAgo) {
+            if (msAgo < 60000) return 'Just now';
+            const mins = Math.floor(msAgo / 60000);
+            if (mins < 60) return `${mins} min ago`;
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
 
         function tickActivityTimes() {
-            activityItems.forEach((item, i) => {
+            const now = Date.now();
+            activityItems.forEach(item => {
                 const el = document.querySelector(item.selector);
                 if (!el) return;
-                // Advance index
-                indices[i] = (indices[i] + 1) % item.labels.length;
-                // Animate: fade out → update → fade in
-                el.style.transition = 'opacity 0.4s';
-                el.style.opacity = '0';
-                setTimeout(() => {
-                    el.textContent = item.labels[indices[i]];
-                    el.style.opacity = '1';
-                }, 400);
+                const msAgo = now - item.timestamp;
+                const newText = formatTimeAgo(msAgo);
+                if (el.textContent !== newText) {
+                    el.style.transition = 'opacity 0.4s';
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.textContent = newText;
+                        el.style.opacity = '1';
+                    }, 400);
+                }
             });
         }
 
-        // Tick every 5 seconds
+        tickActivityTimes();
         setInterval(tickActivityTimes, 5000);
     })();
 
