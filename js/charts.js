@@ -168,22 +168,6 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Expose Timeframe Update Function for Activity Chart
-    window.updateActivityTimeframe = (timeframe) => {
-        if (!window.activityChart) return;
-        
-        let targetData = null;
-        if (timeframe === 'weekly') targetData = data.activity_weekly;
-        else if (timeframe === 'monthly') targetData = data.activity_monthly;
-        else if (timeframe === 'yearly') targetData = data.activity_yearly;
-        
-        if (targetData) {
-            window.activityChart.data.labels = targetData.labels;
-            window.activityChart.data.datasets[0].data = targetData.data;
-            window.activityChart.update();
-        }
-    };
-
     // 5. Intersection Observer to Trigger Animations on View
     // Ensures charts and rings only animate when the Analytics tab becomes visible.
     const wipView = document.getElementById('wip-view');
@@ -243,15 +227,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         window.doughnutChart.reset();
                         window.doughnutChart.update();
                     }
-                } else if (!entry.isIntersecting) {
-                    // Reset so the animation replays every time the user visits the tab
-                    hasAnimated = false;
-                    
-                    // Reset DOM state for rings
-                    ringsData.forEach(item => {
-                        if (item.ring) item.ring.style.setProperty('--ring-pct', '0%');
-                        if (item.valEl) item.valEl.textContent = '0';
-                    });
                 }
             });
         }, { threshold: 0.1 });
@@ -349,27 +324,6 @@ window.addEventListener('DOMContentLoaded', function () {
     document.getElementById('legend-used').textContent      = data.data[0];
     document.getElementById('legend-available').textContent = data.data[1];
     document.getElementById('legend-pending').textContent   = data.data[2];
-
-    // This function is called by Student 9's toggle buttons (Weekly / Monthly / Yearly)
-    window.updateDoughnutTimeframe = function (timeframe) {
-
-        var newData;
-        if (timeframe === 'weekly') {
-            newData = window.mockData.doughnut_weekly;
-        } else if (timeframe === 'monthly') {
-            newData = window.mockData.doughnut_monthly;
-        } else if (timeframe === 'yearly') {
-            newData = window.mockData.doughnut_yearly;
-        }
-
-        window.doughnutChart.data.labels           = newData.labels;
-        window.doughnutChart.data.datasets[0].data = newData.data;
-        window.doughnutChart.update();
-
-        document.getElementById('legend-used').textContent      = newData.data[0];
-        document.getElementById('legend-available').textContent = newData.data[1];
-        document.getElementById('legend-pending').textContent   = newData.data[2];
-    };
 
 });
 

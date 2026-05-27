@@ -159,75 +159,17 @@ function logSession() {
     if (ptsEl) flashEl(ptsEl);
 
     // ── Show a discreet toast notification ───────────────────────────────
-    showToast(
-        '🏋️ Session Logged',
-        `+${POINTS_PER_SESSION} pts earned · ${MAX_SESSIONS_PER_DAY - appState.today} session${MAX_SESSIONS_PER_DAY - appState.today !== 1 ? 's' : ''} remaining today`,
-        'success'
-    );
+    if (typeof window.showToast === 'function') {
+        window.showToast(
+            'Session Logged',
+            `+${POINTS_PER_SESSION} pts earned · ${MAX_SESSIONS_PER_DAY - appState.today} session${MAX_SESSIONS_PER_DAY - appState.today !== 1 ? 's' : ''} remaining today`,
+            'success'
+        );
+    }
 
     console.info(`[FitPulse] Session logged — today: ${appState.today}/${MAX_SESSIONS_PER_DAY}, total: ${appState.total}, points: ${appState.points}`);
     return true;
 }
-
-// ─── TOAST ────────────────────────────────────────────────────────────────────
-
-function showToast(title, message, type = 'info') {
-    // Only show toasts if the dashboard is visible
-    const dashboard = document.getElementById('dashboardContainer');
-    if (!dashboard || dashboard.style.display === 'none' || dashboard.style.display === '') return;
-
-    // Reuse existing toast container if present (from script.js), or create one
-    let container = document.getElementById('fp-toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'fp-toast-container';
-        container.style.cssText = `
-            position:fixed; bottom:1.5rem; right:1.5rem; z-index:99998;
-            display:flex; flex-direction:column; gap:0.6rem;
-            pointer-events:none;
-        `;
-        document.body.appendChild(container);
-    }
-
-    const colours = {
-        success: { bg: '#0f2d1a', border: '#22c55e', icon: '✔' },
-        info:    { bg: '#0d1f33', border: '#3b82f6', icon: 'ℹ' },
-        warn:    { bg: '#2d1e00', border: '#f59e0b', icon: '⚠' }
-    };
-    const c = colours[type] || colours.info;
-
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        pointer-events:auto;
-        background:${c.bg};
-        border:1.5px solid ${c.border};
-        border-radius:14px;
-        padding:0.85rem 1.1rem;
-        min-width:260px;
-        max-width:320px;
-        display:flex;
-        gap:0.75rem;
-        align-items:flex-start;
-        box-shadow:0 8px 32px rgba(0,0,0,0.45);
-        animation:fpToastIn 0.35s cubic-bezier(.34,1.56,.64,1) forwards;
-        opacity:0;
-        transform:translateY(12px);
-    `;
-    toast.innerHTML = `
-        <span style="font-size:1.1rem;line-height:1.3;color:${c.border};">${c.icon}</span>
-        <div style="display:flex;flex-direction:column;gap:2px;">
-            <span style="font-weight:700;font-size:0.88rem;color:#f9fafb;">${title}</span>
-            <span style="font-size:0.78rem;color:#9ca3af;line-height:1.4;">${message}</span>
-        </div>
-    `;
-    container.appendChild(toast);
-
-    // Auto-dismiss
-    setTimeout(() => {
-        toast.style.animation = 'fpToastOut 0.3s ease forwards';
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
-        }
 
 // ─── EXPIRY CARD RENDERER ─────────────────────────────────────────────────────
 
@@ -251,25 +193,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
         const data = window.mockData;
-
-    // ── Inject toast keyframes once ───────────────────────────────────────
-    if (!document.getElementById('fp-toast-styles')) {
-        const style = document.createElement('style');
-        style.id = 'fp-toast-styles';
-        style.textContent = `
-            @keyframes fpToastIn  { to { opacity:1; transform:translateY(0); } }
-            @keyframes fpToastOut { to { opacity:0; transform:translateY(8px); } }
-            .live-update {
-                animation: fpFlash 0.6s ease forwards !important;
-            }
-            @keyframes fpFlash {
-                0%   { opacity:1; }
-                25%  { opacity:0.35; color:var(--accent,#e8813a); transform:scale(1.08); }
-                100% { opacity:1; transform:scale(1); }
-            }
-        `;
-        document.head.appendChild(style);
-    }
 
     // ── Load persisted state ──────────────────────────────────────────────
     appState = loadStorage();
@@ -322,8 +245,8 @@ window.addEventListener('DOMContentLoaded', () => {
         animateCount(ptsValEl, prevPoints, appState.points, 800);
         if (ptsEl) flashEl(ptsEl);
         
-        if (typeof showToast === 'function') {
-            showToast('Task Completed!', `+${pts} reward points earned`, 'success');
+        if (typeof window.showToast === 'function') {
+            window.showToast('Task Completed!', `+${pts} reward points earned`, 'success');
         }
     };
 

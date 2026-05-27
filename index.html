@@ -111,8 +111,7 @@
                     <label class="login-remember">
                         <input type="checkbox" id="rememberMe"> Remember me
                     </label>
-                    <a href="#" class="login-forgot"
-                        data-alert="Password reset link sent to your email (simulated)!">Forgot password?</a>
+                    <a href="#" class="login-forgot">Forgot password?</a>
                 </div>
 
                 <!-- Submit -->
@@ -139,8 +138,7 @@
 
                 <!-- Signup -->
                 <p class="login-signup-link">
-                    New to FitPulse? <a href="#" id="signupLink"
-                        data-alert="Sign up page coming soon! Please login with any email for now.">Create account</a>
+                    New to FitPulse? <a href="#" id="signupLink">Create account</a>
                 </p>
 
             </form>
@@ -1270,13 +1268,13 @@
                                      <span class="donut-legend-label">Used Sessions</span>
                                      <span class="donut-legend-val" id="legend-used">–</span>
                                  </li>
-                                 <li class="donut-legend-item">
-                                     <span class="donut-legend-dot" style="background:var(--chart-goal);"></span>
-                                     <span class="donut-legend-label">Available</span>
-                                     <span class="donut-legend-val" id="legend-available">–</span>
-                                 </li>
-                                 <li class="donut-legend-item">
-                                     <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
+                                  <li class="donut-legend-item">
+                                      <span class="donut-legend-dot" style="background:var(--chart-ring-move);"></span>
+                                      <span class="donut-legend-label">Available</span>
+                                      <span class="donut-legend-val" id="legend-available">–</span>
+                                  </li>
+                                  <li class="donut-legend-item">
+                                      <span class="donut-legend-dot" style="background:var(--chart-alert);"></span>
                                      <span class="donut-legend-label">Pending</span>
                                      <span class="donut-legend-val" id="legend-pending">–</span>
                                  </li>
@@ -1800,6 +1798,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./js/data.js"></script>
+    <script src="./js/app.js"></script>
     <script src="./js/charts.js"></script>
     <script src="./js/script.js"></script>
     <script src="./js/setting_script.js"></script>

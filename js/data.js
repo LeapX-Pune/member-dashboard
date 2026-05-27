@@ -82,16 +82,16 @@ window.renderActiveDashboard = () => {
 
     try {
         // 1. Welcome Header (Handles empty names fallback cleanly)
-        const welcomeContainer = document.getElementById('user-name') || document.getElementById('welcome-message');
+        const welcomeContainer = document.getElementById('welcomeName');
         if (welcomeContainer) {
             const currentName = data.userProfile.name ? data.userProfile.name.trim() : "";
             welcomeContainer.textContent = currentName !== "" ? currentName : "Guest Member";
         }
 
         // 2. Membership Card Information
-        const displayPlanName = document.getElementById('membership-plan') || document.getElementById('card-plan-name');
-        const displayPlanExpiry = document.getElementById('membership-expiry') || document.getElementById('card-expiry-date');
-        const displayPlanStatus = document.getElementById('membership-status') || document.getElementById('card-status-badge');
+        const displayPlanName = document.getElementById('stat-active-plan');
+        const displayPlanExpiry = document.getElementById('stat-plan-expiry');
+        const displayPlanStatus = document.getElementById('membership-status');
 
         if (displayPlanName) displayPlanName.textContent = data.userProfile.membershipPlan;
         if (displayPlanExpiry) displayPlanExpiry.textContent = `Expires: ${data.userProfile.expiryDate}`;
@@ -120,18 +120,16 @@ window.renderActiveDashboard = () => {
         }
 
         // 4. Overview Numeric Statistics Row
-        const countSessions = document.getElementById('stat-sessions') || document.getElementById('stat-sessions-count');
-        const countPoints = document.getElementById('stat-points') || document.getElementById('stat-reward-points');
+        const countSessions = document.getElementById('stat-sessions');
+        const countPoints = document.getElementById('stat-points');
         const countPlanOverview = document.getElementById('stat-active-plan');
-        const countExpiryOverview = document.getElementById('stat-expiry-overview');
 
         if (countSessions) countSessions.textContent = data.membershipStats.sessionsCount;
         if (countPoints) countPoints.textContent = data.membershipStats.rewardPoints;
         if (countPlanOverview) countPlanOverview.textContent = data.membershipStats.activePlan;
-        if (countExpiryOverview) countExpiryOverview.textContent = data.membershipStats.expiryOverview || data.membershipStats.expiryStatus;
 
         // 5. Render Recent Activities Feed dynamically
-        const activityLogWrapper = document.getElementById('activity-list') || document.getElementById('recent-activities-list');
+        const activityLogWrapper = document.getElementById('activityList');
         if (activityLogWrapper) {
             activityLogWrapper.innerHTML = ""; // Clear existing structural layout placeholders
 

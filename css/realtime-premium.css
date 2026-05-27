@@ -402,6 +402,11 @@
     color: #15803d;
 }
 
+.act-badge-live {
+    background: rgba(232, 129, 58, 0.15);
+    color: #e8813a;
+}
+
 .act-done-btn {
     font-size: 0.7rem;
     font-weight: 600;
