@@ -1,7 +1,7 @@
 //Updated
 // Global database of club members - Shared with Student 6 for simulation loops
 const allUsers = [
-    { name: "Sauryaman Bisen", plan: "Elite Premium", sessions: 88, points: 2400, status: "Active" },
+    { name: "Sauryaman Bisen", plan: "Elite Premium", sessions: 88, points: 400, status: "Active" },
     { name: "Ksitij", plan: "Basic Tier", sessions: 12, points: 350, status: "Active" },
     { name: "Pulak Shah", plan: "Pro Club", sessions: 30, points: 800, status: "Expiring Soon" },
     { name: "Sankap Tiwari", plan: "Garib Premium", sessions: 45, points: 1200, status: "Active" },

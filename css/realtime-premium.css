@@ -513,3 +513,77 @@
         min-width: 72px;
     }
 }
+
+/* ── Goal increase button ── */
+.goal-increase-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border, #3a3a3e);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary, #a2a2a7);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+    margin-left: 6px;
+    padding: 0;
+    line-height: 1;
+}
+.goal-increase-btn:hover {
+    border-color: var(--accent, #f15c05);
+    color: var(--accent, #f15c05);
+    background: rgba(241, 92, 5, 0.1);
+}
+.goal-increase-btn:active {
+    transform: scale(0.9);
+}
+.goal-decrease-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border, #3a3a3e);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary, #a2a2a7);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+    margin-left: 4px;
+    padding: 0;
+    line-height: 1;
+}
+.goal-decrease-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+.goal-decrease-btn:active {
+    transform: scale(0.9);
+}
+#stat-points-goal-text {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+#stat-points-goal-analytics {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* ── Goal-reached badge ── */
+.goal-reached-badge {
+    color: #22c55e;
+    font-weight: 600;
+    font-size: 0.85em;
+    white-space: nowrap;
+}

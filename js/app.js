@@ -25,6 +25,7 @@ const STORAGE_KEY_DATE     = 'fp_sessions_date';
 const STORAGE_KEY_TODAY    = 'fp_sessions_today';
 const STORAGE_KEY_TOTAL    = 'fp_total_sessions';
 const STORAGE_KEY_POINTS   = 'fp_reward_points';
+const STORAGE_KEY_GOAL     = 'fp_reward_goal';
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 
@@ -120,6 +121,293 @@ function saveStorage(state) {
     localStorage.setItem(STORAGE_KEY_POINTS, String(state.points));
 }
 
+// ─── REWARD GOAL ──────────────────────────────────────────────────────────────
+
+function loadGoal() {
+    return parseInt(localStorage.getItem(STORAGE_KEY_GOAL) || '2000', 10);
+}
+
+function saveGoal(goal) {
+    localStorage.setItem(STORAGE_KEY_GOAL, String(goal));
+}
+
+function updateGoalDisplay() {
+    const goal = loadGoal();
+    const ptsEl = document.getElementById('stat-points');
+    const points = ptsEl ? parseInt(String(ptsEl.textContent).replace(/[^\d]/g, ''), 10) || 0 : 0;
+    const isReached = points >= goal;
+
+    window.rewardGoal = goal;
+
+    const goalValEl = document.getElementById('stat-points-goal-val');
+    const goalValAnalyticsEl = document.getElementById('stat-points-goal-val-analytics');
+    if (goalValEl) goalValEl.textContent = goal.toLocaleString();
+    if (goalValAnalyticsEl) goalValAnalyticsEl.textContent = goal.toLocaleString();
+
+    const goalTextEl = document.getElementById('stat-points-goal-text');
+    if (goalTextEl) {
+        let badge = goalTextEl.querySelector('.goal-reached-badge');
+        if (isReached && !badge) {
+            badge = document.createElement('span');
+            badge.className = 'goal-reached-badge';
+            badge.textContent = ' ✓ Goal Reached!';
+            goalTextEl.appendChild(badge);
+        } else if (!isReached && badge) {
+            badge.remove();
+        }
+    }
+
+    const goalFooterEl = document.getElementById('stat-points-goal-analytics');
+    if (goalFooterEl) {
+        let badge = goalFooterEl.querySelector('.goal-reached-badge');
+        if (isReached && !badge) {
+            badge = document.createElement('span');
+            badge.className = 'goal-reached-badge';
+            badge.textContent = ' ✓ Reached!';
+            goalFooterEl.appendChild(badge);
+        } else if (!isReached && badge) {
+            badge.remove();
+        }
+    }
+
+    // Keep analytics ring percentage in sync with dynamic goal
+    const ringEl = document.getElementById('stat-points-ring');
+    const ringValEl = document.getElementById('stat-points-val');
+    if (ringValEl && ringEl) {
+        const pct = Math.min((points / goal) * 100, 100);
+        ringValEl.textContent = points.toLocaleString();
+        ringEl.style.setProperty('--ring-pct', `${pct}%`);
+    }
+}
+
+window.increaseRewardGoal = function () {
+    const currentGoal = loadGoal();
+    const input = prompt(
+        `Current goal: ${currentGoal.toLocaleString()} pts\nIncrease by how many points?`,
+        '500'
+    );
+    if (input === null) return;
+    const increment = parseInt(input, 10);
+    if (isNaN(increment) || increment <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newGoal = currentGoal + increment;
+    saveGoal(newGoal);
+    updateGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Goal Updated', `Reward goal increased to ${newGoal.toLocaleString()} pts`, 'success');
+    }
+};
+
+window.decreaseRewardGoal = function () {
+    const currentGoal = loadGoal();
+    const input = prompt(
+        `Current goal: ${currentGoal.toLocaleString()} pts\nDecrease by how many points?`,
+        '200'
+    );
+    if (input === null) return;
+    const decrement = parseInt(input, 10);
+    if (isNaN(decrement) || decrement <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newGoal = Math.max(1, currentGoal - decrement);
+    if (newGoal === currentGoal) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Minimum Goal', 'Goal cannot go below 1', 'error');
+        }
+        return;
+    }
+    saveGoal(newGoal);
+    updateGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Goal Updated', `Reward goal decreased to ${newGoal.toLocaleString()} pts`, 'success');
+    }
+};
+
+// ─── SESSION GOAL ─────────────────────────────────────────────────────────────
+
+function loadSessionGoal() {
+    return parseInt(localStorage.getItem('fp_sessions_goal') || '200', 10);
+}
+
+function saveSessionGoal(goal) {
+    localStorage.setItem('fp_sessions_goal', String(goal));
+}
+
+function updateSessionGoalDisplay() {
+    const goal = loadSessionGoal();
+    const sessEl = document.getElementById('stat-sessions');
+    const count = sessEl ? parseInt(String(sessEl.textContent).replace(/[^\d]/g, ''), 10) || 0 : 0;
+    const isReached = count >= goal;
+
+    window.sessionGoal = goal;
+
+    const goalValEl = document.getElementById('stat-sessions-goal-val');
+    const goalValAnalyticsEl = document.getElementById('stat-sessions-goal-val-analytics');
+    if (goalValEl) goalValEl.textContent = goal.toLocaleString();
+    if (goalValAnalyticsEl) goalValAnalyticsEl.textContent = goal.toLocaleString();
+
+    const goalTextEl = document.getElementById('stat-sessions-goal-text');
+    if (goalTextEl) {
+        let badge = goalTextEl.querySelector('.goal-reached-badge');
+        if (isReached && !badge) {
+            badge = document.createElement('span');
+            badge.className = 'goal-reached-badge';
+            badge.textContent = ' ✓ Goal Reached!';
+            goalTextEl.appendChild(badge);
+        } else if (!isReached && badge) {
+            badge.remove();
+        }
+    }
+
+    const goalFooterEl = document.getElementById('stat-sessions-goal-analytics');
+    if (goalFooterEl) {
+        let badge = goalFooterEl.querySelector('.goal-reached-badge');
+        if (isReached && !badge) {
+            badge = document.createElement('span');
+            badge.className = 'goal-reached-badge';
+            badge.textContent = ' ✓ Reached!';
+            goalFooterEl.appendChild(badge);
+        } else if (!isReached && badge) {
+            badge.remove();
+        }
+    }
+
+    // Keep analytics ring percentage in sync with dynamic goal
+    const ringEl = document.getElementById('stat-sessions-ring');
+    const ringValEl = document.getElementById('stat-sessions-val');
+    if (ringValEl && ringEl) {
+        const pct = Math.min((count / goal) * 100, 100);
+        ringValEl.textContent = count.toLocaleString();
+        ringEl.style.setProperty('--ring-pct', `${pct}%`);
+    }
+}
+
+window.increaseSessionGoal = function () {
+    const currentGoal = loadSessionGoal();
+    const input = prompt(
+        `Current session goal: ${currentGoal.toLocaleString()} sessions\nIncrease by how many?`,
+        '100'
+    );
+    if (input === null) return;
+    const increment = parseInt(input, 10);
+    if (isNaN(increment) || increment <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newGoal = currentGoal + increment;
+    saveSessionGoal(newGoal);
+    updateSessionGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Goal Updated', `Session goal increased to ${newGoal.toLocaleString()} sessions`, 'success');
+    }
+};
+
+window.decreaseSessionGoal = function () {
+    const currentGoal = loadSessionGoal();
+    const input = prompt(
+        `Current session goal: ${currentGoal.toLocaleString()} sessions\nDecrease by how many?`,
+        '50'
+    );
+    if (input === null) return;
+    const decrement = parseInt(input, 10);
+    if (isNaN(decrement) || decrement <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newGoal = Math.max(1, currentGoal - decrement);
+    if (newGoal === currentGoal) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Minimum Goal', 'Goal cannot go below 1', 'error');
+        }
+        return;
+    }
+    saveSessionGoal(newGoal);
+    updateSessionGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Goal Updated', `Session goal decreased to ${newGoal.toLocaleString()} sessions`, 'success');
+    }
+};
+
+// ─── MANUAL ADD: Sessions ─────────────────────────────────────────────────────
+
+window.addSessions = function () {
+    if (!appState) return;
+    const sessEl = document.getElementById('stat-sessions');
+    const currentTotal = sessEl ? parseInt(String(sessEl.textContent).replace(/[^\d]/g, ''), 10) || 0 : appState.total;
+    const input = prompt(
+        `Current total sessions: ${currentTotal}\nAdd how many sessions?`,
+        '5'
+    );
+    if (input === null) return;
+    const increment = parseInt(input, 10);
+    if (isNaN(increment) || increment <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newTotal = currentTotal + increment;
+    appState.total = newTotal;
+    saveStorage(appState);
+
+    if (typeof window.updateDashboardStats === 'function') {
+        window.updateDashboardStats({
+            totalSessions: newTotal,
+            sessionsDone: newTotal,
+        });
+    }
+
+    if (sessEl) flashEl(sessEl);
+    updateSessionGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Sessions Added', `+${increment} sessions logged`, 'success');
+    }
+};
+
+// ─── MANUAL ADD: Reward Points ────────────────────────────────────────────────
+
+window.addPointsManually = function () {
+    if (!appState) return;
+    const ptsEl = document.getElementById('stat-points');
+    const currentPoints = ptsEl ? parseInt(String(ptsEl.textContent).replace(/[^\d]/g, ''), 10) || 0 : appState.points;
+    const input = prompt(
+        `Current reward points: ${currentPoints.toLocaleString()}\nAdd how many points?`,
+        '100'
+    );
+    if (input === null) return;
+    const increment = parseInt(input, 10);
+    if (isNaN(increment) || increment <= 0) {
+        if (typeof window.showToast === 'function') {
+            window.showToast('Invalid Amount', 'Please enter a positive number', 'error');
+        }
+        return;
+    }
+    const newPoints = currentPoints + increment;
+    appState.points = newPoints;
+    saveStorage(appState);
+
+    if (typeof window.updateDashboardStats === 'function') {
+        window.updateDashboardStats({ rewardPoints: newPoints });
+    }
+
+    if (ptsEl) flashEl(ptsEl);
+    updateGoalDisplay();
+    if (typeof window.showToast === 'function') {
+        window.showToast('Points Added', `+${increment} reward points`, 'success');
+    }
+};
+
 // ─── SESSION LOGGING ──────────────────────────────────────────────────────────
 
 let appState = null; // loaded on DOMContentLoaded
@@ -157,6 +445,7 @@ function logSession() {
     animateCount(ptsEl,    prevPoints, appState.points, 1200);
     animateCount(ptsValEl, prevPoints, appState.points, 1200);
     if (ptsEl) flashEl(ptsEl);
+    updateGoalDisplay();
 
     // ── Show a discreet toast notification ───────────────────────────────
     if (typeof window.showToast === 'function') {
@@ -215,14 +504,73 @@ window.addEventListener('DOMContentLoaded', () => {
     // ── Sessions card — from localStorage ─────────────────────────────────
     const sessEl    = document.getElementById('stat-sessions');
     const sessValEl = document.getElementById('stat-sessions-val');
-    if (sessEl)    animateCount(sessEl,    0, appState.total, 1000);
+    const heroSessEl = document.getElementById('heroSessions');
+    if (sessEl) {
+        sessEl.textContent = String(appState.total);
+        animateCount(sessEl, 0, appState.total, 1000);
+    }
+    if (heroSessEl) {
+        heroSessEl.textContent = String(appState.total);
+        animateCount(heroSessEl, 0, appState.total, 700);
+    }
     if (sessValEl) animateCount(sessValEl, 0, appState.total, 1000);
+
+    // ── Session goal display ────────────────────────────────────────────────
+    updateSessionGoalDisplay();
+
+    const sessObserver = new MutationObserver(() => updateSessionGoalDisplay());
+    if (sessEl) sessObserver.observe(sessEl, { characterData: true, childList: true, subtree: true });
+
+    const bindIncreaseSess = (id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); window.increaseSessionGoal(); });
+    };
+    bindIncreaseSess('increaseSessionGoalBtn');
+    bindIncreaseSess('increaseSessionGoalBtnAnalytics');
+
+    const bindDecreaseSess = (id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); window.decreaseSessionGoal(); });
+    };
+    bindDecreaseSess('decreaseSessionGoalBtn');
+    bindDecreaseSess('decreaseSessionGoalBtnAnalytics');
+
+    const addSessBtn = document.getElementById('addSessionsBtn');
+    if (addSessBtn) addSessBtn.addEventListener('click', (e) => { e.preventDefault(); window.addSessions(); });
 
     // ── Points card — from localStorage ───────────────────────────────────
     const ptsEl    = document.getElementById('stat-points');
     const ptsValEl = document.getElementById('stat-points-val');
-    if (ptsEl)    animateCount(ptsEl,    0, appState.points, 1200);
+    if (ptsEl) {
+        ptsEl.textContent = String(appState.points);
+        animateCount(ptsEl, 0, appState.points, 1200);
+    }
     if (ptsValEl) animateCount(ptsValEl, 0, appState.points, 1200);
+
+    // ── Reward goal display ────────────────────────────────────────────────
+    updateGoalDisplay();
+
+    // Watch the points element for realtime-engine updates
+    const ptsObserver = new MutationObserver(() => updateGoalDisplay());
+    if (ptsEl) ptsObserver.observe(ptsEl, { characterData: true, childList: true, subtree: true });
+
+    // Bind increase-goal buttons
+    const bindIncrease = (id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); window.increaseRewardGoal(); });
+    };
+    bindIncrease('increaseGoalBtn');
+    bindIncrease('increaseGoalBtnAnalytics');
+
+    const bindDecrease = (id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); window.decreaseRewardGoal(); });
+    };
+    bindDecrease('decreaseGoalBtn');
+    bindDecrease('decreaseGoalBtnAnalytics');
+
+    const addPtsBtn = document.getElementById('addPointsBtn');
+    if (addPtsBtn) addPtsBtn.addEventListener('click', (e) => { e.preventDefault(); window.addPointsManually(); });
 
     // ── Analytics ring stats ───────────────────────────────────────────────
     const attendanceValEl = document.getElementById('stat-attendance-val');
@@ -235,15 +583,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     window.addRewardPoints = function(pts) {
         if (!appState) return;
-        const prevPoints = appState.points;
-        appState.points += pts;
-        saveStorage(appState);
-        
         const ptsEl = document.getElementById('stat-points');
         const ptsValEl = document.getElementById('stat-points-val');
+        const currentPoints = ptsEl ? parseInt(String(ptsEl.textContent).replace(/[^\d]/g, ''), 10) || 0 : appState.points;
+        const prevPoints = currentPoints;
+        appState.points = currentPoints + pts;
+        saveStorage(appState);
         animateCount(ptsEl, prevPoints, appState.points, 800);
         animateCount(ptsValEl, prevPoints, appState.points, 800);
         if (ptsEl) flashEl(ptsEl);
+        updateGoalDisplay();
         
         if (typeof window.showToast === 'function') {
             window.showToast('Task Completed!', `+${pts} reward points earned`, 'success');
