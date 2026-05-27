@@ -589,7 +589,7 @@
                                 <span class="m-label">Workout Tier</span>
                             </div>
                             <div class="m-stat" id="heroSessionsStat">
-                                <span class="m-val" id="heroSessions">84</span>
+                                <span class="m-val" id="heroSessions">88</span>
                                 <span class="m-label">Sessions Done</span>
                             </div>
                         </div>
@@ -633,8 +633,8 @@
                             <span>Total Sessions</span>
                         </div>
                         <div class="dark-card-body">
-                            <h2 id="stat-sessions">84</h2>
-                            <p>Goal: 200+ sessions</p>
+                            <h2 id="stat-sessions">88 <button class="goal-increase-btn add-count-btn" id="addSessionsBtn" title="Add sessions"><i class="fa-solid fa-plus"></i></button></h2>
+                            <p id="stat-sessions-goal-text">Goal: <span id="stat-sessions-goal-val">200</span>+ sessions <button class="goal-increase-btn" id="increaseSessionGoalBtn" title="Increase session goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseSessionGoalBtn" title="Decrease session goal"><i class="fa-solid fa-minus"></i></button></p>
                         </div>
                     </div>
 
@@ -644,8 +644,8 @@
                             <span>Reward Points</span>
                         </div>
                         <div class="dark-card-body">
-                            <h2 id="stat-points">1,250</h2>
-                            <p>Goal: 2,000 pts</p>
+                            <h2 id="stat-points">400 <button class="goal-increase-btn add-count-btn" id="addPointsBtn" title="Add reward points"><i class="fa-solid fa-plus"></i></button></h2>
+                            <p id="stat-points-goal-text">Goal: <span id="stat-points-goal-val">2,000</span> pts <button class="goal-increase-btn" id="increaseGoalBtn" title="Increase goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseGoalBtn" title="Decrease goal"><i class="fa-solid fa-minus"></i></button></p>
                         </div>
                     </div>
 
@@ -1177,8 +1177,8 @@
                                     <span class="unit">Sessions</span>
                                 </div>
                             </div>
-                            <div class="analytics-card-footer">
-                                Goal: 200 Sessions
+                            <div class="analytics-card-footer" id="stat-sessions-goal-analytics">
+                                Goal: <span id="stat-sessions-goal-val-analytics">200</span> Sessions <button class="goal-increase-btn" id="increaseSessionGoalBtnAnalytics" title="Increase session goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseSessionGoalBtnAnalytics" title="Decrease session goal"><i class="fa-solid fa-minus"></i></button>
                             </div>
                         </div>
                         <!-- Metric 2: Reward Points -->
@@ -1191,8 +1191,8 @@
                                     <span class="unit">Pts</span>
                                 </div>
                             </div>
-                            <div class="analytics-card-footer">
-                                Goal: 2,000 Pts
+                            <div class="analytics-card-footer" id="stat-points-goal-analytics">
+                                Goal: <span id="stat-points-goal-val-analytics">2,000</span> Pts <button class="goal-increase-btn" id="increaseGoalBtnAnalytics" title="Increase goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseGoalBtnAnalytics" title="Decrease goal"><i class="fa-solid fa-minus"></i></button>
                             </div>
                         </div>
                         <!-- Metric 3: Attendance Rate -->

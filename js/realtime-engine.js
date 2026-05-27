@@ -38,7 +38,7 @@
         streak: 12,
         sessionsDone: 84,
         totalSessions: 84,
-        rewardPoints: 1250,
+        rewardPoints: window.mockData?.membershipStats?.rewardPoints || 1250,
         expiryDate: null,
         goals: { steps: 68000, stepsMax: 70000, workouts: 9, workoutsMax: 14, water: 17.5, waterMax: 27.5 },
     };
@@ -357,6 +357,7 @@
         dashboardState.totalSessions += 1;
         dashboardState.rewardPoints += POINTS_BONUS_DONE;
         localStorage.setItem('fp_reward_points', String(dashboardState.rewardPoints));
+        localStorage.setItem('fp_total_sessions', String(dashboardState.totalSessions));
 
         updateDashboardStats({
             streak: dashboardState.streak,

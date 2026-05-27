@@ -32,30 +32,36 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Goals: Sessions(200), Points(2000), Attendance(100), Hours(200)
     const ringsData = [
-        prepareRingData('stat-sessions', stats.sessionsCount, 200),
-        prepareRingData('stat-points', stats.rewardPoints, 2000),
+        prepareRingData('stat-sessions', stats.sessionsCount, window.sessionGoal || 200),
+        prepareRingData('stat-points', stats.rewardPoints, window.rewardGoal || 2000),
         prepareRingData('stat-attendance', parseFloat(stats.attendanceRate), 100),
         prepareRingData('stat-hours', stats.totalHoursBurned, 200)
     ];
 
     // Animation Function for a Single Ring
-    // Animates the number value from 0 to the target value, and the ring progress from 0% to the target percentage using a custom easing function.
+    // Animates from current DOM state to the target (instead of always from 0).
     const animateRing = (item) => {
         if (!item.ring) return;
-        const duration = 1000; // 1s duration
+        const duration = 1000;
         const startTime = performance.now();
-        
+
+        const startVal = item.valEl ? parseFloat(String(item.valEl.textContent).replace(/[^\d]/g, '')) || 0 : 0;
+        const startPctStr = item.ring.style.getPropertyValue('--ring-pct') || '0%';
+        const startPct = parseFloat(startPctStr) || 0;
+        const diffVal = item.numVal - startVal;
+        const diffPct = item.pct - startPct;
+
         const step = (currentTime) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const easeProgress = 1 - Math.pow(1 - progress, 4); // easeOutQuart
-            
-            const currentVal = (item.numVal * easeProgress);
-            const currentPct = (item.pct * easeProgress);
-            
+            const easeProgress = 1 - Math.pow(1 - progress, 4);
+
+            const currentVal = startVal + (diffVal * easeProgress);
+            const currentPct = startPct + (diffPct * easeProgress);
+
             if (item.valEl) item.valEl.textContent = Math.round(currentVal);
             item.ring.style.setProperty('--ring-pct', `${currentPct}%`);
-            
+
             if (progress < 1) {
                 requestAnimationFrame(step);
             } else {
@@ -186,7 +192,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         const item = ringsData.find(d => d.ring && d.ring.id === 'stat-points-ring');
                         if (item) {
                             item.numVal = numVal;
-                            item.pct = Math.min((numVal / 2000) * 100, 100);
+                            item.pct = Math.min((numVal / (window.rewardGoal || 2000)) * 100, 100);
                         }
                     }
 
@@ -196,7 +202,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         const item = ringsData.find(d => d.ring && d.ring.id === 'stat-sessions-ring');
                         if (item) {
                             item.numVal = numVal;
-                            item.pct = Math.min((numVal / 200) * 100, 100);
+                            item.pct = Math.min((numVal / (window.sessionGoal || 200)) * 100, 100);
                         }
                     }
 
@@ -236,7 +242,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // --- Real-time Synchronization between Overview and Analytics tabs ---
     // Sets up MutationObservers to instantly reflect point and session changes in the Analytics tab.
-    const syncRingWithOverview = (overviewId, valElId, ringId, goal) => {
+    const syncRingWithOverview = (overviewId, valElId, ringId, goalKey, defaultGoal) => {
         const overviewEl = document.getElementById(overviewId);
         const valEl = document.getElementById(valElId);
         const ringEl = document.getElementById(ringId);
@@ -249,6 +255,7 @@ window.addEventListener('DOMContentLoaded', () => {
             debounceTimeout = setTimeout(() => {
                 const valStr = overviewEl.textContent || '0';
                 const numVal = parseInt(valStr.replace(/[^\d]/g, ''), 10) || 0;
+                const goal = window[goalKey] || defaultGoal;
                 const pct = Math.min((numVal / goal) * 100, 100);
 
                 // Update the ringsData so future entry animations use the correct target
@@ -269,8 +276,8 @@ window.addEventListener('DOMContentLoaded', () => {
         observer.observe(overviewEl, { characterData: true, childList: true, subtree: true });
     };
 
-    syncRingWithOverview('stat-points', 'stat-points-val', 'stat-points-ring', 2000);
-    syncRingWithOverview('stat-sessions', 'stat-sessions-val', 'stat-sessions-ring', 200);
+    syncRingWithOverview('stat-points', 'stat-points-val', 'stat-points-ring', 'rewardGoal', 2000);
+    syncRingWithOverview('stat-sessions', 'stat-sessions-val', 'stat-sessions-ring', 'sessionGoal', 200);
 });
 
 
