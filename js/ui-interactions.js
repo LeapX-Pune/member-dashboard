@@ -110,17 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // ─── 4. LANDING PAGE BUTTONS ─────────────────────────────────────────────
-    // "Explore Plans" scroll button in hero
-    const explorePlansBtn = document.querySelector('button[data-scroll-target="membershipTiers"]');
-    if (explorePlansBtn) {
-        explorePlansBtn.addEventListener('click', () => {
-            const el = document.getElementById('membershipTiers');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-
-
     // ─── 5. DASHBOARD QUICK ACTIONS ──────────────────────────────────────────
 
     // ── 5a. Book Session — handled by realtime-engine.js (openBookingModal) ──
@@ -260,17 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // ─── 6. RECENT ACTIVITY 'VIEW ALL' ──────────────────────────────────────
-    const viewAllBtn   = document.getElementById('viewAllActivity');
-    const moreActivity = document.getElementById('moreActivity');
-    if (viewAllBtn && moreActivity) {
-        viewAllBtn.addEventListener('click', () => {
-            moreActivity.style.display = 'block';
-            viewAllBtn.style.display   = 'none';
-        });
-    }
-
-
     // ─── 7. TO-DO LIST DELETE (Event Delegation) ────────────────────────────
     const todoListUlEl = document.getElementById('todoListUl');
     if (todoListUlEl) {
@@ -315,8 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (forgotLink) {
         forgotLink.addEventListener('click', (e) => {
             e.preventDefault();
-            const msg = forgotLink.getAttribute('data-alert') || 'Password reset link sent!';
-            showToast('🔐 Password Reset', msg, 'info');
+            showToast('Password Reset', 'Password reset link sent to your email (simulated)!', 'info');
         });
     }
 

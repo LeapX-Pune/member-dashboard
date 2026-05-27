@@ -147,6 +147,12 @@
     z-index: 10;
 }
 
+.theme-dark .elite-badge {
+    background: #2a2520;
+    color: #e8d5c4;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .plans-grid {

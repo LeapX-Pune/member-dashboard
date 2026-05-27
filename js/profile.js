@@ -261,12 +261,6 @@ function populateDashboard(profile) {
     if (pctBar)  pctBar.style.width = pct + '%';
     if (pctText) pctText.textContent = pct + '%';
 
-    // ── Activity list first item avatar ──
-    const actFirstAvatar = document.getElementById('actFirstAvatar');
-    if (actFirstAvatar) {
-        actFirstAvatar.src = avatarUrl(profile.fullName, 'fce9d5', 'e8813a');
-        actFirstAvatar.alt = profile.fullName;
-    }
 }
 
 // ─────────────────────────────────────────────

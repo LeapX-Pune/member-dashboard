@@ -198,32 +198,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!greetingText) return;
         const currentHour = new Date().getHours();
         let greeting = 'Good Morning';
-        let emoji = '🎉';
         let subMsg = "Ready for today's workout?";
-
 
         if (currentHour >= 5 && currentHour < 12) {
             greeting = 'Good Morning';
-            emoji = '🎉';
             subMsg = "Ready for today's workout?";
 
         } else if (currentHour >= 12 && currentHour < 17) {
             greeting = 'Good Afternoon';
-            emoji = '☀️';
-            subMsg = "Let’s keep the momentum going.";
+            subMsg = "Let's keep the momentum going.";
 
         } else if (currentHour >= 17 && currentHour < 21) {
             greeting = 'Good Evening';
-            emoji = '🎉';
             subMsg = "Ready for your evening workout?";
         } else {
             greeting = 'Good Night';
-            emoji = '🌙';
             subMsg = "Time to review your progress.";
         }
 
-        // Non-breaking space used between words for styling, keep emoji inline
-        greetingText.innerHTML = `${greeting.replace(' ', '&nbsp;')}&nbsp;${emoji}`;
+        greetingText.textContent = greeting;
 
         if (welcomeSubtext) {
             const welcomeNameEl = document.getElementById('welcomeName');
@@ -531,93 +524,56 @@ document.addEventListener('DOMContentLoaded', () => {
     // LIVE DASHBOARD UPDATES
     // ═══════════════════════════════════════════════════════
 
-    // ── 1. Recent Activity — time labels refresh every 5 s ──
-    (function initActivityTimestamps() {
-        const activityItems = [
-            { selector: '.activity-list .activity-item:nth-child(1) .act-time', timestamp: Date.now() - 60000 },
-            { selector: '.activity-list .activity-item:nth-child(2) .act-time', timestamp: Date.now() - 7200000 },
-            { selector: '.activity-list .activity-item:nth-child(3) .act-time', timestamp: Date.now() - 18000000 }
-        ];
-
-        function formatTimeAgo(msAgo) {
-            if (msAgo < 60000) return 'Just now';
-            const mins = Math.floor(msAgo / 60000);
-            if (mins < 60) return `${mins} min ago`;
-            const hours = Math.floor(mins / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            return `${days}d ago`;
-        }
-
-        function tickActivityTimes() {
-            const now = Date.now();
-            activityItems.forEach(item => {
-                const el = document.querySelector(item.selector);
-                if (!el) return;
-                const msAgo = now - item.timestamp;
-                const newText = formatTimeAgo(msAgo);
-                if (el.textContent !== newText) {
-                    el.style.transition = 'opacity 0.4s';
-                    el.style.opacity = '0';
-                    setTimeout(() => {
-                        el.textContent = newText;
-                        el.style.opacity = '1';
-                    }, 400);
-                }
-            });
-        }
-
-        tickActivityTimes();
-        setInterval(tickActivityTimes, 5000);
-    })();
-
-
-    // ── 2. Recent Workouts — rotate by day, calories tick every ~8 s ──
+    // ── 2. Recent Workouts — static categories, updated only on session completion ──
     (function initRecentWorkouts() {
-        // Pool of workouts keyed by day-of-week (0=Sun … 6=Sat)
-        // Each day has 3 workouts shown
         const workoutsByDay = {
             0: [ // Sunday
                 { initials: 'YS', name: 'Yoga Session',      time: '07:00 AM', dur: '40 min', cal: 160, intensity: 'Low',    badge: 'low'    },
                 { initials: 'MS', name: 'Meditation',        time: '08:00 AM', dur: '20 min', cal:  80, intensity: 'Low',    badge: 'low'    },
                 { initials: 'SW', name: 'Swimming',          time: '10:00 AM', dur: '45 min', cal: 350, intensity: 'Medium', badge: 'medium' },
+                { initials: 'RW', name: 'Recovery Walk',     time: '06:00 PM', dur: '30 min', cal: 120, intensity: 'Low',    badge: 'low'    },
             ],
             1: [ // Monday
                 { initials: 'MR', name: 'Morning Run',       time: '06:30 AM', dur: '45 min', cal: 420, intensity: 'High',   badge: 'high'   },
                 { initials: 'ST', name: 'Strength Training', time: '06:00 PM', dur: '60 min', cal: 380, intensity: 'Medium', badge: 'medium' },
                 { initials: 'YS', name: 'Yoga Session',      time: '08:00 PM', dur: '30 min', cal: 150, intensity: 'Low',    badge: 'low'    },
+                { initials: 'CT', name: 'Core Training',     time: '05:30 AM', dur: '25 min', cal: 200, intensity: 'Medium', badge: 'medium' },
             ],
             2: [ // Tuesday
                 { initials: 'HC', name: 'HIIT Cardio',       time: '06:00 AM', dur: '30 min', cal: 480, intensity: 'High',   badge: 'high'   },
                 { initials: 'CS', name: 'Cycling Sprint',    time: '07:30 AM', dur: '40 min', cal: 390, intensity: 'High',   badge: 'high'   },
                 { initials: 'SB', name: 'Stretching',        time: '07:00 PM', dur: '25 min', cal: 110, intensity: 'Low',    badge: 'low'    },
+                { initials: 'RM', name: 'Rowing Machine',    time: '06:00 PM', dur: '35 min', cal: 340, intensity: 'Medium', badge: 'medium' },
             ],
             3: [ // Wednesday
                 { initials: 'PL', name: 'Pilates',           time: '07:00 AM', dur: '50 min', cal: 220, intensity: 'Medium', badge: 'medium' },
                 { initials: 'BC', name: 'Boxing Class',      time: '05:30 PM', dur: '60 min', cal: 540, intensity: 'High',   badge: 'high'   },
                 { initials: 'WA', name: 'Walk / Jog',        time: '07:30 PM', dur: '35 min', cal: 200, intensity: 'Low',    badge: 'low'    },
+                { initials: 'KB', name: 'Kickboxing',        time: '06:30 AM', dur: '45 min', cal: 480, intensity: 'High',   badge: 'high'   },
             ],
             4: [ // Thursday
                 { initials: 'DL', name: 'Deadlifts',         time: '06:00 AM', dur: '55 min', cal: 460, intensity: 'High',   badge: 'high'   },
                 { initials: 'SC', name: 'Spin Class',        time: '08:00 AM', dur: '45 min', cal: 410, intensity: 'High',   badge: 'high'   },
                 { initials: 'YS', name: 'Yoga Session',      time: '07:00 PM', dur: '30 min', cal: 150, intensity: 'Low',    badge: 'low'    },
+                { initials: 'BP', name: 'Bench Press',       time: '07:00 AM', dur: '40 min', cal: 320, intensity: 'High',   badge: 'high'   },
             ],
             5: [ // Friday
                 { initials: 'MR', name: 'Morning Run',       time: '06:30 AM', dur: '50 min', cal: 450, intensity: 'High',   badge: 'high'   },
                 { initials: 'ST', name: 'Strength Training', time: '12:00 PM', dur: '60 min', cal: 400, intensity: 'Medium', badge: 'medium' },
                 { initials: 'ZM', name: 'Zumba',             time: '06:00 PM', dur: '50 min', cal: 320, intensity: 'Medium', badge: 'medium' },
+                { initials: 'RW', name: 'Rowing',            time: '07:00 AM', dur: '40 min', cal: 370, intensity: 'Medium', badge: 'medium' },
             ],
             6: [ // Saturday
                 { initials: 'HC', name: 'HIIT Cardio',       time: '07:00 AM', dur: '35 min', cal: 490, intensity: 'High',   badge: 'high'   },
                 { initials: 'SW', name: 'Swimming',          time: '09:00 AM', dur: '60 min', cal: 380, intensity: 'Medium', badge: 'medium' },
                 { initials: 'CB', name: 'CrossFit Basics',   time: '05:00 PM', dur: '50 min', cal: 510, intensity: 'High',   badge: 'high'   },
+                { initials: 'SC', name: 'Stair Climber',     time: '08:00 AM', dur: '30 min', cal: 280, intensity: 'Medium', badge: 'medium' },
             ],
         };
 
         const workoutList = document.querySelector('.workout-list');
         if (!workoutList) return;
 
-        // Current live cal values (will tick up)
         let liveCals = [];
 
         function renderWorkouts(day) {
@@ -641,38 +597,27 @@ document.addEventListener('DOMContentLoaded', () => {
             `).join('');
         }
 
-        // Initial render based on today's day
         const today = new Date().getDay();
         renderWorkouts(today);
 
-        // Tick calorie numbers every 8 seconds (±5–15 cal variance per item)
-        function tickCalories() {
-            liveCals = liveCals.map((cal, i) => {
-                const delta = Math.floor(Math.random() * 11) + 5; // 5–15
-                const increase = Math.random() > 0.3; // 70% chance to go up
-                const newCal = increase ? cal + delta : Math.max(cal - delta, 50);
-                const el = document.getElementById(`wCal${i}`);
-                if (el) {
-                    el.style.transition = 'opacity 0.3s';
-                    el.style.opacity = '0';
-                    setTimeout(() => {
-                        el.textContent = `${newCal} cal`;
-                        el.style.opacity = '1';
-                    }, 300);
-                }
-                return newCal;
-            });
-        }
+        window.bumpWorkoutCalories = function (amount) {
+            if (!liveCals || liveCals.length === 0) return;
+            const idx = Math.floor(Math.random() * liveCals.length);
+            liveCals[idx] += amount;
+            const el = document.getElementById(`wCal${idx}`);
+            if (el) {
+                el.textContent = `${liveCals[idx]} cal`;
+                el.classList.add('live-update');
+                setTimeout(() => el.classList.remove('live-update'), 600);
+            }
+        };
 
-        setInterval(tickCalories, 8000);
-
-        // Schedule a midnight re-render (so workouts change by day without refresh)
         function scheduleNextDay() {
             const now = new Date();
             const msTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5).getTime() - now.getTime();
             setTimeout(() => {
                 renderWorkouts(new Date().getDay());
-                scheduleNextDay(); // schedule again for the next midnight
+                scheduleNextDay();
             }, msTillMidnight);
         }
         scheduleNextDay();
@@ -681,27 +626,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── 3. Weekly Goal Progress — incremental live updates ──
     (function initWeeklyGoalProgress() {
-        // Live state
-        const goals = {
-            steps:    { current: 68000, max: 70000, fillId: null,     textId: null     },
-            workouts: { current: 9,     max: 14,    fillId: null,     textId: null     },
-            water:    { current: 17.5,  max: 27.5,  fillId: null,     textId: null     },
+        const GOAL_IDS = {
+            steps:    { bar: 'goalStepsBar',    text: 'goalStepsText' },
+            workouts: { bar: 'goalWorkoutsBar', text: 'goalWorkoutsText' },
+            water:    { bar: 'goalWaterBar',    text: 'goalWaterText' },
         };
 
-        // Get references to DOM elements
-        const progressItems = document.querySelectorAll('.progress-item');
-        if (progressItems.length < 3) return;
-
-        // Assign IDs dynamically so we can target them
-        const keys = ['steps', 'workouts', 'water'];
-        progressItems.forEach((item, i) => {
-            const key = keys[i];
-            if (!key) return;
-            const fill = item.querySelector('.progress-fill');
-            const text = item.querySelector('.prog-text p');
-            if (fill) { fill.id = `pgFill-${key}`; }
-            if (text) { text.id = `pgText-${key}`; }
-        });
+        const goals = {
+            steps:    { current: 68000, max: 70000 },
+            workouts: { current: 9,     max: 14 },
+            water:    { current: 17.5,  max: 27.5 },
+        };
 
         function formatGoalText(key) {
             const g = goals[key];
@@ -714,8 +649,9 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateGoalUI(key) {
             const g = goals[key];
             const pct = Math.min(100, Math.round((g.current / g.max) * 100));
-            const fill = document.getElementById(`pgFill-${key}`);
-            const text = document.getElementById(`pgText-${key}`);
+            const ids = GOAL_IDS[key];
+            const fill = document.getElementById(ids.bar);
+            const text = document.getElementById(ids.text);
             if (fill) fill.style.width = `${pct}%`;
             if (text) {
                 text.style.transition = 'opacity 0.3s';
@@ -756,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(tickWorkouts, 60000);
 
         // Initial render
-        keys.forEach(k => updateGoalUI(k));
+        Object.keys(GOAL_IDS).forEach(k => updateGoalUI(k));
     })();
 
 

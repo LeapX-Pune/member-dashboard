@@ -6,6 +6,7 @@
 
 (function () {
     const STORAGE_EXPIRY = 'fp_membership_expiry';
+    const STORAGE_ACTIVITIES = 'fp_activities';
     const POINTS_BONUS_DONE = 50;
     const SIM_MIN_MS = 2000;
     const SIM_MAX_MS = 3000;
@@ -30,6 +31,8 @@
     let expiryCheckIntervalId = null;
     let liveEventTimeoutId = null;
     let activityIdCounter = 0;
+    let activities = [];
+    let showAllActivities = false;
 
     const dashboardState = {
         streak: 12,
@@ -223,6 +226,44 @@
         });
     }
 
+    // ─── Persistence & view limit ───────────────────────────────────────────────
+
+    function saveActivities() {
+        try {
+            localStorage.setItem(STORAGE_ACTIVITIES, JSON.stringify(activities));
+        } catch (e) {}
+    }
+
+    function loadActivities() {
+        try {
+            const data = localStorage.getItem(STORAGE_ACTIVITIES);
+            if (data) {
+                activities = JSON.parse(data);
+                return Array.isArray(activities) && activities.length > 0;
+            }
+        } catch (e) {}
+        return false;
+    }
+
+    function applyActivityLimit() {
+        const list = $('activityList');
+        if (!list) return;
+        const items = list.querySelectorAll(':scope > .activity-item');
+        items.forEach((item, i) => {
+            item.style.display = (showAllActivities || i < 3) ? '' : 'none';
+        });
+        const btn = $('viewAllActivity');
+        if (btn) {
+            btn.style.display = items.length <= 3 ? 'none' : '';
+            btn.textContent = showAllActivities ? 'Show Less' : 'View All';
+        }
+    }
+
+    function toggleActivityView() {
+        showAllActivities = !showAllActivities;
+        applyActivityLimit();
+    }
+
     // ─── Required: addActivity ─────────────────────────────────────────────────
 
     function addActivity(options) {
@@ -244,8 +285,7 @@
         item.dataset.timestamp = String(timestamp);
         if (bookable) item.dataset.bookable = 'true';
 
-        const badgeClass = completed ? 'act-badge-completed' : 'act-badge-booked';
-        const badgeText = completed ? 'Completed' : (bookable ? 'Booked' : 'Live');
+        const badgeHtml = bookable ? '' : `<span class="act-badge act-badge-live">Live</span>`;
         const doneHtml = bookable
             ? `<button type="button" class="act-done-btn${completed ? ' completed' : ''}" data-act-id="${id}" ${completed ? 'disabled' : ''}>${completed ? 'Completed ✓' : 'Done'}</button>`
             : '';
@@ -257,17 +297,18 @@
                 <p>${subtitle}</p>
             </div>
             <div class="act-meta">
-                <span class="act-badge ${badgeClass}">${badgeText}</span>
+                ${badgeHtml}
                 <span class="act-time">${formatRelativeTime(timestamp)}</span>
                 ${doneHtml}
             </div>
         `;
 
-        const more = $('moreActivity');
-        if (more && more.parentNode === list) {
-            list.insertBefore(item, more);
-        } else {
-            list.prepend(item);
+        list.prepend(item);
+
+        const exists = activities.some(a => a.id === id);
+        if (!exists) {
+            activities.unshift({ id, timestamp, title, subtitle, name, bookable, completed, avatar });
+            saveActivities();
         }
 
         const btn = item.querySelector('.act-done-btn');
@@ -276,6 +317,7 @@
         }
 
         setTimeout(() => item.classList.remove('fp-slide-in'), 600);
+        applyActivityLimit();
         return item;
     }
 
@@ -304,10 +346,17 @@
             btn.disabled = true;
         }
 
+        const idx = activities.findIndex(a => a.id === activityId);
+        if (idx !== -1) {
+            activities[idx].completed = true;
+            saveActivities();
+        }
+
         dashboardState.streak += 1;
         dashboardState.sessionsDone += 1;
         dashboardState.totalSessions += 1;
         dashboardState.rewardPoints += POINTS_BONUS_DONE;
+        localStorage.setItem('fp_reward_points', String(dashboardState.rewardPoints));
 
         updateDashboardStats({
             streak: dashboardState.streak,
@@ -320,6 +369,10 @@
 
         animateCard($('stat-sessions')?.closest('.dark-card'));
         animateCard($('stat-points')?.closest('.dark-card'));
+
+        if (typeof window.bumpWorkoutCalories === 'function') {
+            window.bumpWorkoutCalories(POINTS_BONUS_DONE);
+        }
 
         if (typeof window.showToast === 'function') {
             window.showToast('Workout Completed', `+${POINTS_BONUS_DONE} bonus points · Streak increased!`, 'success');
@@ -571,24 +624,16 @@
         if (!isDashboardActive()) return;
 
         const roll = Math.random();
-        if (roll < 0.35) {
-            const bump = randomBetween(1, 8);
-            dashboardState.rewardPoints += bump;
-            const el = $('stat-points');
-            if (el) {
-                animateCounter(el, dashboardState.rewardPoints - bump, dashboardState.rewardPoints, 500, formatPoints);
-                animateCard(el.closest('.dark-card'), 'fp-live-tick');
-            }
-        } else if (roll < 0.55) {
+        if (roll < 0.30) {
             dashboardState.goals.steps = Math.min(dashboardState.goals.stepsMax, dashboardState.goals.steps + randomBetween(100, 800));
             updateGoalUI('steps');
-        } else if (roll < 0.72) {
+        } else if (roll < 0.55) {
             dashboardState.goals.workouts = Math.min(dashboardState.goals.workoutsMax, dashboardState.goals.workouts + 1);
             updateGoalUI('workouts');
-        } else if (roll < 0.85) {
+        } else if (roll < 0.75) {
             dashboardState.goals.water = Math.min(dashboardState.goals.waterMax, Math.round((dashboardState.goals.water + 0.3) * 10) / 10);
             updateGoalUI('water');
-        } else if (roll < 0.92) {
+        } else if (roll < 0.90) {
             const cals = document.querySelectorAll('.workout-stats .cal');
             if (cals.length) {
                 const cal = cals[randomBetween(0, cals.length - 1)];
@@ -728,6 +773,11 @@
             renderCalendar();
         });
 
+        $('viewAllActivity')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleActivityView();
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
             if ($('bookingModalOverlay')?.classList.contains('visible')) closeBookingModal();
@@ -757,10 +807,27 @@
     function init() {
         if (!$('dashboardContainer')) return;
 
+        const hasPersisted = loadActivities();
+        if (hasPersisted) {
+            let maxId = 0;
+            activities.forEach(a => {
+                const n = parseInt(String(a.id).replace('act-', ''), 10);
+                if (!isNaN(n) && n > maxId) maxId = n;
+            });
+            activityIdCounter = maxId;
+            for (let i = activities.length - 1; i >= 0; i--) {
+                addActivity(activities[i]);
+            }
+            applyActivityLimit();
+        }
+
         readInitialStats();
         applyExpiryToUI(false);
         bindEvents();
-        seedInitialActivities();
+
+        if (!hasPersisted) {
+            seedInitialActivities();
+        }
 
         const dash = $('dashboardContainer');
         const observer = new MutationObserver(() => {
