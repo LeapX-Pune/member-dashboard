@@ -108,10 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginSubmitBtn.classList.remove('loading');
                 }
                 
-                // Set default plan to Gold Premium on login
                 if (window.mockData) {
-                    window.mockData.userProfile.membershipPlan = "Gold Premium";
-                    window.mockData.membershipStats.activePlan = "Gold Premium";
                     // Derive name from email (part before @)
                     const email = emailInput?.value?.trim() || "";
                     const derivedName = email.includes("@") ? email.split("@")[0] : email;
@@ -763,12 +760,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     paymentSuccess.style.display = 'block';
                     paymentTitle.textContent = "Payment Successful";
                     
-                    if (window.mockData) {
-                        window.mockData.userProfile.membershipPlan = selectedPlanName;
-                        window.mockData.membershipStats.activePlan = selectedPlanName;
-                        if (typeof window.renderActiveDashboard === 'function') {
-                            window.renderActiveDashboard();
-                        }
+                    if (typeof window.updateMembershipPlan === 'function') {
+                        window.updateMembershipPlan(selectedPlanName);
                     }
                     
                     paymentCloseTimer = setTimeout(() => {
@@ -815,6 +808,7 @@ function setActiveToggleBtn(groupId, period) {
 // Destroys the old line chart and creates a fresh one with new period data
 // Does NOT touch the doughnut chart at all
 function switchLineChart(period) {
+    try {
     console.log("Line chart switching to:", period);
 
     // Step 1: highlight the correct button
@@ -889,12 +883,16 @@ function switchLineChart(period) {
             interaction: { intersect: false, mode: 'index' }
         }
     });
+    } catch (e) {
+        console.error('switchLineChart error:', e);
+    }
 }
 
 // --- Doughnut Chart Toggle ---
 // Destroys the old doughnut chart and creates a fresh one with new period data
 // Does NOT touch the line chart at all
 function switchDoughnutChart(period) {
+    try {
     console.log("Doughnut chart switching to:", period);
 
     // Step 1: highlight the correct button
@@ -953,4 +951,48 @@ function switchDoughnutChart(period) {
     document.getElementById('legend-used').textContent      = doughnutData.data[0];
     document.getElementById('legend-available').textContent = doughnutData.data[1];
     document.getElementById('legend-pending').textContent   = doughnutData.data[2];
+    } catch (e) {
+        console.error('switchDoughnutChart error:', e);
+    }
 }
+
+// ============================================================
+// Chart Data Update — in-place data refresh
+// Uses chart.update() instead of destroy+recreate for data changes.
+// Called via dashboard:data-updated custom event.
+// ============================================================
+
+function updateLineChartInPlace() {
+    if (!window.activityChart) return;
+    const activeLine = document.querySelector('#lineChartToggle .chart-toggle-btn.active');
+    const period = activeLine ? activeLine.getAttribute('data-period') : 'weekly';
+    var lineData = (typeof window.getActivityData === 'function')
+        ? window.getActivityData(period)
+        : window.mockData['activity_' + period];
+    if (!lineData) return;
+    window.activityChart.data.labels = lineData.labels;
+    window.activityChart.data.datasets[0].data = lineData.data;
+    window.activityChart.update();
+}
+
+function updateDoughnutChartInPlace() {
+    if (!window.doughnutChart) return;
+    const activeDoughnut = document.querySelector('#doughnutChartToggle .chart-toggle-btn.active');
+    const period = activeDoughnut ? activeDoughnut.getAttribute('data-period') : 'weekly';
+    var doughnutData = (typeof window.getDoughnutData === 'function')
+        ? window.getDoughnutData(period)
+        : window.mockData['doughnut_' + period];
+    if (!doughnutData) return;
+    window.doughnutChart.data.labels = doughnutData.labels;
+    window.doughnutChart.data.datasets[0].data = doughnutData.data;
+    window.doughnutChart.update();
+
+    document.getElementById('legend-used').textContent      = doughnutData.data[0];
+    document.getElementById('legend-available').textContent = doughnutData.data[1];
+    document.getElementById('legend-pending').textContent   = doughnutData.data[2];
+}
+
+window.switchLineChart = switchLineChart;
+window.switchDoughnutChart = switchDoughnutChart;
+window.updateLineChartInPlace = updateLineChartInPlace;
+window.updateDoughnutChartInPlace = updateDoughnutChartInPlace;

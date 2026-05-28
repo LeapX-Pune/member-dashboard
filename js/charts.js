@@ -273,6 +273,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     syncRingWithOverview('stat-points', 'stat-points-val', 'stat-points-ring', 'rewardGoal', 2000);
     syncRingWithOverview('stat-sessions', 'stat-sessions-val', 'stat-sessions-ring', 'sessionGoal', 200);
+
+    // ── React to data changes via custom event ──────────────────────────────
+    document.addEventListener('dashboard:data-updated', () => {
+        if (typeof window.updateLineChartInPlace === 'function') {
+            window.updateLineChartInPlace();
+        }
+        if (typeof window.updateDoughnutChartInPlace === 'function') {
+            window.updateDoughnutChartInPlace();
+        }
+    });
 });
 
 

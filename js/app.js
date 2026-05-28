@@ -110,8 +110,8 @@ function loadStorage() {
 
     return {
         today:  parseInt(localStorage.getItem(STORAGE_KEY_TODAY)  || '0', 10),
-        total:  parseInt(localStorage.getItem(STORAGE_KEY_TOTAL)  || String(window.mockData?.membershipStats?.sessionsCount || 45), 10),
-        points: parseInt(localStorage.getItem(STORAGE_KEY_POINTS) || String(window.mockData?.membershipStats?.rewardPoints  || 1200), 10),
+        total:  parseInt(localStorage.getItem(STORAGE_KEY_TOTAL)  || String(window.mockData?.membershipStats?.sessionsCount || 80), 10),
+        points: parseInt(localStorage.getItem(STORAGE_KEY_POINTS) || String(window.mockData?.membershipStats?.rewardPoints  || 300), 10),
         completedCount: parseInt(localStorage.getItem('fp_completed_count') || '0', 10),
     };
 }
@@ -375,6 +375,7 @@ window.addSessions = function () {
 
     if (sessEl) flashEl(sessEl);
     updateSessionGoalDisplay();
+    document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
     if (typeof window.showToast === 'function') {
         window.showToast('Sessions Added', `+${increment} sessions logged`, 'success');
     }
@@ -412,6 +413,7 @@ window.addPointsManually = function () {
 
     if (ptsEl) flashEl(ptsEl);
     updateGoalDisplay();
+    document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
     if (typeof window.showToast === 'function') {
         window.showToast('Points Added', `+${increment} reward points`, 'success');
     }
@@ -628,6 +630,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (typeof window.syncAnalyticsRings === 'function') {
             window.syncAnalyticsRings(appState.total, appState.points);
         }
+        document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
         
         if (typeof window.showToast === 'function') {
             window.showToast('Task Completed!', `+${pts} reward points earned`, 'success');

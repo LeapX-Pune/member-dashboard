@@ -39,20 +39,41 @@
     let showAllActivities = false;
 
     const dashboardState = {
-        streak: 12,
-        sessionsDone: 84,
-        totalSessions: 84,
-        rewardPoints: window.mockData?.membershipStats?.rewardPoints || 1250,
+        streak: window.mockData?.membershipStats?.totalHoursBurned ? Math.floor(window.mockData.membershipStats.totalHoursBurned / 12) : 15,
+        sessionsDone: window.mockData?.membershipStats?.sessionsCount || 80,
+        totalSessions: window.mockData?.membershipStats?.sessionsCount || 80,
+        rewardPoints: window.mockData?.membershipStats?.rewardPoints || 300,
         expiryDate: null,
-        goals: { steps: 68000, stepsMax: 70000, workouts: 9, workoutsMax: 14, water: 17.5, waterMax: 27.5 },
+        goals: {
+            steps: 55000 + Math.floor(Math.random() * 15000),
+            stepsMax: 70000 + Math.floor(Math.random() * 5000),
+            workouts: 8 + Math.floor(Math.random() * 5),
+            workoutsMax: 14 + Math.floor(Math.random() * 4),
+            water: 15 + Math.round(Math.random() * 8 * 10) / 10,
+            waterMax: 24 + Math.round(Math.random() * 6 * 10) / 10,
+        },
     };
 
     let calendarView = { year: 0, month: 0 };
+    let bookingCalView = { year: 0, month: 0 };
+    let bookingSelectedDate = null;
 
     // ─── Utilities ───────────────────────────────────────────────────────────
 
+    function getCurrentUserName() {
+        const el = $('welcomeName');
+        return el ? el.textContent.trim() : 'You';
+    }
+
     function $(id) {
         return document.getElementById(id);
+    }
+
+    function toLocalDateStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
 
     function isDashboardActive() {
@@ -249,22 +270,108 @@
         return false;
     }
 
+    const DEFAULT_SHOW_COUNT = 4;
+
     function applyActivityLimit() {
         const list = $('activityList');
         if (!list) return;
         const items = list.querySelectorAll(':scope > .activity-item');
         items.forEach((item, i) => {
-            item.style.display = (showAllActivities || i < 3) ? '' : 'none';
+            item.style.display = (showAllActivities || i < DEFAULT_SHOW_COUNT) ? '' : 'none';
         });
         const btn = $('viewAllActivity');
         if (btn) {
-            btn.style.display = items.length <= 3 ? 'none' : '';
+            btn.style.display = items.length <= DEFAULT_SHOW_COUNT ? 'none' : '';
             btn.textContent = showAllActivities ? 'Show Less' : 'View All';
         }
     }
 
     function toggleActivityView() {
-        showAllActivities = !showAllActivities;
+        const list = $('activityList');
+        if (!showAllActivities) {
+            if (list) {
+                list.style.overflowY = 'auto';
+                list.style.height = list.offsetHeight + 'px';
+            }
+            showAllActivities = true;
+        } else {
+            showAllActivities = false;
+            if (list) {
+                list.style.overflowY = '';
+                list.style.height = '';
+            }
+        }
+        applyActivityLimit();
+    }
+
+    // ─── Activity rendering (sorted) ─────────────────────────────────────────
+
+    function createActivityElement(data) {
+        const item = document.createElement('div');
+        item.className = 'activity-item' + (data.completed ? ' is-completed' : '');
+        item.dataset.activityId = data.id;
+        item.dataset.timestamp = String(data.timestamp);
+        item.dataset.name = data.name;
+        if (data.bookable) item.dataset.bookable = 'true';
+
+        const badgeHtml = data.bookable ? '' : `<span class="act-badge act-badge-live">Live</span>`;
+        const doneHtml = data.bookable
+            ? `<button type="button" class="act-done-btn${data.completed ? ' completed' : ''}" data-act-id="${data.id}" ${data.completed ? 'disabled' : ''}>${data.completed ? 'Completed ✓' : 'Done'}</button>`
+            : '';
+
+        item.innerHTML = `
+            <img src="${avatarUrl(data.name, data.avatar.bg, data.avatar.color)}" alt="${data.name}" class="act-avatar">
+            <div class="act-details">
+                <h4>${data.title}</h4>
+                <p>${data.subtitle}</p>
+            </div>
+            <div class="act-meta">
+                ${badgeHtml}
+                <span class="act-time">${formatRelativeTime(data.timestamp)}</span>
+                ${doneHtml}
+            </div>
+        `;
+
+        return item;
+    }
+
+    function renderActivities(newActivityId) {
+        const list = $('activityList');
+        if (!list) return;
+
+        const currentUser = getCurrentUserName();
+        const userActivities = activities.filter(a => a.name === currentUser);
+        const userNewest = userActivities.length > 0
+            ? userActivities.reduce((a, b) => (a.timestamp > b.timestamp ? a : b))
+            : null;
+
+        const sorted = [...activities].sort((a, b) => {
+            const aIsTop = userNewest && a.id === userNewest.id;
+            const bIsTop = userNewest && b.id === userNewest.id;
+            if (aIsTop && !bIsTop) return -1;
+            if (!aIsTop && bIsTop) return 1;
+            return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+
+        list.innerHTML = '';
+        sorted.forEach(a => {
+            const item = createActivityElement(a);
+            list.appendChild(item);
+
+            const btn = item.querySelector('.act-done-btn');
+            if (btn && !a.completed) {
+                btn.addEventListener('click', () => completeSession(a.id));
+            }
+        });
+
+        if (newActivityId) {
+            const el = list.querySelector(`[data-activity-id="${newActivityId}"]`);
+            if (el) {
+                el.classList.add('fp-slide-in');
+                setTimeout(() => el.classList.remove('fp-slide-in'), 600);
+            }
+        }
+
         applyActivityLimit();
     }
 
@@ -275,54 +382,26 @@
         if (!list) return null;
 
         const id = options.id || `act-${++activityIdCounter}`;
-        const timestamp = options.timestamp || Date.now();
-        const title = options.title || 'Activity';
-        const subtitle = options.subtitle || '';
-        const name = options.name || 'You';
-        const bookable = !!options.bookable;
-        const completed = !!options.completed;
-        const avatar = options.avatar || { bg: 'fce9d5', color: 'e8813a' };
-
-        const item = document.createElement('div');
-        item.className = 'activity-item fp-slide-in' + (completed ? ' is-completed' : '');
-        item.dataset.activityId = id;
-        item.dataset.timestamp = String(timestamp);
-        if (bookable) item.dataset.bookable = 'true';
-
-        const badgeHtml = bookable ? '' : `<span class="act-badge act-badge-live">Live</span>`;
-        const doneHtml = bookable
-            ? `<button type="button" class="act-done-btn${completed ? ' completed' : ''}" data-act-id="${id}" ${completed ? 'disabled' : ''}>${completed ? 'Completed ✓' : 'Done'}</button>`
-            : '';
-
-        item.innerHTML = `
-            <img src="${avatarUrl(name, avatar.bg, avatar.color)}" alt="${name}" class="act-avatar">
-            <div class="act-details">
-                <h4>${title}</h4>
-                <p>${subtitle}</p>
-            </div>
-            <div class="act-meta">
-                ${badgeHtml}
-                <span class="act-time">${formatRelativeTime(timestamp)}</span>
-                ${doneHtml}
-            </div>
-        `;
-
-        list.prepend(item);
 
         const exists = activities.some(a => a.id === id);
         if (!exists) {
-            activities.unshift({ id, timestamp, title, subtitle, name, bookable, completed, avatar });
+            activities.unshift({
+                id,
+                timestamp: options.timestamp || Date.now(),
+                title: options.title || 'Activity',
+                subtitle: options.subtitle || '',
+                name: options.name || 'You',
+                bookable: !!options.bookable,
+                completed: !!options.completed,
+                avatar: options.avatar || { bg: 'fce9d5', color: 'e8813a' },
+                bookingDate: options.bookingDate || '',
+            });
             saveActivities();
         }
 
-        const btn = item.querySelector('.act-done-btn');
-        if (btn && !completed) {
-            btn.addEventListener('click', () => completeSession(id));
-        }
+        renderActivities(id);
 
-        setTimeout(() => item.classList.remove('fp-slide-in'), 600);
-        applyActivityLimit();
-        return item;
+        return list.querySelector(`[data-activity-id="${id}"]`);
     }
 
     // ─── Required: completeSession ───────────────────────────────────────────────
@@ -342,10 +421,10 @@
 
     // ─── Dynamic chart data tracking ─────────────────────────────────────────
 
-    function trackDailyActivity() {
-        const today = new Date().toISOString().slice(0, 10);
+    function trackDailyActivity(date) {
+        const dateStr = date ? toLocalDateStr(date) : toLocalDateStr(new Date());
         const data = JSON.parse(localStorage.getItem(STORAGE_DAILY_ACTIVITY) || '{}');
-        data[today] = (data[today] || 0) + 1;
+        data[dateStr] = (data[dateStr] || 0) + 1;
         try { localStorage.setItem(STORAGE_DAILY_ACTIVITY, JSON.stringify(data)); } catch (e) {}
     }
 
@@ -372,10 +451,10 @@
 
         if (period === 'weekly') {
             const dayIndex = (today.getDay() + 6) % 7;
-            for (let i = 0; i <= dayIndex; i++) {
+            for (let i = 0; i < 7; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - dayIndex + i);
-                const dateStr = date.toISOString().slice(0, 10);
+                const dateStr = toLocalDateStr(date);
                 if (daily[dateStr]) data[i] += daily[dateStr];
             }
         } else if (period === 'monthly') {
@@ -415,10 +494,10 @@
         let dynamicUsed = 0;
         if (period === 'weekly') {
             const dayIndex = (today.getDay() + 6) % 7;
-            for (let i = 0; i <= dayIndex; i++) {
+            for (let i = 0; i < 7; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - dayIndex + i);
-                dynamicUsed += daily[date.toISOString().slice(0, 10)] || 0;
+                dynamicUsed += daily[toLocalDateStr(date)] || 0;
             }
         } else if (period === 'monthly') {
             const month = today.getMonth();
@@ -503,8 +582,12 @@
         }
 
         const idx = activities.findIndex(a => a.id === activityId);
+        let completedBookingDate = null;
         if (idx !== -1) {
             activities[idx].completed = true;
+            if (activities[idx].bookingDate) {
+                completedBookingDate = new Date(activities[idx].bookingDate + 'T00:00:00');
+            }
             saveActivities();
             // Decrement pending count if this was a bookable activity
             if (activities[idx].bookable) {
@@ -519,7 +602,7 @@
         localStorage.setItem('fp_reward_points', String(dashboardState.rewardPoints));
         localStorage.setItem('fp_total_sessions', String(dashboardState.totalSessions));
         trackCompletedActivity();
-        trackDailyActivity();
+        trackDailyActivity(completedBookingDate);
         trackSessionHours();
 
         updateDashboardStats({
@@ -536,18 +619,7 @@
 
         syncAnalyticsRings(dashboardState.totalSessions, dashboardState.rewardPoints);
 
-        // Refresh charts if analytics tab is currently visible
-        const wipView = $('wip-view');
-        if (wipView && window.getComputedStyle(wipView).display === 'flex') {
-            if (typeof window.switchLineChart === 'function') {
-                const activeLine = document.querySelector('#lineChartToggle .chart-toggle-btn.active');
-                window.switchLineChart(activeLine ? activeLine.getAttribute('data-period') : 'weekly');
-            }
-            if (typeof window.switchDoughnutChart === 'function') {
-                const activeDoughnut = document.querySelector('#doughnutChartToggle .chart-toggle-btn.active');
-                window.switchDoughnutChart(activeDoughnut ? activeDoughnut.getAttribute('data-period') : 'weekly');
-            }
-        }
+        emitDataUpdate();
 
         if (typeof window.bumpWorkoutCalories === 'function') {
             window.bumpWorkoutCalories(POINTS_BONUS_DONE);
@@ -574,12 +646,19 @@
         const overlay = $('bookingModalOverlay');
         if (!overlay) return;
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        bookingSelectedDate = new Date(today);
+
         const dateEl = $('bookingDate');
         if (dateEl) {
-            const today = new Date().toISOString().slice(0, 10);
-            dateEl.min = today;
-            if (!dateEl.value) dateEl.value = today;
+            const dateStr = toLocalDateStr(today);
+            dateEl.value = dateStr;
+            dateEl.min = dateStr;
         }
+
+        updateBookingDateDisplay();
+        closeBookingCalendar();
 
         overlay.removeAttribute('hidden');
         requestAnimationFrame(() => overlay.classList.add('visible'));
@@ -589,16 +668,19 @@
     function closeBookingModal() {
         const overlay = $('bookingModalOverlay');
         if (!overlay) return;
+        closeBookingCalendar();
         overlay.classList.remove('visible');
         document.body.style.overflow = '';
         setTimeout(() => overlay.setAttribute('hidden', ''), 350);
     }
 
-    function showBookingSuccess(sessionType, trainer, timeStr) {
+    function showBookingSuccess(sessionType, trainer, timeStr, dateStr) {
         const overlay = $('bookingSuccessOverlay');
         const detail = $('bookingSuccessDetail');
         if (detail) {
-            detail.textContent = `${sessionType} with ${trainer} at ${timeStr}`;
+            detail.textContent = dateStr
+                ? `${sessionType} with ${trainer} on ${dateStr} at ${timeStr}`
+                : `${sessionType} with ${trainer} at ${timeStr}`;
         }
         if (!overlay) return;
 
@@ -609,6 +691,163 @@
             overlay.classList.remove('visible');
             setTimeout(() => overlay.setAttribute('hidden', ''), 400);
         }, 2200);
+    }
+
+    // ─── Mini calendar date picker ─────────────────────────────────────────────
+
+    function initBookingDatePicker() {
+        const toggle = $('bookingDateToggle');
+        const calendar = $('bookingCalendar');
+        if (!toggle || !calendar) return;
+
+        const overlay = $('bookingModalOverlay');
+        if (overlay && calendar.parentElement && !calendar.parentElement.classList.contains('fp-premium-overlay')) {
+            overlay.insertBefore(calendar, overlay.firstChild);
+        }
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (calendar.hidden) {
+                openBookingCalendar();
+            } else {
+                closeBookingCalendar();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrap = e.target.closest('.fp-booking-date-wrap');
+            const cal = e.target.closest('.fp-booking-calendar');
+            if (!wrap && !cal) {
+                closeBookingCalendar();
+            }
+        });
+
+        $('bookingCalPrev')?.addEventListener('click', () => {
+            bookingCalView.month -= 1;
+            if (bookingCalView.month < 0) { bookingCalView.month = 11; bookingCalView.year -= 1; }
+            renderBookingCalendar();
+        });
+
+        $('bookingCalNext')?.addEventListener('click', () => {
+            bookingCalView.month += 1;
+            if (bookingCalView.month > 11) { bookingCalView.month = 0; bookingCalView.year += 1; }
+            renderBookingCalendar();
+        });
+    }
+
+    function openBookingCalendar() {
+        const cal = $('bookingCalendar');
+        if (!cal) return;
+        const date = bookingSelectedDate || new Date();
+        bookingCalView.year = date.getFullYear();
+        bookingCalView.month = date.getMonth();
+        renderBookingCalendar();
+
+        const isMobile = window.innerWidth <= 640;
+        if (!isMobile) {
+            const toggle = $('bookingDateToggle');
+            if (toggle) {
+                const rect = toggle.getBoundingClientRect();
+                const calWidth = 300;
+                let left = rect.right - calWidth;
+                if (left < 8) left = 8;
+                if (left + calWidth > window.innerWidth - 8) left = window.innerWidth - calWidth - 8;
+                cal.style.top = (rect.bottom + 4) + 'px';
+                cal.style.left = left + 'px';
+            }
+        }
+
+        cal.hidden = false;
+    }
+
+    function closeBookingCalendar() {
+        const cal = $('bookingCalendar');
+        if (cal) cal.hidden = true;
+    }
+
+    function renderBookingCalendar() {
+        const grid = $('bookingCalGrid');
+        const label = $('bookingCalLabel');
+        if (!grid || !label) return;
+
+        const { year, month } = bookingCalView;
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+        label.textContent = `${monthNames[month]} ${year}`;
+
+        grid.innerHTML = '';
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const sel = bookingSelectedDate ? new Date(bookingSelectedDate) : null;
+        if (sel) sel.setHours(0, 0, 0, 0);
+
+        for (let i = 0; i < firstDay; i++) {
+            const pad = document.createElement('button');
+            pad.type = 'button';
+            pad.className = 'fp-cal-day other-month';
+            pad.disabled = true;
+            grid.appendChild(pad);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(year, month, d);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'fp-cal-day';
+            btn.textContent = String(d);
+
+            const isPast = date < today;
+            if (isPast) {
+                btn.disabled = true;
+                btn.classList.add('other-month');
+            }
+            if (date.toDateString() === today.toDateString()) {
+                btn.classList.add('today');
+            }
+            if (sel && date.toDateString() === sel.toDateString()) {
+                btn.classList.add('selected');
+            }
+
+            if (!isPast) {
+                btn.addEventListener('click', () => {
+                    selectBookingDate(new Date(date));
+                });
+            }
+
+            grid.appendChild(btn);
+        }
+    }
+
+    function selectBookingDate(date) {
+        bookingSelectedDate = new Date(date);
+        bookingSelectedDate.setHours(0, 0, 0, 0);
+        updateBookingDateDisplay();
+        closeBookingCalendar();
+    }
+
+    function updateBookingDateDisplay() {
+        const display = $('bookingDateDisplay');
+        const hidden = $('bookingDate');
+        if (!bookingSelectedDate) {
+            if (display) display.value = '';
+            return;
+        }
+        if (display) {
+            display.value = bookingSelectedDate.toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+        }
+        if (hidden) {
+            hidden.value = toLocalDateStr(bookingSelectedDate);
+        }
+    }
+
+    // ─── Shared data-update event ────────────────────────────────────────────
+    function emitDataUpdate() {
+        document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
     }
 
     function confirmBooking() {
@@ -624,9 +863,22 @@
             return;
         }
 
+        const selectedDate = new Date(dateVal + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate < today) {
+            if (typeof window.showToast === 'function') {
+                window.showToast('Invalid Date', 'Please select today or a future date.', 'warning');
+            }
+            return;
+        }
+
         const timeFormatted = formatTime12h(timeVal);
+        const dateFormatted = bookingSelectedDate
+            ? bookingSelectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+            : '';
         closeBookingModal();
-        showBookingSuccess(sessionType, trainer, timeFormatted);
+        showBookingSuccess(sessionType, trainer, timeFormatted, dateFormatted);
 
         addActivity({
             title: 'Session Booked',
@@ -634,8 +886,13 @@
             name: $('welcomeName')?.textContent?.trim() || 'You',
             bookable: true,
             avatar: { bg: 'fce9d5', color: 'e8813a' },
+            bookingDate: toLocalDateStr(bookingSelectedDate),
         });
         updatePendingCount(1);
+
+        // Update ring metrics and notify chart layer
+        syncAnalyticsRings(dashboardState.totalSessions, dashboardState.rewardPoints);
+        emitDataUpdate();
 
         if (typeof window.showToast === 'function') {
             window.showToast('Session Booked', `${sessionType} confirmed.`, 'success');
@@ -889,22 +1146,27 @@
             { title: 'Points Earned', subtitle: '+50 pts · Priya Verma', name: 'Priya Verma', offset: 5 * 3600000, avatar: { bg: 'd1fae5', color: '059669' } },
         ];
         seeds.forEach((s) => {
-            addActivity({
+            activities.unshift({
+                id: `act-${++activityIdCounter}`,
+                timestamp: now - s.offset,
                 title: s.title,
                 subtitle: s.subtitle,
                 name: s.name,
-                timestamp: now - s.offset,
+                bookable: false,
+                completed: false,
                 avatar: s.avatar,
             });
         });
+        saveActivities();
+        renderActivities();
     }
 
     function readInitialStats() {
         dashboardState.streak = parseNumber($('heroStreak')?.textContent) || 12;
-        const persistedTotal = parseInt(localStorage.getItem('fp_total_sessions') || String(window.mockData?.membershipStats?.sessionsCount || 84), 10);
+        const persistedTotal = parseInt(localStorage.getItem('fp_total_sessions') || String(window.mockData?.membershipStats?.sessionsCount || 80), 10);
         dashboardState.sessionsDone = persistedTotal;
         dashboardState.totalSessions = persistedTotal;
-        dashboardState.rewardPoints = parseInt(localStorage.getItem('fp_reward_points') || String(window.mockData?.membershipStats?.rewardPoints || 1250), 10);
+        dashboardState.rewardPoints = parseInt(localStorage.getItem('fp_reward_points') || String(window.mockData?.membershipStats?.rewardPoints || 300), 10);
         dashboardState.expiryDate = defaultExpiryDate();
     }
 
@@ -959,8 +1221,15 @@
             toggleActivityView();
         });
 
+        initBookingDatePicker();
+
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
+            const cal = $('bookingCalendar');
+            if (cal && !cal.hidden) {
+                closeBookingCalendar();
+                return;
+            }
             if ($('bookingModalOverlay')?.classList.contains('visible')) closeBookingModal();
             if ($('expiryCalendarOverlay')?.classList.contains('visible')) closeExpiryCalendar();
         });
@@ -996,10 +1265,7 @@
                 if (!isNaN(n) && n > maxId) maxId = n;
             });
             activityIdCounter = maxId;
-            for (let i = activities.length - 1; i >= 0; i--) {
-                addActivity(activities[i]);
-            }
-            applyActivityLimit();
+            renderActivities();
         }
 
         readInitialStats();
@@ -1041,6 +1307,7 @@
     window.syncAnalyticsRings = syncAnalyticsRings;
     window.getActivityData = getActivityData;
     window.getDoughnutData = getDoughnutData;
+    window.emitDataUpdate = emitDataUpdate;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
