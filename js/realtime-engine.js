@@ -7,11 +7,15 @@
 (function () {
     const STORAGE_EXPIRY = 'fp_membership_expiry';
     const STORAGE_ACTIVITIES = 'fp_activities';
+    const STORAGE_DAILY_ACTIVITY = 'fp_daily_activity';
+    const STORAGE_PENDING_SESSIONS = 'fp_pending_sessions';
+    const STORAGE_TOTAL_HOURS = 'fp_total_hours';
+    const DEFAULT_SESSION_HOURS = 0.75;
     const POINTS_BONUS_DONE = 50;
     const SIM_MIN_MS = 2000;
     const SIM_MAX_MS = 3000;
     const RELATIVE_TICK_MS = 15000;
-    const EXPIRY_CHECK_MS = 5000;
+    const EXPIRY_CHECK_MS = 60000;
     const LIVE_EVENT_MIN_MS = 8000;
     const LIVE_EVENT_MAX_MS = 14000;
 
@@ -336,15 +340,143 @@
         console.info('[FitPulse] Completed activity data cleared.');
     }
 
+    // ─── Dynamic chart data tracking ─────────────────────────────────────────
+
+    function trackDailyActivity() {
+        const today = new Date().toISOString().slice(0, 10);
+        const data = JSON.parse(localStorage.getItem(STORAGE_DAILY_ACTIVITY) || '{}');
+        data[today] = (data[today] || 0) + 1;
+        try { localStorage.setItem(STORAGE_DAILY_ACTIVITY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    function trackSessionHours() {
+        const hours = parseFloat(localStorage.getItem(STORAGE_TOTAL_HOURS) || '142');
+        localStorage.setItem(STORAGE_TOTAL_HOURS, String(Math.round((hours + DEFAULT_SESSION_HOURS) * 100) / 100));
+    }
+
+    function updatePendingCount(delta) {
+        const current = parseInt(localStorage.getItem(STORAGE_PENDING_SESSIONS) || '0', 10);
+        localStorage.setItem(STORAGE_PENDING_SESSIONS, String(Math.max(0, current + delta)));
+    }
+
+    /** Build line chart data for a given period, merging static baseline + dynamic daily activity */
+    function getActivityData(period) {
+        if (!window.mockData) return { labels: [], data: [] };
+        const staticData = window.mockData['activity_' + period];
+        if (!staticData) return { labels: [], data: [] };
+
+        const labels = [...staticData.labels];
+        const data = [...staticData.data];
+        const daily = JSON.parse(localStorage.getItem(STORAGE_DAILY_ACTIVITY) || '{}');
+        const today = new Date();
+
+        if (period === 'weekly') {
+            const dayIndex = (today.getDay() + 6) % 7;
+            for (let i = 0; i <= dayIndex; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - dayIndex + i);
+                const dateStr = date.toISOString().slice(0, 10);
+                if (daily[dateStr]) data[i] += daily[dateStr];
+            }
+        } else if (period === 'monthly') {
+            const month = today.getMonth();
+            const year = today.getFullYear();
+            for (const [dateStr, count] of Object.entries(daily)) {
+                const d = new Date(dateStr + 'T00:00:00');
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                    data[Math.min(3, Math.floor((d.getDate() - 1) / 7))] += count;
+                }
+            }
+        } else if (period === 'yearly') {
+            const year = today.getFullYear();
+            for (const [dateStr, count] of Object.entries(daily)) {
+                const d = new Date(dateStr + 'T00:00:00');
+                if (d.getFullYear() === year) {
+                    data[d.getMonth()] += count;
+                }
+            }
+        }
+
+        return { labels, data };
+    }
+
+    /** Build doughnut chart data for a given period, merging static + dynamic */
+    function getDoughnutData(period) {
+        if (!window.mockData) return { labels: ["Used Sessions", "Available Sessions", "Pending Approval"], data: [0, 0, 0] };
+        const staticData = window.mockData['doughnut_' + period];
+        if (!staticData) return { labels: ["Used Sessions", "Available Sessions", "Pending Approval"], data: [0, 0, 0] };
+
+        const labels = [...staticData.labels];
+        const staticTotal = staticData.data.reduce((a, b) => a + b, 0);
+        const pending = parseInt(localStorage.getItem(STORAGE_PENDING_SESSIONS) || '0', 10);
+        const daily = JSON.parse(localStorage.getItem(STORAGE_DAILY_ACTIVITY) || '{}');
+        const today = new Date();
+
+        let dynamicUsed = 0;
+        if (period === 'weekly') {
+            const dayIndex = (today.getDay() + 6) % 7;
+            for (let i = 0; i <= dayIndex; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - dayIndex + i);
+                dynamicUsed += daily[date.toISOString().slice(0, 10)] || 0;
+            }
+        } else if (period === 'monthly') {
+            const month = today.getMonth();
+            const year = today.getFullYear();
+            for (const [dateStr, count] of Object.entries(daily)) {
+                const d = new Date(dateStr + 'T00:00:00');
+                if (d.getFullYear() === year && d.getMonth() === month) dynamicUsed += count;
+            }
+        } else if (period === 'yearly') {
+            dynamicUsed = parseInt(localStorage.getItem('fp_total_sessions') || '0', 10);
+        }
+
+        const usedSessions = staticData.data[0] + dynamicUsed;
+        const pendingSessions = pending;
+        const adjustTotal = staticTotal + dynamicUsed;
+        const availableSessions = Math.max(0, adjustTotal - usedSessions - pendingSessions);
+
+        return { labels, data: [usedSessions, availableSessions, pendingSessions] };
+    }
+
     function syncAnalyticsRings(sessions, points) {
         const updateRing = (valElId, ringId, value, goal) => {
             const valEl = document.getElementById(valElId);
             const ringEl = document.getElementById(ringId);
-            if (valEl) valEl.textContent = value.toLocaleString();
-            if (ringEl) ringEl.style.setProperty('--ring-pct', `${Math.min((value / goal) * 100, 100)}%`);
+            if (!valEl || !ringEl) return;
+            const prevVal = parseFloat(String(valEl.textContent).replace(/[^\d.]/g, '')) || 0;
+            const prevPct = parseFloat(ringEl.style.getPropertyValue('--ring-pct')) || 0;
+            const targetPct = Math.min((value / goal) * 100, 100);
+            if (prevVal === value && Math.abs(prevPct - targetPct) < 0.5) return;
+            animateCounter(valEl, prevVal, value, 700);
+            animateRingPct(ringEl, prevPct, targetPct, 700);
         };
+
+        function animateRingPct(el, from, to, duration) {
+            const start = performance.now();
+            const diff = to - from;
+            function step(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.style.setProperty('--ring-pct', `${from + diff * eased}%`);
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
         updateRing('stat-sessions-val', 'stat-sessions-ring', sessions, window.sessionGoal || 200);
         updateRing('stat-points-val', 'stat-points-ring', points, window.rewardGoal || 2000);
+
+        // Attendance ring — computed from completed / (completed + pending)
+        const totalSessions = parseInt(localStorage.getItem('fp_total_sessions') || '0', 10);
+        const pendingSessions = parseInt(localStorage.getItem(STORAGE_PENDING_SESSIONS) || '0', 10);
+        const denom = totalSessions + pendingSessions;
+        const attendancePct = denom > 0 ? Math.round((totalSessions / denom) * 100) : 0;
+        updateRing('stat-attendance-val', 'stat-attendance-ring', attendancePct, 100);
+
+        // Hours ring — accumulated session hours
+        const totalHours = parseFloat(localStorage.getItem(STORAGE_TOTAL_HOURS) || '142');
+        updateRing('stat-hours-val', 'stat-hours-ring', Math.round(totalHours), 200);
     }
 
     function completeSession(activityId) {
@@ -374,6 +506,10 @@
         if (idx !== -1) {
             activities[idx].completed = true;
             saveActivities();
+            // Decrement pending count if this was a bookable activity
+            if (activities[idx].bookable) {
+                updatePendingCount(-1);
+            }
         }
 
         dashboardState.streak += 1;
@@ -383,6 +519,8 @@
         localStorage.setItem('fp_reward_points', String(dashboardState.rewardPoints));
         localStorage.setItem('fp_total_sessions', String(dashboardState.totalSessions));
         trackCompletedActivity();
+        trackDailyActivity();
+        trackSessionHours();
 
         updateDashboardStats({
             streak: dashboardState.streak,
@@ -397,6 +535,19 @@
         animateCard($('stat-points')?.closest('.dark-card'));
 
         syncAnalyticsRings(dashboardState.totalSessions, dashboardState.rewardPoints);
+
+        // Refresh charts if analytics tab is currently visible
+        const wipView = $('wip-view');
+        if (wipView && window.getComputedStyle(wipView).display === 'flex') {
+            if (typeof window.switchLineChart === 'function') {
+                const activeLine = document.querySelector('#lineChartToggle .chart-toggle-btn.active');
+                window.switchLineChart(activeLine ? activeLine.getAttribute('data-period') : 'weekly');
+            }
+            if (typeof window.switchDoughnutChart === 'function') {
+                const activeDoughnut = document.querySelector('#doughnutChartToggle .chart-toggle-btn.active');
+                window.switchDoughnutChart(activeDoughnut ? activeDoughnut.getAttribute('data-period') : 'weekly');
+            }
+        }
 
         if (typeof window.bumpWorkoutCalories === 'function') {
             window.bumpWorkoutCalories(POINTS_BONUS_DONE);
@@ -484,6 +635,7 @@
             bookable: true,
             avatar: { bg: 'fce9d5', color: 'e8813a' },
         });
+        updatePendingCount(1);
 
         if (typeof window.showToast === 'function') {
             window.showToast('Session Booked', `${sessionType} confirmed.`, 'success');
@@ -887,6 +1039,8 @@
     window.animateCard = animateCard;
     window.animateCounter = animateCounter;
     window.syncAnalyticsRings = syncAnalyticsRings;
+    window.getActivityData = getActivityData;
+    window.getDoughnutData = getDoughnutData;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

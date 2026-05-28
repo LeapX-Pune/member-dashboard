@@ -72,6 +72,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (targetId === 'wip-view') {
             setTimeout(() => {
                 window.dispatchEvent(new Event('resize'));
+                // Re-render charts with latest dynamic data
+                if (typeof window.getActivityData === 'function' && typeof window.switchLineChart === 'function') {
+                    const activeLine = document.querySelector('#lineChartToggle .chart-toggle-btn.active');
+                    window.switchLineChart(activeLine ? activeLine.getAttribute('data-period') : 'weekly');
+                }
+                if (typeof window.getDoughnutData === 'function' && typeof window.switchDoughnutChart === 'function') {
+                    const activeDoughnut = document.querySelector('#doughnutChartToggle .chart-toggle-btn.active');
+                    window.switchDoughnutChart(activeDoughnut ? activeDoughnut.getAttribute('data-period') : 'weekly');
+                }
             }, 100);
         }
     }

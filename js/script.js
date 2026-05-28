@@ -826,8 +826,10 @@ function switchLineChart(period) {
         window.activityChart = null;
     }
 
-    // Step 3: pick the correct dataset from data.js based on period
-    var lineData = window.mockData['activity_' + period];
+    // Step 3: pick the correct dataset — use dynamic data when available
+    var lineData = (typeof window.getActivityData === 'function')
+        ? window.getActivityData(period)
+        : window.mockData['activity_' + period];
 
     // Step 4: read theme colors the same way charts.js does
     var themeEl  = document.getElementById('dashboardContainer') || document.body;
@@ -904,8 +906,10 @@ function switchDoughnutChart(period) {
         window.doughnutChart = null;
     }
 
-    // Step 3: pick the correct dataset from data.js based on period
-    var doughnutData = window.mockData['doughnut_' + period];
+    // Step 3: pick the correct dataset — use dynamic data when available
+    var doughnutData = (typeof window.getDoughnutData === 'function')
+        ? window.getDoughnutData(period)
+        : window.mockData['doughnut_' + period];
 
     // Step 4: read theme colors the same way charts.js does
     var themeEl = document.getElementById('dashboardContainer') || document.body;

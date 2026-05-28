@@ -523,8 +523,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const sessValEl = document.getElementById('stat-sessions-val');
     const heroSessEl = document.getElementById('heroSessions');
     if (sessEl) {
-        sessEl.textContent = String(appState.total);
-        animateCount(sessEl, 0, appState.total, 1000);
+        const currentVal = parseInt(sessEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+        if (currentVal !== appState.total) {
+            animateCount(sessEl, currentVal, appState.total, 1000);
+        }
     }
     if (heroSessEl) {
         heroSessEl.textContent = String(appState.total);
@@ -535,7 +537,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // ── Session goal display ────────────────────────────────────────────────
     updateSessionGoalDisplay();
 
-    const sessObserver = new MutationObserver(() => updateSessionGoalDisplay());
+    let sessObsTimer = null;
+    const sessObserver = new MutationObserver(() => {
+        if (sessObsTimer) clearTimeout(sessObsTimer);
+        sessObsTimer = setTimeout(() => updateSessionGoalDisplay(), 50);
+    });
     if (sessEl) sessObserver.observe(sessEl, { characterData: true, childList: true, subtree: true });
 
     const bindIncreaseSess = (id) => {
@@ -559,8 +565,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const ptsEl    = document.getElementById('stat-points');
     const ptsValEl = document.getElementById('stat-points-val');
     if (ptsEl) {
-        ptsEl.textContent = String(appState.points);
-        animateCount(ptsEl, 0, appState.points, 1200);
+        const currentVal = parseInt(ptsEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+        if (currentVal !== appState.points) {
+            animateCount(ptsEl, currentVal, appState.points, 1200);
+        }
     }
     if (ptsValEl) animateCount(ptsValEl, 0, appState.points, 1200);
 
@@ -568,7 +576,11 @@ window.addEventListener('DOMContentLoaded', () => {
     updateGoalDisplay();
 
     // Watch the points element for realtime-engine updates
-    const ptsObserver = new MutationObserver(() => updateGoalDisplay());
+    let ptsObsTimer = null;
+    const ptsObserver = new MutationObserver(() => {
+        if (ptsObsTimer) clearTimeout(ptsObsTimer);
+        ptsObsTimer = setTimeout(() => updateGoalDisplay(), 50);
+    });
     if (ptsEl) ptsObserver.observe(ptsEl, { characterData: true, childList: true, subtree: true });
 
     // Bind increase-goal buttons
@@ -596,7 +608,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if (hoursValEl)      hoursValEl.textContent      = data.membershipStats.totalHoursBurned;
 
     // ── Re-check expiry every hour (tab might stay open) ──────────────────
-    setInterval(() => renderExpiryCard(data.userProfile.expiryDate), 3_600_000);
+    setInterval(() => {
+        const expiry = window.mockData?.userProfile?.expiryDate || data.userProfile.expiryDate;
+        renderExpiryCard(expiry);
+    }, 3_600_000);
 
     window.addRewardPoints = function(pts) {
         if (!appState) return;

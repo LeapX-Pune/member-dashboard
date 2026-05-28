@@ -1407,11 +1407,7 @@ body {
         justify-content: space-between;
     }
 
-    /* Hide Active Plan card and span the last card to maintain grid balance */
-    .dark-cards-grid .dark-card:first-child {
-        display: none;
-    }
-    
+    /* Keep all cards visible on mobile — remove hiding of the first card */
     .dark-cards-grid { 
         grid-template-columns: 1fr 1fr; 
     }

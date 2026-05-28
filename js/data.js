@@ -94,39 +94,41 @@ window.renderActiveDashboard = () => {
         const displayPlanStatus = document.getElementById('membership-status');
 
         if (displayPlanName) displayPlanName.textContent = data.userProfile.membershipPlan;
-        if (displayPlanExpiry) displayPlanExpiry.textContent = `Expires: ${data.userProfile.expiryDate}`;
-
-        // 3. Status badge text and conditional style bindings
-        if (displayPlanStatus) {
-            const currentStatus = data.userProfile.status;
-            displayPlanStatus.textContent = currentStatus;
-            
-            displayPlanStatus.removeAttribute('style'); // Clear previous inline styles on updates
-            displayPlanStatus.className = "status-badge";
-
-            if (currentStatus === "Active") {
-                displayPlanStatus.style.color = "#22c55e";
-                displayPlanStatus.classList.add('status-active');
-            } else if (currentStatus === "Expiring Soon") {
-                displayPlanStatus.style.color = "#f59e0b";
-                displayPlanStatus.classList.add('status-expiring');
-            } else if (currentStatus === "Expired") {
-                displayPlanStatus.style.color = "#ef4444";
-                displayPlanStatus.classList.add('status-expired');
-            } else {
-                displayPlanStatus.style.color = "#6b7280";
-                displayPlanStatus.classList.add('status-unknown');
-            }
+        if (displayPlanExpiry) {
+            const expiryDate = new Date(data.userProfile.expiryDate);
+            const formatted = !isNaN(expiryDate.getTime())
+                ? expiryDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : data.userProfile.expiryDate;
+            displayPlanExpiry.textContent = `Valid till ${formatted}`;
         }
 
-        // 4. Overview Numeric Statistics Row
-        const countSessions = document.getElementById('stat-sessions');
-        const countPoints = document.getElementById('stat-points');
+        // 3. Status badge — leave styling to app.js and realtime-engine which compute from expiry date
+        if (displayPlanStatus) {
+            let currentStatus = data.userProfile.status;
+            if (typeof window.calculateMembershipStatus === 'function' && data.userProfile.expiryDate) {
+                try {
+                    const computed = window.calculateMembershipStatus(data.userProfile.expiryDate);
+                    currentStatus = computed.status;
+                } catch (e) { /* ignore */ }
+            }
+            displayPlanStatus.textContent = currentStatus;
+        }
+
+        // 4. Overview Numeric Statistics Row — refresh from localStorage
         const countPlanOverview = document.getElementById('stat-active-plan');
 
-        if (countSessions) countSessions.textContent = data.membershipStats.sessionsCount;
-        if (countPoints) countPoints.textContent = data.membershipStats.rewardPoints;
         if (countPlanOverview) countPlanOverview.textContent = data.membershipStats.activePlan;
+
+        const countSessions = document.getElementById('stat-sessions');
+        const countPoints = document.getElementById('stat-points');
+        if (countSessions) {
+            const total = parseInt(localStorage.getItem('fp_total_sessions') || String(data.membershipStats.sessionsCount), 10);
+            countSessions.textContent = String(total);
+        }
+        if (countPoints) {
+            const pts = parseInt(localStorage.getItem('fp_reward_points') || String(data.membershipStats.rewardPoints), 10);
+            countPoints.textContent = pts.toLocaleString();
+        }
 
         // 5. Render Recent Activities Feed dynamically
         const activityLogWrapper = document.getElementById('activityList');
