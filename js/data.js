@@ -134,7 +134,7 @@ window.renderActiveDashboard = () => {
             activityLogWrapper.innerHTML = ""; // Clear existing structural layout placeholders
 
             if (data.recentActivities && data.recentActivities.length > 0) {
-                data.recentActivities.forEach(session => {
+                data.recentActivities.slice(0, 4).forEach(session => {
                     const recordRow = document.createElement('div');
                     recordRow.className = "activity-row-item activity-list-item-row";
                     

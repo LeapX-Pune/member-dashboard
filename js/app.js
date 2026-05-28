@@ -112,6 +112,7 @@ function loadStorage() {
         today:  parseInt(localStorage.getItem(STORAGE_KEY_TODAY)  || '0', 10),
         total:  parseInt(localStorage.getItem(STORAGE_KEY_TOTAL)  || String(window.mockData?.membershipStats?.sessionsCount || 45), 10),
         points: parseInt(localStorage.getItem(STORAGE_KEY_POINTS) || String(window.mockData?.membershipStats?.rewardPoints  || 1200), 10),
+        completedCount: parseInt(localStorage.getItem('fp_completed_count') || '0', 10),
     };
 }
 
@@ -368,6 +369,10 @@ window.addSessions = function () {
         });
     }
 
+    if (typeof window.syncAnalyticsRings === 'function') {
+        window.syncAnalyticsRings(newTotal, appState.points);
+    }
+
     if (sessEl) flashEl(sessEl);
     updateSessionGoalDisplay();
     if (typeof window.showToast === 'function') {
@@ -399,6 +404,10 @@ window.addPointsManually = function () {
 
     if (typeof window.updateDashboardStats === 'function') {
         window.updateDashboardStats({ rewardPoints: newPoints });
+    }
+
+    if (typeof window.syncAnalyticsRings === 'function') {
+        window.syncAnalyticsRings(appState.total, newPoints);
     }
 
     if (ptsEl) flashEl(ptsEl);
@@ -486,11 +495,19 @@ window.addEventListener('DOMContentLoaded', () => {
     // ── Load persisted state ──────────────────────────────────────────────
     appState = loadStorage();
 
-    // ── Welcome name ──────────────────────────────────────────────────────
+    // ── Welcome name — prefer profile from settings tab ────────────────────
     const welcomeNameEl = document.getElementById('welcomeName');
     if (welcomeNameEl) {
-        welcomeNameEl.textContent = (data.userProfile.name || 'Guest').split(' ')[0];
-        }
+        let displayName = data.userProfile.name || 'Guest';
+        try {
+            const savedProfile = JSON.parse(localStorage.getItem('fitpulse-profile'));
+            if (savedProfile?.fullName) {
+                displayName = savedProfile.fullName;
+            }
+        } catch { /* ignore */ }
+        if (data.userProfile) data.userProfile.name = displayName;
+        welcomeNameEl.textContent = displayName.split(' ')[0];
+    }
 
     // ── Active Plan card ──────────────────────────────────────────────────
     const activePlanEl = document.getElementById('stat-active-plan');
@@ -593,6 +610,9 @@ window.addEventListener('DOMContentLoaded', () => {
         animateCount(ptsValEl, prevPoints, appState.points, 800);
         if (ptsEl) flashEl(ptsEl);
         updateGoalDisplay();
+        if (typeof window.syncAnalyticsRings === 'function') {
+            window.syncAnalyticsRings(appState.total, appState.points);
+        }
         
         if (typeof window.showToast === 'function') {
             window.showToast('Task Completed!', `+${pts} reward points earned`, 'success');

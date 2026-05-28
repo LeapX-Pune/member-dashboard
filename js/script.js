@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try { return !!JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return false; }
     }
     function persistSession() {
-        // session data is written by profile.js; we just ensure the key exists
-        if (!isSessionActive()) {
-            try { localStorage.setItem(SESSION_KEY, JSON.stringify({ loggedInAt: Date.now() })); } catch { /* private mode */ }
-        }
+        const name = window.mockData?.userProfile?.name || 'Guest';
+        try {
+            localStorage.setItem(SESSION_KEY, JSON.stringify({ loggedInAt: Date.now(), userName: name }));
+        } catch { /* private mode */ }
     }
     function destroySession() {
         try { localStorage.removeItem(SESSION_KEY); } catch { /* private mode */ }
@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginOverlay)        loginOverlay.style.display = 'none';
         if (landingContainer)    landingContainer.style.display = 'none';
         if (dashboardContainer)  dashboardContainer.style.display = 'flex';
+        // Restore the logged-in user's name
+        try {
+            const session = JSON.parse(localStorage.getItem(SESSION_KEY));
+            if (session?.userName && window.mockData?.userProfile) {
+                window.mockData.userProfile.name = session.userName;
+            }
+        } catch { /* ignore */ }
     }
 
     // Placeholder links — only prevent default scroll-to-top, but do NOT
@@ -105,6 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.mockData) {
                     window.mockData.userProfile.membershipPlan = "Gold Premium";
                     window.mockData.membershipStats.activePlan = "Gold Premium";
+                    // Derive name from email (part before @)
+                    const email = emailInput?.value?.trim() || "";
+                    const derivedName = email.includes("@") ? email.split("@")[0] : email;
+                    const displayName = derivedName ? derivedName.charAt(0).toUpperCase() + derivedName.slice(1) : "Guest";
+                    window.mockData.userProfile.name = displayName;
                     if (typeof window.renderActiveDashboard === 'function') {
                         window.renderActiveDashboard();
                     }

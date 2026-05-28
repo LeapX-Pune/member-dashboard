@@ -222,6 +222,10 @@ function populateDashboard(profile) {
         // Show only first name in the greeting
         welcomeName.textContent = profile.fullName.split(' ')[0];
     }
+    // Keep mockData in sync so overview tab picks up the name
+    if (window.mockData?.userProfile) {
+        window.mockData.userProfile.name = profile.fullName;
+    }
 
     // ── Settings Profile Card ──
     const settingsCardName = document.getElementById('settingsCardName');

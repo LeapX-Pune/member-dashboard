@@ -167,8 +167,14 @@ body {
 }
 
 .dashboard-container {
-    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    gap: 0;
     background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-left: 260px;
 }
 
 .dashboard-container .main-wrapper {
@@ -218,31 +224,21 @@ body {
 /* ------------------------------------------------------
     Layout (Sidebar + Main Wrapper)
    ------------------------------------------------------ */
-.dashboard-container {
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    gap: 0;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    min-height: 100vh;
-}
-
 .sidebar {
     width: 260px;
     flex-shrink: 0;
-    background-color: var(--bg-card);
+    background-color: var(--bg-main);
     border-radius: 0;
     padding: 2.5rem 2rem;
     box-shadow: none;
     display: flex;
     flex-direction: column;
     gap: 3rem;
-    min-height: 100vh;
-    height: auto;
-    align-self: stretch;
-    position: sticky;
+    height: 100vh;
+    position: fixed;
     top: 0;
+    left: 0;
+    z-index: 100;
     border: none;
     border-right: 1px solid var(--border);
 }
@@ -1241,6 +1237,9 @@ body {
 
 /* ---------- Responsive — Tablet ≤1024px ---------- */
 @media (max-width: 1024px) {
+    .dashboard-container {
+        padding-left: 0;
+    }
     .main-content {
         grid-template-columns: 1fr;
     }

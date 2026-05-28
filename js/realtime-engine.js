@@ -323,6 +323,30 @@
 
     // ─── Required: completeSession ───────────────────────────────────────────────
 
+    function trackCompletedActivity() {
+        const count = parseInt(localStorage.getItem('fp_completed_count') || '0', 10);
+        localStorage.setItem('fp_completed_count', String(count + 1));
+        if (count >= 5000) {
+            console.info('[FitPulse] Completed activity count at 5000 — consider calling clearCompletedData() to reset.');
+        }
+    }
+
+    function clearCompletedData() {
+        localStorage.removeItem('fp_completed_count');
+        console.info('[FitPulse] Completed activity data cleared.');
+    }
+
+    function syncAnalyticsRings(sessions, points) {
+        const updateRing = (valElId, ringId, value, goal) => {
+            const valEl = document.getElementById(valElId);
+            const ringEl = document.getElementById(ringId);
+            if (valEl) valEl.textContent = value.toLocaleString();
+            if (ringEl) ringEl.style.setProperty('--ring-pct', `${Math.min((value / goal) * 100, 100)}%`);
+        };
+        updateRing('stat-sessions-val', 'stat-sessions-ring', sessions, window.sessionGoal || 200);
+        updateRing('stat-points-val', 'stat-points-ring', points, window.rewardGoal || 2000);
+    }
+
     function completeSession(activityId) {
         const list = $('activityList');
         if (!list) return;
@@ -358,6 +382,7 @@
         dashboardState.rewardPoints += POINTS_BONUS_DONE;
         localStorage.setItem('fp_reward_points', String(dashboardState.rewardPoints));
         localStorage.setItem('fp_total_sessions', String(dashboardState.totalSessions));
+        trackCompletedActivity();
 
         updateDashboardStats({
             streak: dashboardState.streak,
@@ -370,6 +395,8 @@
 
         animateCard($('stat-sessions')?.closest('.dark-card'));
         animateCard($('stat-points')?.closest('.dark-card'));
+
+        syncAnalyticsRings(dashboardState.totalSessions, dashboardState.rewardPoints);
 
         if (typeof window.bumpWorkoutCalories === 'function') {
             window.bumpWorkoutCalories(POINTS_BONUS_DONE);
@@ -722,9 +749,10 @@
 
     function readInitialStats() {
         dashboardState.streak = parseNumber($('heroStreak')?.textContent) || 12;
-        dashboardState.sessionsDone = parseNumber($('heroSessions')?.textContent) || 84;
-        dashboardState.totalSessions = parseNumber($('stat-sessions')?.textContent) || 84;
-        dashboardState.rewardPoints = parseNumber($('stat-points')?.textContent) || 1250;
+        const persistedTotal = parseInt(localStorage.getItem('fp_total_sessions') || String(window.mockData?.membershipStats?.sessionsCount || 84), 10);
+        dashboardState.sessionsDone = persistedTotal;
+        dashboardState.totalSessions = persistedTotal;
+        dashboardState.rewardPoints = parseInt(localStorage.getItem('fp_reward_points') || String(window.mockData?.membershipStats?.rewardPoints || 1250), 10);
         dashboardState.expiryDate = defaultExpiryDate();
     }
 
@@ -851,12 +879,14 @@
     window.updateRelativeTimes = updateRelativeTimes;
     window.completeSession = completeSession;
     window.updateDashboardStats = updateDashboardStats;
+    window.clearCompletedData = clearCompletedData;
     window.openExpiryCalendar = openExpiryCalendar;
     window.renderCalendar = renderCalendar;
     window.selectExpiryDate = selectExpiryDate;
     window.calculateMembershipStatus = calculateMembershipStatus;
     window.animateCard = animateCard;
     window.animateCounter = animateCounter;
+    window.syncAnalyticsRings = syncAnalyticsRings;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
