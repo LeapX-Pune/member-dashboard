@@ -108,11 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     loginSubmitBtn.classList.remove('loading');
                 }
                 
+                var displayName = "Guest";
                 if (window.mockData) {
                     // Derive name from email (part before @)
                     const email = emailInput?.value?.trim() || "";
                     const derivedName = email.includes("@") ? email.split("@")[0] : email;
-                    const displayName = derivedName ? derivedName.charAt(0).toUpperCase() + derivedName.slice(1) : "Guest";
+                    displayName = derivedName ? derivedName.charAt(0).toUpperCase() + derivedName.slice(1) : "Guest";
                     window.mockData.userProfile.name = displayName;
                     if (typeof window.renderActiveDashboard === 'function') {
                         window.renderActiveDashboard();
@@ -127,6 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 dismissLogin('dashboard');
                 loginTimerId = null;
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Welcome Back!', `Signed in as ${displayName}`, 'success');
+                }
             }, 2000);
         });
     }
@@ -179,6 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function doLogout() {
         hideLogoutModal();
         destroySession();
+        if (typeof window.showToast === 'function') {
+            window.showToast('Signed Out', 'You have been logged out successfully.', 'success');
+        }
         if (dashboardContainer) dashboardContainer.style.display = 'none';
         if (landingContainer)   landingContainer.style.display   = 'flex';
         if (profileDropdown)    profileDropdown.style.display    = 'none';
