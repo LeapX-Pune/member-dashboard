@@ -70,9 +70,24 @@ document.addEventListener("DOMContentLoaded", () => {
         window.dispatchEvent(new Event('resize'));
 
         if (targetId === 'wip-view') {
-            setTimeout(() => {
-                window.dispatchEvent(new Event('resize'));
-            }, 100);
+            // Use requestAnimationFrame to ensure layout is settled after display:flex
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    window.dispatchEvent(new Event('resize'));
+                    try {
+                        if (typeof window.switchLineChart === 'function') {
+                            const activeLine = document.querySelector('#lineChartToggle .chart-toggle-btn.active');
+                            window.switchLineChart(activeLine ? activeLine.getAttribute('data-period') : 'weekly');
+                        }
+                        if (typeof window.switchDoughnutChart === 'function') {
+                            const activeDoughnut = document.querySelector('#doughnutChartToggle .chart-toggle-btn.active');
+                            window.switchDoughnutChart(activeDoughnut ? activeDoughnut.getAttribute('data-period') : 'weekly');
+                        }
+                    } catch (e) {
+                        console.error('Chart refresh on tab switch failed:', e);
+                    }
+                });
+            });
         }
     }
 

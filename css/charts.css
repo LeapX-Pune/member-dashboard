@@ -1,9 +1,9 @@
 /* Light Theme (Default) */
 :root {
   /* Backgrounds & Surfaces */
-  --chart-bg-main: #FDF4ED;       /* Pure White App Background */
+  --chart-bg-main: #f0ece6;       /* Matches main page background */
   --chart-surface: #DFCAB4;       /* Light Beige Card Surface */
-  --chart-sidebar-bg: #e4d1be;    /* Light Warm Beige Sidebar */
+  --chart-sidebar-bg: #f0ece6;    /* Matches main page background */
   
   /* Borders */
   --chart-border: #E1C4B0;        /* Tan / Light Brown Divider */
@@ -27,9 +27,9 @@
 /* Dark Theme */
 .theme-dark {
   /* Backgrounds & Surfaces */
-  --chart-bg-main: #1C1A17;       /* Earthy Charcoal App Background */
+  --chart-bg-main: #0f0e0d;       /* Matches main page background */
   --chart-surface: #1A1D1D;       /* Dark Brown Card Surface */
-  --chart-sidebar-bg: #261A14;    /* Deep Mocha Sidebar */
+  --chart-sidebar-bg: #0f0e0d;    /* Matches main page background */
   
   /* Borders */
   --chart-border: #2b3333;        /* Solid Brown Divider */

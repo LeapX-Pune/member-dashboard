@@ -634,7 +634,7 @@
                         </div>
                         <div class="dark-card-body">
                             <h2 id="stat-sessions">88 <button class="goal-increase-btn add-count-btn" id="addSessionsBtn" title="Add sessions"><i class="fa-solid fa-plus"></i></button></h2>
-                            <p id="stat-sessions-goal-text">Goal: <span id="stat-sessions-goal-val">200</span>+ sessions <button class="goal-increase-btn" id="increaseSessionGoalBtn" title="Increase session goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseSessionGoalBtn" title="Decrease session goal"><i class="fa-solid fa-minus"></i></button></p>
+                            <p id="stat-sessions-goal-text">Goal: <span id="stat-sessions-goal-val">200</span> sessions <button class="goal-increase-btn" id="increaseSessionGoalBtn" title="Increase session goal"><i class="fa-solid fa-plus"></i></button><button class="goal-decrease-btn" id="decreaseSessionGoalBtn" title="Decrease session goal"><i class="fa-solid fa-minus"></i></button></p>
                         </div>
                     </div>
 
@@ -1399,9 +1399,32 @@
                         </div>
                     </div>
                     <div class="modal-field-group">
-                        <div class="modal-field">
+                        <div class="modal-field" style="position: relative;">
                             <label for="bookingDate">Date</label>
-                            <input type="date" id="bookingDate">
+                            <div class="fp-booking-date-wrap">
+                                <input type="text" class="fp-booking-date-input" id="bookingDateDisplay"
+                                    placeholder="Select date" readonly autocomplete="off">
+                                <input type="date" id="bookingDate" class="fp-booking-date-hidden">
+                                <button type="button" class="fp-booking-date-btn" id="bookingDateToggle"
+                                    aria-label="Pick date">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </button>
+                            </div>
+                            <div class="fp-booking-calendar" id="bookingCalendar" hidden>
+                                <div class="fp-booking-cal-nav">
+                                    <button type="button" id="bookingCalPrev" aria-label="Previous month">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </button>
+                                    <span id="bookingCalLabel"></span>
+                                    <button type="button" id="bookingCalNext" aria-label="Next month">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="fp-calendar-weekdays" aria-hidden="true">
+                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                                </div>
+                                <div class="fp-calendar-grid" id="bookingCalGrid"></div>
+                            </div>
                         </div>
                         <div class="modal-field">
                             <label for="bookingTime">Time</label>

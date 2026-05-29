@@ -110,8 +110,9 @@ function loadStorage() {
 
     return {
         today:  parseInt(localStorage.getItem(STORAGE_KEY_TODAY)  || '0', 10),
-        total:  parseInt(localStorage.getItem(STORAGE_KEY_TOTAL)  || String(window.mockData?.membershipStats?.sessionsCount || 45), 10),
-        points: parseInt(localStorage.getItem(STORAGE_KEY_POINTS) || String(window.mockData?.membershipStats?.rewardPoints  || 1200), 10),
+        total:  parseInt(localStorage.getItem(STORAGE_KEY_TOTAL)  || String(window.mockData?.membershipStats?.sessionsCount || 80), 10),
+        points: parseInt(localStorage.getItem(STORAGE_KEY_POINTS) || String(window.mockData?.membershipStats?.rewardPoints  || 300), 10),
+        completedCount: parseInt(localStorage.getItem('fp_completed_count') || '0', 10),
     };
 }
 
@@ -368,8 +369,13 @@ window.addSessions = function () {
         });
     }
 
+    if (typeof window.syncAnalyticsRings === 'function') {
+        window.syncAnalyticsRings(newTotal, appState.points);
+    }
+
     if (sessEl) flashEl(sessEl);
     updateSessionGoalDisplay();
+    document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
     if (typeof window.showToast === 'function') {
         window.showToast('Sessions Added', `+${increment} sessions logged`, 'success');
     }
@@ -401,8 +407,13 @@ window.addPointsManually = function () {
         window.updateDashboardStats({ rewardPoints: newPoints });
     }
 
+    if (typeof window.syncAnalyticsRings === 'function') {
+        window.syncAnalyticsRings(appState.total, newPoints);
+    }
+
     if (ptsEl) flashEl(ptsEl);
     updateGoalDisplay();
+    document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
     if (typeof window.showToast === 'function') {
         window.showToast('Points Added', `+${increment} reward points`, 'success');
     }
@@ -486,11 +497,19 @@ window.addEventListener('DOMContentLoaded', () => {
     // ── Load persisted state ──────────────────────────────────────────────
     appState = loadStorage();
 
-    // ── Welcome name ──────────────────────────────────────────────────────
+    // ── Welcome name — prefer profile from settings tab ────────────────────
     const welcomeNameEl = document.getElementById('welcomeName');
     if (welcomeNameEl) {
-        welcomeNameEl.textContent = (data.userProfile.name || 'Guest').split(' ')[0];
-        }
+        let displayName = data.userProfile.name || 'Guest';
+        try {
+            const savedProfile = JSON.parse(localStorage.getItem('fitpulse-profile'));
+            if (savedProfile?.fullName) {
+                displayName = savedProfile.fullName;
+            }
+        } catch { /* ignore */ }
+        if (data.userProfile) data.userProfile.name = displayName;
+        welcomeNameEl.textContent = displayName.split(' ')[0];
+    }
 
     // ── Active Plan card ──────────────────────────────────────────────────
     const activePlanEl = document.getElementById('stat-active-plan');
@@ -506,8 +525,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const sessValEl = document.getElementById('stat-sessions-val');
     const heroSessEl = document.getElementById('heroSessions');
     if (sessEl) {
-        sessEl.textContent = String(appState.total);
-        animateCount(sessEl, 0, appState.total, 1000);
+        const currentVal = parseInt(sessEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+        if (currentVal !== appState.total) {
+            animateCount(sessEl, currentVal, appState.total, 1000);
+        }
     }
     if (heroSessEl) {
         heroSessEl.textContent = String(appState.total);
@@ -518,7 +539,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // ── Session goal display ────────────────────────────────────────────────
     updateSessionGoalDisplay();
 
-    const sessObserver = new MutationObserver(() => updateSessionGoalDisplay());
+    let sessObsTimer = null;
+    const sessObserver = new MutationObserver(() => {
+        if (sessObsTimer) clearTimeout(sessObsTimer);
+        sessObsTimer = setTimeout(() => updateSessionGoalDisplay(), 50);
+    });
     if (sessEl) sessObserver.observe(sessEl, { characterData: true, childList: true, subtree: true });
 
     const bindIncreaseSess = (id) => {
@@ -542,8 +567,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const ptsEl    = document.getElementById('stat-points');
     const ptsValEl = document.getElementById('stat-points-val');
     if (ptsEl) {
-        ptsEl.textContent = String(appState.points);
-        animateCount(ptsEl, 0, appState.points, 1200);
+        const currentVal = parseInt(ptsEl.textContent.replace(/[^\d]/g, ''), 10) || 0;
+        if (currentVal !== appState.points) {
+            animateCount(ptsEl, currentVal, appState.points, 1200);
+        }
     }
     if (ptsValEl) animateCount(ptsValEl, 0, appState.points, 1200);
 
@@ -551,7 +578,11 @@ window.addEventListener('DOMContentLoaded', () => {
     updateGoalDisplay();
 
     // Watch the points element for realtime-engine updates
-    const ptsObserver = new MutationObserver(() => updateGoalDisplay());
+    let ptsObsTimer = null;
+    const ptsObserver = new MutationObserver(() => {
+        if (ptsObsTimer) clearTimeout(ptsObsTimer);
+        ptsObsTimer = setTimeout(() => updateGoalDisplay(), 50);
+    });
     if (ptsEl) ptsObserver.observe(ptsEl, { characterData: true, childList: true, subtree: true });
 
     // Bind increase-goal buttons
@@ -579,7 +610,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if (hoursValEl)      hoursValEl.textContent      = data.membershipStats.totalHoursBurned;
 
     // ── Re-check expiry every hour (tab might stay open) ──────────────────
-    setInterval(() => renderExpiryCard(data.userProfile.expiryDate), 3_600_000);
+    setInterval(() => {
+        const expiry = window.mockData?.userProfile?.expiryDate || data.userProfile.expiryDate;
+        renderExpiryCard(expiry);
+    }, 3_600_000);
 
     window.addRewardPoints = function(pts) {
         if (!appState) return;
@@ -593,6 +627,10 @@ window.addEventListener('DOMContentLoaded', () => {
         animateCount(ptsValEl, prevPoints, appState.points, 800);
         if (ptsEl) flashEl(ptsEl);
         updateGoalDisplay();
+        if (typeof window.syncAnalyticsRings === 'function') {
+            window.syncAnalyticsRings(appState.total, appState.points);
+        }
+        document.dispatchEvent(new CustomEvent('dashboard:data-updated'));
         
         if (typeof window.showToast === 'function') {
             window.showToast('Task Completed!', `+${pts} reward points earned`, 'success');

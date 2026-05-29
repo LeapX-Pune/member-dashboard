@@ -108,17 +108,21 @@ window.addEventListener('DOMContentLoaded', () => {
         console.warn("charts.js: Chart.js library is not loaded. Charts will not render.");
     }
 
-    // 3. Render Activity Chart (Line Chart synced with data.js)
+    // 3. Render Activity Chart (Line Chart synced with dynamic data)
     const activityCanvas = document.getElementById('activityChart');
     if (activityCanvas && typeof Chart !== 'undefined') {
+        const lineData = (typeof window.getActivityData === 'function')
+            ? window.getActivityData('weekly')
+            : data.activity_weekly;
+
         window.activityChart = new Chart(activityCanvas.getContext('2d'), {
             type: 'line',
             data: {
-                labels: data.activity_weekly.labels,
+                labels: lineData.labels,
                 datasets: [
                     {
                         label: 'Sessions',
-                        data: data.activity_weekly.data, 
+                        data: lineData.data, 
                         borderColor: THEME.primary,
                         borderWidth: 3,
                         tension: 0.4,
@@ -178,12 +182,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // Ensures charts and rings only animate when the Analytics tab becomes visible.
     const wipView = document.getElementById('wip-view');
     let hasAnimated = false;
-    
+
     if (wipView) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !hasAnimated) {
-                    hasAnimated = true;
+                if (entry.isIntersecting) {
+                    if (!hasAnimated) {
+                        hasAnimated = true;
 
                     // Retrieve latest values from Overview elements
                     const pointsEl = document.getElementById('stat-points');
@@ -207,31 +212,21 @@ window.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Trigger Ring Animations
-                    ringsData.forEach(animateRing);
-                    
-                    // Refresh theme colors
-                    updateThemeFromCSS();
-                    
-                    // Trigger Line Chart Entrance Animation
-                    if (window.activityChart) {
-                        window.activityChart.data.datasets[0].borderColor = THEME.primary;
-                        window.activityChart.data.datasets[0].pointBorderColor = THEME.primary;
-                        window.activityChart.options.scales.x.ticks.color = THEME.text;
-                        window.activityChart.options.scales.y.grid.color = THEME.grid;
-                        window.activityChart.options.plugins.tooltip.backgroundColor = THEME.surface;
-                        window.activityChart.options.plugins.tooltip.titleColor = THEME.text;
-                        window.activityChart.options.plugins.tooltip.bodyColor = THEME.primary;
-                        window.activityChart.options.plugins.tooltip.borderColor = THEME.grid;
-                        window.activityChart.resize();
-                        window.activityChart.reset();
-                        window.activityChart.update();
+                    // Refresh attendance + hours from dynamic data
+                    const attItem = ringsData.find(d => d.ring && d.ring.id === 'stat-attendance-ring');
+                    if (attItem && typeof window.getActivityData === 'function') {
+                        const totalSess = parseInt(localStorage.getItem('fp_total_sessions') || '0', 10);
+                        const pendingSess = parseInt(localStorage.getItem('fp_pending_sessions') || '0', 10);
+                        const denom = totalSess + pendingSess;
+                        attItem.numVal = denom > 0 ? Math.round((totalSess / denom) * 100) : 0;
+                        attItem.pct = Math.min(attItem.numVal, 100);
                     }
-                    
-                    // Refresh Doughnut Chart when tab becomes visible (canvas had no size when hidden)
-                    if (window.doughnutChart) {
-                        window.doughnutChart.resize();
-                        window.doughnutChart.reset();
-                        window.doughnutChart.update();
+                    const hrsItem = ringsData.find(d => d.ring && d.ring.id === 'stat-hours-ring');
+                    if (hrsItem) {
+                        hrsItem.numVal = parseFloat(localStorage.getItem('fp_total_hours') || '142');
+                        hrsItem.pct = Math.min((hrsItem.numVal / 200) * 100, 100);
+                    }
+                    ringsData.forEach(animateRing);
                     }
                 }
             });
@@ -278,6 +273,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     syncRingWithOverview('stat-points', 'stat-points-val', 'stat-points-ring', 'rewardGoal', 2000);
     syncRingWithOverview('stat-sessions', 'stat-sessions-val', 'stat-sessions-ring', 'sessionGoal', 200);
+
+    // ── React to data changes via custom event ──────────────────────────────
+    document.addEventListener('dashboard:data-updated', () => {
+        if (typeof window.updateLineChartInPlace === 'function') {
+            window.updateLineChartInPlace();
+        }
+        if (typeof window.updateDoughnutChartInPlace === 'function') {
+            window.updateDoughnutChartInPlace();
+        }
+    });
 });
 
 
@@ -287,7 +292,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('DOMContentLoaded', function () {
 
-    var data = window.mockData.doughnut_weekly;
+    var data = (typeof window.getDoughnutData === 'function')
+        ? window.getDoughnutData('weekly')
+        : window.mockData.doughnut_weekly;
     var canvas = document.getElementById('doughnutChart');
     if (!canvas) return;
 
